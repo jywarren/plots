@@ -1,0 +1,47 @@
+
+html {
+	
+}
+
+body {
+	margin:10px auto;
+	width:1000px;
+	font-size:11pt;
+	font-family:lucida grande,lucida sans console,sans-serif;
+}
+
+a {
+	color:#34a;
+}
+
+h1,h2,h3,h4 {
+	font-weight:normal;
+}
+
+h1 {
+	font-family: georgia;
+	font-style: italic;
+}
+
+h2 a {
+	background: #333;
+	color:white;
+	padding:6px;
+}
+
+#header {
+	height:120px;
+	background:#999;
+	margin-bottom:16px;
+}
+
+#main.column{
+	width:600px;
+}
+
+.section {
+	padding:10px 10px 10px 0px;
+	background: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAADCAYAAAC09K7GAAAABHNCSVQICAgIfAhkiAAAABJJREFUCJljYECA/wxYOP8xZABf0wP96WTlbgAAAABJRU5ErkJggg==") repeat-x bottom;
+}
+
+
