@@ -19,14 +19,26 @@ h1,h2,h3,h4 {
 }
 
 h1 {
+	font-size:3.2em;
+	font-family: georgia;
+	margin:0;
+}
+
+h2 {
 	font-family: georgia;
 	font-style: italic;
 }
 
 h2 a {
+	font-family:lucida grande,lucida sans console,sans-serif;
 	background: #333;
 	color:white;
 	padding:6px;
+	margin-bottom:0;
+}
+
+li {
+	list-style:square;
 }
 
 #header {
@@ -35,12 +47,30 @@ h2 a {
 	margin-bottom:16px;
 }
 
+.column {
+
+}
+
+.sidebar {
+	float:right;
+	width:240px;
+	padding:20px;
+	padding-top:0;
+	background: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAMAAAAECAYAAABLLYUHAAAABHNCSVQICAgIfAhkiAAAABFJREFUCJljYICA/wzoDNwCAGHSA/39bYdFAAAAAElFTkSuQmCC") repeat-y left;
+}
+
+.sidebar h2 {
+	margin-top:0;
+	font-family: georgia;
+	font-style: italic;
+}
+
 #main.column{
 	width:600px;
 }
 
 .section {
-	padding:10px 10px 10px 0px;
+	padding:0 10px 10px 0;
 	background: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAADCAYAAAC09K7GAAAABHNCSVQICAgIfAhkiAAAABJJREFUCJljYECA/wxYOP8xZABf0wP96WTlbgAAAABJRU5ErkJggg==") repeat-x bottom;
 }
 

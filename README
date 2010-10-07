@@ -1,0 +1,40 @@
+To Do:
+
+- 
+
+Routes:
+
+/<sitename>/report/<date>/<title>
+/<sitename>/<toolname>/
+/<personname>/note/<date>
+/<personname>/reports
+
+/create/site
+/create/account
+/create/note
+/create/report
+
+Models:
+	Note:
+		-link
+		-text
+		-user
+		-date
+		-(image_url?)
+	Report:
+		-title
+		-date
+		-users (comma delimited)
+	Picture:
+		-report_id
+		-note_id
+	Site:
+		-latitude
+		-longitude
+		-
+	Member:
+		-name
+		-location
+		-profile_text
+		-
+
