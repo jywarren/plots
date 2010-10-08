@@ -5,7 +5,7 @@ html {
 
 body {
 	margin:10px auto;
-	width:1000px;
+	width:994px;
 	font-size:11pt;
 	font-family:lucida grande,lucida sans console,sans-serif;
 }
@@ -38,13 +38,49 @@ h2 a {
 }
 
 li {
+	padding-left:3px;
 	list-style:square;
 }
 
+ul.large {
+	font-size:1.3em;
+	padding-left:14px;
+}
+
+#links {
+	font-size:1.4em;
+	display:block;
+}
+#links a {
+	text-decoration:none;
+	color:white;
+	padding:12px;
+	background:black;
+	margin-right:8px;
+	margin-bottom:8px;
+	float:left;
+}
+#links a:hover {
+	background:#333;
+	color:#ccc;
+}
+#links .right {
+	float:right;
+}
+#links .right a {
+	margin-right:0;
+	margin-left:8px;
+}
+
 #header {
+	clear:both;
 	height:120px;
 	background:#999;
 	margin-bottom:16px;
+}
+
+.modal {
+	font-size:1.5em;
 }
 
 .column {
@@ -56,13 +92,27 @@ li {
 	width:240px;
 	padding:20px;
 	padding-top:0;
+	padding-right:0;
 	background: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAMAAAAECAYAAABLLYUHAAAABHNCSVQICAgIfAhkiAAAABFJREFUCJljYICA/wzoDNwCAGHSA/39bYdFAAAAAElFTkSuQmCC") repeat-y left;
 }
 
 .sidebar h2 {
 	margin-top:0;
-	font-family: georgia;
-	font-style: italic;
+	text-decoration:none;
+	color:white;
+	padding:12px;
+	background:black;
+	font-size:1.8em;
+}
+.sidebar h3 {
+	font-size:1.5em;
+	margin-bottom:4px;
+}
+.sidebar p {
+	font-size:10pt;
+}
+.sidebar a {
+	font-style:italic;
 }
 
 #main.column{

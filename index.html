@@ -6,12 +6,24 @@
 
 <title>Open Geography Lab</title>
 <link rel="stylesheet" type="text/css" href="style.css" /> 
+<link rel="stylesheet" type="text/css" href="lib/modalbox/modalbox.css" /> 
 <script src="lib/prototype-1.6.1.js"></script>
 <script src="lib/scriptaculous.js"></script>
+<script src="lib/modalbox/modalbox.js"></script>
 
 </head>
 
 <body>
+
+<div id='links'>
+	<a href="">Home</a>
+	<a href="">About</a>
+	<a href="">Projects</a>
+	<a href="">Updates</a>
+	<div class="right">
+		<a href="javascript:void(0);" onClick="Modalbox.show('note.html');">Note [+]</a>
+	</div>
+</div>
 
 <div id='header'>
 
@@ -20,11 +32,20 @@
 <div class='sidebar'>
 
 	<h2>Project Sites</h2>
-	<ul class='large'>
-		<li>Oil Mapping - <i>Gulf of Mexico</i></li>
-		<li>Wetlanding - <i>Boston</i></li>
-		<li>Mining Monitoring - <i>Peru</i></li>
-	</ul>
+	<div class='section'>
+		<h3><a href="">Oil Mapping</a></h3>
+		<small><i>Gulf of Mexico</i></small>
+		<p>Volunteers and concerned citizens are working with the Louisiana Bucket Brigade to capture aerial imagery of the BP oil spill's effects. Using helium balloons and cheap cameras, we have gathered high resolution maps depicting oil along the Gulf Coast, and continued efforts will document the ecological and economic damage incurred by the disaster.</p>
+		<p><a href="/project/oil-mapping">Read more &raquo;</a></p>
+	</div>
+	<div class='section'>
+		<h3><a href="">Wetlanding</a></h3>
+		<small><i>Boston</i></small>
+	</div>
+	<div class='section'>
+		<h3><a href="">Mining Monitoring</a></h3>
+		<small><i>Peru</i></small>
+	</div>
 
 </div>
 
@@ -37,10 +58,27 @@
 	Using inexpensive DIY techniques, we seek to change how people see the world in environmental, social, and political terms. Using a participatory research model, we are activists, educators, technologists, and community organizers interested in new ways to promote action, intervention, and awareness.
 	</p>
 
-	<h2><a href="javascript:void(0);" onClick="Effect.toggle('sec-action', 'blind', { duration: 0.5 });">Action instead of visualization &raquo;</a></h2>
-	<div style="display:none;" id="sec-action">
-	<div class="section">
+	<div class="section">	
+	<h2><a href="javascript:void(0);" onClick="Effect.toggle('sec-people', 'blind', { duration: 0.5 });">Expertise, not experts &raquo;</a></h2>
+	<p>
+	Our community-run projects put people before technology, by focusing on building inexpensive yet powerful tools, designed in collaboration with local activists and educators to serve local needs. Many of our members are students who seek to situate their learning in real world challenges; others are community organizers or activists who want to be more involved in the development of new and empowering technologies.
+	</p>
+	<div style="display:none;" id="sec-people">
+	<div>
+
+	</div>
+	</div>
+	</div>
+
+	<div class="section">	
+	<h2><a href="javascript:void(0);" onClick="Effect.toggle('sec-action', 'blind', { duration: 0.5 });">Action over visualization &raquo;</a></h2>
+	<p>
 	Though we employ cartography, our work is action-oriented. It's not enough to simply document what we wish to change -- we must use information to effect change. 
+	</p>
+	<div style="display:none;" id="sec-action">
+	<div>
+
+	</div>
 	</div>
 	</div>
 
