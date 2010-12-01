@@ -1,13 +1,11 @@
 
 html {
-	
+	font-size:11pt;
+	font-family:lucida grande,lucida sans console,sans-serif;
 }
 
 body {
 	margin:10px auto;
-	width:994px;
-	font-size:11pt;
-	font-family:lucida grande,lucida sans console,sans-serif;
 }
 
 a {
@@ -27,6 +25,7 @@ h1 {
 h2 {
 	font-family: georgia;
 	font-style: italic;
+	margin-top:0;
 }
 
 h2 a {
@@ -88,12 +87,7 @@ ul.large {
 }
 
 .sidebar {
-	float:right;
-	width:240px;
-	padding:20px;
-	padding-top:0;
-	padding-right:0;
-	background: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAMAAAAECAYAAABLLYUHAAAABHNCSVQICAgIfAhkiAAAABFJREFUCJljYICA/wzoDNwCAGHSA/39bYdFAAAAAElFTkSuQmCC") repeat-y left;
+	background: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAMAAAAECAYAAABLLYUHAAAABHNCSVQICAgIfAhkiAAAABFJREFUCJljYICA/wzoDNwCAGHSA/39bYdFAAAAAElFTkSuQmCC") repeat-y right;
 }
 
 .sidebar h2 {
