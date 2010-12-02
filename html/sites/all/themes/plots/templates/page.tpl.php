@@ -126,6 +126,16 @@
 
   <div id="page-wrapper"><div id="page">
 
+    <div id='links'> 
+	<a href="/">Home</a> 
+	<a href="/about">About</a> 
+	<a href="/sites">Sites</a> 
+	<a href="/notes">Updates</a> 
+	<div class="right"> 
+		<a href="javascript:void(0);" onClick="Modalbox.show('note.html');">Note [+]</a> 
+	</div> 
+    </div> 
+
     <div id="header"><div class="section clearfix">
 
       <?php if ($logo): ?>
