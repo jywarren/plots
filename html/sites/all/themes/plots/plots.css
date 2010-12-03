@@ -1,11 +1,23 @@
 
 html {
 	font-size:11pt;
-	font-family:lucida grande,lucida sans console,sans-serif;
+}
+
+@font-face {
+	font-family: Junction;
+	src: url("/fonts/junction.ttf") format("truetype-aat"),
+	     url("/fonts/junction.otf") format("opentype");
+	font-weight: normal;
+	font-style: normal;	
 }
 
 body {
+	font-family: lucida grande,lucida sans console,sans-serif;
 	margin:10px auto;
+}
+
+p {
+	font-size:0.9em;
 }
 
 a {
@@ -13,6 +25,7 @@ a {
 }
 
 h1,h2,h3,h4 {
+	font-family:Junction, lucida grande,lucida sans console,sans-serif;
 	font-weight:normal;
 }
 
@@ -29,7 +42,7 @@ h2 {
 }
 
 h2 a {
-	font-family:lucida grande,lucida sans console,sans-serif;
+	font-family:Junction, lucida grande,lucida sans console,sans-serif;
 	background: #333;
 	color:white;
 	padding:6px;
@@ -47,6 +60,8 @@ ul.large {
 }
 
 #links {
+	font-family:Junction, lucida grande,lucida sans console,sans-serif;
+	background: #333;
 	font-size:1.4em;
 	display:block;
 }
@@ -58,6 +73,7 @@ ul.large {
 	margin-right:8px;
 	margin-bottom:8px;
 	float:left;
+	padding-top:14px;
 }
 #links a:hover {
 	background:#333;
