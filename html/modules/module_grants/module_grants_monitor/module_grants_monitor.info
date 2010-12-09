@@ -1,0 +1,15 @@
+; $Id: module_grants_monitor.info,v 1.2 2010/04/30 01:20:30 rdeboer Exp $
+name = Module Grants Monitor
+package = Access control
+description = Provides a summary view of all content accessible to the user, as determined by enabled content access modules.
+core = "6.x"
+dependencies[] = node_tools
+dependencies[] = user_tools
+dependencies[] = smart_tabs
+
+; Information added by drupal.org packaging script on 2010-07-10
+version = "6.x-3.6"
+core = "6.x"
+project = "module_grants"
+datestamp = "1278724209"
+

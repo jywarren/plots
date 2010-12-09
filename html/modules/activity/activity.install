@@ -1,0 +1,266 @@
+<?php
+// $Id: activity.install,v 1.1.2.1.2.6.2.4.2.17 2010/07/18 21:17:20 scottreynolds Exp $
+
+function activity_install() {
+  drupal_install_schema('activity');
+  // Set Trigger's weight to 2 so that it will fire AFTER pathauto. This makes
+  // pathauto alias' work.
+  if (activity_bad_trigger_weight()) {
+    drupal_set_message(t('In order for proper Pathauto behavior with Activity module, the Trigger module\'s weight needs to be fixed up. !clickhere', array('!clickhere' => l(t('Click here to fix Trigger\'s weight'), 'admin/activity/weight', array('query' => drupal_get_destination())))), 'error');
+  }
+}
+
+function activity_schema() {
+  $schema['activity'] = array(
+    'description' => 'Provides a place to record activity messages for display.',
+    'fields' => array(
+      'aid' => array(
+        'description' => 'The primary identifier for any activity',
+        'type' => 'serial',
+        'not null' => TRUE,
+        'unsigned' => TRUE,
+      ),
+      'uid' => array(
+        'description' => 'The user id of whomever performed the activity being recorded.',
+        'type' => 'int',
+        'not null' => TRUE,
+        'unsigned' => TRUE,
+      ),
+      'op' => array(
+        'description' => 'The operation being performed (update, insert, etc.)',
+        'type' => 'varchar',
+        'length' => '50',
+        'not null' => TRUE,
+      ),
+      'type' => array(
+        'description' => 'The type of object being acted upon (node, user, etc.)',
+        'type' => 'varchar',
+        'length' => '50',
+        'not null' => TRUE,
+       ),
+      'nid' => array(
+        'description' => 'A foreign key used with node_access table. Can be NULL for all non-node, comment activities',
+        'type' => 'int',
+        'unsigned' => TRUE,
+      ),
+      'eid' => array(
+        'description' => 'Entity ID used to maintain the relationship between activity and the entity that created the activity',
+        'type' => 'int',
+        'default value' => NULL,
+        'unsigned' => TRUE,
+      ),
+      'created' => array(
+        'description' => 'When the activity was recorded',
+        'type' => 'int',
+        'not null' => TRUE,
+        'unsigned' => TRUE,
+      ),
+      'actions_id' => array(
+        'description' => 'Foreign key to the actions table.',
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+        'default' => '0',
+      ),
+      'status' => array(
+        'description' => 'Whether or not this Activity is published',
+        'type' => 'int',
+        'size' => 'tiny',
+        'default' => 1,
+      ),
+    ),
+    'primary key' => array('aid'),
+    'indexes' => array(
+      'nid' => array('nid'),
+      'eid' => array('eid'),
+      'created' => array('created'), // Probably not at all useful.
+      'actions_id' => array('actions_id'),
+    ),
+  );
+  
+  $schema['activity_targets'] = array(
+    'fields' => array(
+      'aid' => array(
+        'description' => 'Foreign key to the activity table',
+        'type' => 'int',
+        'not null' => TRUE,
+        'unsigned' => TRUE,
+      ),
+      'uid' => array(
+        'description' => "The uid for which this message is for",
+        'type' => 'int',
+        'not null' => TRUE,
+        'unsigned' => TRUE,
+        'default' => 0,
+      ),
+      'amid' => array(
+        'description' => "The message id for this uid/aid combination",
+        'type' => 'int',
+        'not null' => TRUE,
+        'unsigned' => TRUE,
+        'default' => 0,
+      ),
+      'language' => array(
+        'description' => "The  IS0-3166 name of the langauge for the associated message.",
+        'type' => 'varchar',
+        'not null' => TRUE,
+        'length' => '12',
+      ),
+    ),
+    'primary key' => array('aid', 'uid', 'language'),
+    'unique keys' => array(
+      'amid' => array('amid'),
+    ),
+  );
+  
+  $schema['activity_messages'] = array(
+    'fields' => array(
+      'amid' => array(
+        'type' => 'serial',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'description' => 'The Unique id of the message',
+      ),
+      'message' => array(
+        'descripiton' => 'The full plaintext message',
+        'type' => 'text',
+        'size' => 'big',
+        'not null' => TRUE,
+      ),
+    ),
+    'primary key' => array('amid'),
+  );
+
+  $schema['activity_access'] = array(
+    'description' => 'Provides access control on a very granular level to activity items',
+    'fields' => array(
+      'aid' => array(
+        'description' => 'The primary identifier for an activity',
+        'type' => 'int',
+        'not null' => TRUE,
+        'unsigned' => TRUE,
+      ),
+      'realm' => array(
+        'description' => 'The module providing the access control',
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+      ),
+      'value' => array(
+        'description' => 'The provided value from the implementing module. E.g a uid, nid or a tid',
+        'type' => 'int',
+        'not null' => TRUE,
+        'default' => 0,
+        'unsigned' => TRUE,
+      ),
+    ),
+    // UGG!!!
+    'primary key' => array('aid', 'realm', 'value'),
+  );
+  return $schema;
+}
+
+function activity_uninstall() {
+  drupal_uninstall_schema('activity');
+
+  // clean up actions and triggers
+  db_query("DELETE FROM {trigger_assignments} WHERE aid IN (SELECT aid FROM {actions} WHERE callback = 'activity_record')");
+  db_query("DELETE FROM {actions} WHERE callback = 'activity_record'");
+
+  // clean variable table
+  db_query("DELETE FROM {variable} WHERE name = 'activity_expire' OR name = 'activity_count_expire' OR name = 'activity_access_realms'");
+}
+
+/**
+ * Implementation of hook_requirements().
+ */
+function activity_requirements($phase) {
+  $requirements = array();
+  $t = get_t();
+  $views_schema_version = db_result(db_query("SELECT schema_version FROM {system} WHERE name = 'views'"));
+  if (intval($views_schema_version) < 6006) {
+    $requirements['activity_views'] = array(
+      'title' => $t('Activity Views'),
+      'description' => $t('Activity2 requires Views >= 6.2. It can be downloaded !release. The change that is required by Activity2 is !issue', array('!release' => l('here', 'http://drupal.org/node/488082'), '!issue' => l('#419270', 'http://drupal.org/node/419270'))),
+      // set the severity to warning on install because we don't want to stop the install...
+      'severity' => ($phase == 'install') ? REQUIREMENT_WARNING : REQUIREMENT_ERROR,
+    );
+  }
+
+  if (activity_bad_trigger_weight()) {
+    $requirements['activity_trigger_weight'] = array(
+      'title' => $t('Activity Trigger Weight'),
+      'description' => $t('Activity2 requires Trigger\'s weight be greater then Pathauto\'s in order to produce proper aliased paths. !clickhere to fix that', array('!clickhere' => l(t('Click here'), 'admin/activity/weight', array('query' => drupal_get_destination())))),
+      'severity' => REQUIREMENT_WARNING,
+    );
+  }
+  return $requirements;
+}
+
+/**
+ * Sets Trigger modules weight to be higher then pathauto.
+ */
+function activity_fix_trigger_weight() {
+  db_query("UPDATE {system} SET weight = 2 WHERE name = 'trigger'");
+  drupal_goto();
+}
+
+/**
+ * Check to see if we need to fix the Trigger weight.
+ */
+function activity_bad_trigger_weight() {
+  // Verify Triggers weight.
+  $pathauto_weight = db_result(db_query("SELECT weight FROM {system} WHERE name = 'pathauto'"));
+  if ($pathauto_weight !== FALSE) {
+    $trigger_weight = db_result(db_query("SELECT weight FROM {system} WHERE name = 'trigger'"));
+    return $trigger_weight <= $pathauto_weight;
+  }
+  return FALSE;
+}
+
+/**
+ * Update the Activity Messages.amid field to be not null.
+ * @see: http://drupal.org/node/778662
+ */
+function activity_update_6201() {
+  $ret = array();
+  db_change_field($ret, 'activity_messages', 'amid', 'amid', array('type' => 'serial', 'unsigned' => TRUE, 'not null' => TRUE));
+  return $ret;
+}
+
+/**
+ * Update {activity} table to have the actions_id field.
+ * @see: http://drupal.org/node/463854
+ */
+function activity_update_6202() {
+  $ret = array();
+
+  db_add_field($ret, 'activity', 'actions_id', array(
+        'description' => 'Foreign key to the actions table.',
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+        'default' => '0',
+      ),
+    array('indexes' => array('actions_id' => array('actions_id'))));
+
+  return $ret;
+}
+
+/**
+ * Update {activity} table to have a status field
+ * @see: http://drupal.org/node/582230
+ */
+function activity_update_6203() {
+  $ret = array();
+
+  db_add_field ($ret, 'activity', 'status', array(
+      'description' => 'Whether or not this Activity is published',
+      'type' => 'int',
+      'size' => 'tiny',
+      'default' => 1,
+    )
+ );
+
+  return $ret;
+}

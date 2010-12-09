@@ -1,0 +1,1475 @@
+<?php
+// $Id: event.install,v 1.37 2009/07/05 00:34:15 killes Exp $ 
+
+/**
+ * We need mysql >= 4.1.1
+ */
+function event_requirements($phase) {
+  // Ensure translations don't break at install time
+  $t = get_t();
+  global $db_type;
+  $requirements = array();
+  if ($db_type == 'mysql' || $db_type == 'mysqli') {
+    $version = db_version();
+
+    $requirements['mysql_event'] = array(
+      'title' => $t('MySQL database for event module'),
+      'value' => ($phase == 'runtime') ? l($version, 'admin/reports/status/sql') : $version,
+      );
+
+    if (version_compare($version, '4.1.1') < 0) {
+      $requirements['mysql_event']['severity'] = REQUIREMENT_ERROR;
+      $requirements['mysql_event']['description'] = $t('Your MySQL Server is too old. Event module 6.2 requires at least MySQL %version.', array('%version' => '4.1.1'));
+    }
+  }
+
+  return $requirements;
+}
+
+/**
+ * Implementation of hook_schema().
+ */
+function event_schema() {
+  $schema['event'] = array(
+    'fields' => array(
+      'nid' => array(
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'default' => 0),
+      'event_start' => array(
+        'type' => 'datetime',
+        'not null' => TRUE),
+      'event_end' => array(
+        'type' => 'datetime',
+        'not null' => TRUE),
+      'timezone' => array(
+        'type' => 'int',
+        'not null' => TRUE,
+        'default' => 0),
+      'start_in_dst' => array(
+        'type' => 'int',
+        'not null' => TRUE,
+        'default' => 0),
+      'end_in_dst' => array(
+        'type' => 'int',
+        'not null' => TRUE,
+        'default' => 0),
+      'has_time' => array(
+        'type' => 'int',
+        'not null' => TRUE,
+        'default' => 1),
+      'has_end_date' => array(
+        'type' => 'int',
+        'not null' => TRUE,
+        'default' => 1)
+    ),
+    'indexes' => array(
+      'event_start' => array('event_start'),
+      'event_end' => array('event_end'),
+      'timezone' => array('timezone')
+    ),
+    'primary key' => array('nid'),
+  );
+
+  return $schema;
+}
+
+/**
+ * Implementation of hook_install().
+ */
+function event_install() {
+  drupal_install_schema('event');
+  $ret = array();
+  db_add_field($ret, 'users', 'timezone_id', array('type' => 'int', 'not null' => TRUE, 'default' => 0));
+
+  // Schema API doesn't have a TIME field reverting to old method.
+  switch ($GLOBALS['db_type']) {
+    case 'mysql':
+    case 'mysqli':
+      db_query("CREATE TABLE {event_timezones} (
+                timezone int NOT NULL default '0',
+                name varchar(255) NOT NULL default '',
+                offset TIME NOT NULL default '0',
+                offset_dst TIME NOT NULL default '0',
+                dst_region int NOT NULL default '0',
+                is_dst int NOT NULL default '0',
+                PRIMARY KEY (timezone)
+                ) /*!40100 DEFAULT CHARACTER SET utf8 */;");
+      break;
+    case 'pgsql':
+      db_query("CREATE TABLE {event_timezones} (
+                timezone integer NOT NULL default '0',
+                name varchar(255) NOT NULL default '',
+                \"offset\" interval NOT NULL default '0 seconds',
+                offset_dst interval NOT NULL default '0 seconds',
+                dst_region integer NOT NULL default '0',
+                is_dst integer NOT NULL default '0',
+                PRIMARY KEY (timezone)
+                ) ");
+      break;
+  }
+  $zones = event_install_timezones();
+  foreach ($zones as $zone => $value) {
+    switch ($GLOBALS['db_type']) {
+      case 'mysql':
+      case 'mysqli':
+        db_query("INSERT INTO {event_timezones} (timezone, name, offset, offset_dst, dst_region) VALUES (%d, '%s', '%s', '%s', %d)", $zone, $value['timezone'], $value['offset'], $value['offset_dst'], $value['dst_region']);
+        break;
+      case 'pgsql':
+        db_query("INSERT INTO {event_timezones} (timezone, name, \"offset\", offset_dst, dst_region) VALUES (%d, '%s', '%s', '%s', %d)", $zone, $value['timezone'], $value['offset'], $value['offset_dst'], $value['dst_region']);
+        break;
+    }
+  }
+  variable_del('event_range_prev');
+  variable_del('event_range_next');
+
+  // Create default event type
+  $type = array(
+    'type' => 'event',
+    'name' => t('Event'),
+    'module' => 'node',
+    'description' => t('Events have a start date and an optional end date as well as a teaser and a body. They can be extended by other modules, too.'),
+    'custom' => TRUE,
+    'modified' => TRUE,
+    'locked' => FALSE,
+    );
+  $type = (object) _node_type_set_defaults($type);
+  node_type_save($type);
+  variable_set('event_nodeapi_event', 'all');
+
+  // Notify of changes
+  drupal_set_message(t('Event module was successfully installed with default options. To customize event and/or location settings for events, please view the <a href="!settings">event content type settings page</a>. Make sure to <a href="!url">select the default timezone</a> for your website before creating events.', array('!settings' => url('admin/content/node-type/event'), '!url' => url('admin/settings/date-time'))));
+  drupal_set_message('A content type "event" was created.');
+}
+
+/**
+ * Implementation of hook_uninstall().
+ */
+function event_uninstall() {
+  $ret = array();
+  drupal_uninstall_schema('event');
+  db_drop_field($ret, 'users', 'timezone_id');
+  db_query('DROP TABLE {event_timezones}');
+  variable_del('event_timezone_input');
+  variable_del('event_timezone_display');
+  variable_del('event_ampm');
+  variable_del('event_upcoming_limit');
+  variable_del('event_overview');
+  variable_del('event_table_duration');
+  variable_del('event_taxonomy_control');
+  variable_del('event_type_control');
+  variable_del('event_range_prev');
+  variable_del('event_range_next');
+  foreach (node_get_types() as $type => $info) {
+    variable_del('event_nodeapi_'. $type);
+  }
+
+  drupal_set_message(t('Event module successfully uninstalled'));
+}
+
+
+/**
+ * Update 4.7 or 5.1 to 5.2
+ */
+function event_update_3() {
+  $ret = array();
+  variable_del('event_range_prev');
+  variable_del('event_range_next');
+
+  switch ($GLOBALS['db_type']) {
+    case 'mysql':
+    case 'mysqli':
+      $ret[] = update_sql("RENAME TABLE {event} TO {event_backup}");
+      $ret[] = update_sql("CREATE TABLE {event_timezones} (
+                timezone int NOT NULL default '0',
+                name varchar(255) NOT NULL default '',
+                offset TIME NOT NULL default '0',
+                offset_dst TIME NOT NULL default '0',
+                dst_region int NOT NULL default '0',
+                PRIMARY KEY (timezone)
+                ) /*!40100 DEFAULT CHARACTER SET utf8 */;");
+      $zones = event_install_timezones();
+      foreach ($zones as $zone => $value) {
+        db_query("INSERT INTO {event_timezones} (timezone, name, offset, offset_dst, dst_region) VALUES (%d, '%s', '%s', '%s', %d)", $zone, $value['timezone'], $value['offset'], $value['offset_dst'], $value['dst_region']);
+      }
+
+      $ret[] = update_sql("CREATE TABLE {event} (
+                nid int(10) unsigned NOT NULL default '0',
+                event_start datetime NOT NULL,
+                event_end datetime NOT NULL,
+                timezone int NOT NULL default '0',
+                start_in_dst int NOT NULL default '0',
+                end_in_dst int NOT NULL default '0'
+                ) /*!40100 DEFAULT CHARACTER SET utf8 */;");
+
+      $ret[] = update_sql("SET time_zone = '+00:00'");
+      $sql = "INSERT INTO {event} (nid, event_start, event_end, timezone, start_in_dst, end_in_dst) SELECT e.nid, IF(%cond_start, FROM_UNIXTIME(e.event_start) + INTERVAL ez.offset_dst HOUR_SECOND, FROM_UNIXTIME(e.event_start) + INTERVAL ez.offset HOUR_SECOND) AS event_start, IF(%cond_end, FROM_UNIXTIME(e.event_end) + INTERVAL ez.offset_dst HOUR_SECOND, FROM_UNIXTIME(e.event_end) + INTERVAL ez.offset HOUR_SECOND) AS event_end, e.timezone, IF(%cond_start, 1, 0), IF(%cond_end, 1, 0) FROM {event_backup} e INNER JOIN {event_timezones} ez ON e.timezone = ez.timezone WHERE ez.dst_region = %d";
+      // Loop over the 21 supported DST regions.
+      for ($i = 0; $i <= 20;  $i++) {
+        if ($i == 0) {
+            $ret[] = update_sql("INSERT INTO {event} (nid, event_start, event_end, timezone, start_in_dst, end_in_dst) SELECT e.nid, FROM_UNIXTIME(e.event_start) + INTERVAL ez.offset HOUR_SECOND AS event_start, FROM_UNIXTIME(e.event_end) + INTERVAL ez.offset HOUR_SECOND AS event_end, e.timezone, 0, 0 FROM {event_backup} e INNER JOIN {event_timezones} ez ON e.timezone = ez.timezone WHERE ez.dst_region = 0");
+        }
+        else {
+          $start = str_replace('%date', 'e.event_start', _event_install_get_dst_dates($i));
+          $end = str_replace('%date', 'e.event_end', _event_install_get_dst_dates($i));
+          $ret[] = update_sql(str_replace(array('%cond_start', '%cond_end', '%d'), array($start, $end, $i), $sql));
+        }
+      }
+
+      $ret[] = update_sql('ALTER TABLE {event} ADD PRIMARY KEY nid (nid)');
+      $ret[] = update_sql('ALTER TABLE {event} ADD KEY timezone (timezone)');
+      $ret[] = update_sql("ALTER TABLE {users} ADD timezone_id int NOT NULL default '0'");
+      break;
+    case 'pgsql':
+      $ret[] = update_sql("ALTER TABLE {event} RENAME TO {event_backup}");
+
+      $ret[] = update_sql("CREATE TABLE {event_timezones} (
+                timezone integer NOT NULL default '0',
+                name varchar(255) NOT NULL default '',
+                \"offset\" interval NOT NULL default '0 seconds',
+                offset_dst interval NOT NULL default '0 seconds',
+                dst_region integer NOT NULL default '0',
+                PRIMARY KEY (timezone)
+                ) ");
+      $zones = event_install_timezones();
+      foreach ($zones as $zone => $value) {
+        db_query("INSERT INTO {event_timezones} (timezone, name, \"offset\", offset_dst, dst_region) VALUES (%d, '%s', '%s', '%s', %d)", $zone, $value['timezone'], $value['offset'], $value['offset_dst'], $value['dst_region']);
+      }
+
+      db_query("CREATE TABLE {event} (
+                nid integer NOT NULL default '0',
+                event_start timestamp NOT NULL,
+                event_end timestamp NOT NULL,
+                timezone integer NOT NULL default '0',
+                start_in_dst integer NOT NULL default '0',
+                end_in_dst integer NOT NULL default '0'
+                ) ");
+
+      // needs work?
+      $sql = "INSERT INTO {event} (nid, event_start, event_end, timezone, start_in_dst, end_in_dst) SELECT e.nid, IF(%cond_start, TIMESTAMP 'epoch' + event_start * INTERVAL '1 second' + ez.offset_dst, TIMESTAMP 'epoch' + event_start * INTERVAL '1 second' + ez.offset) AS event_start, IF(%cond_end, TIMESTAMP 'epoch' + event_end * INTERVAL '1 second' + ez.offset_dst, TIMESTAMP 'epoch' + event_end * INTERVAL '1 second' + ez.offset) AS event_end, e.timezone, IF(%cond_start, 1, 0), IF(%cond_end, 1, 0) FROM {event_backup} e INNER JOIN {event_timezones} ez ON e.timezone = ez.timezone WHERE ez.dst_region = %d";
+
+      // Loop over the 21 supported DST regions.
+      for ($i = 0; $i <= 20;  $i++) {
+        if ($i == 0) {
+            // needs work?
+            $ret[] = update_sql("INSERT INTO {event} (nid, event_start, event_end, timezone, start_in_dst, end_in_dst) SELECT e.nid, TIMESTAMP 'epoch' + event_start * INTERVAL '1 second' + ez.offset AS event_start, TIMESTAMP 'epoch' + event_end * INTERVAL '1 second' + ez.offset AS event_end, e.timezone, 0, 0 FROM {event_backup} e INNER JOIN {event_timezones} ez ON e.timezone = ez.timezone WHERE ez.dst_region = 0");
+        }
+        else {
+          $start = str_replace('%date', 'e.event_start', _event_install_get_dst_dates($i));
+          $end = str_replace('%date', 'e.event_end', _event_install_get_dst_dates($i));
+          $ret[] = update_sql(str_replace(array('%cond_start', '%cond_end', '%d'), array($start, $end, $i), $sql));
+        }
+      }
+
+      $ret[] = update_sql('ALTER TABLE {event} ADD PRIMARY KEY (nid)');
+      $ret[] = update_sql('CREATE INDEX {event}_timezone_idx ON {event} (timezone)');
+      $ret[] = update_sql("ALTER TABLE {users} ADD timezone_id integer NOT NULL default '0'");
+      break;
+  }
+  return $ret;
+}
+
+/**
+ * Replace basicevent module if installed
+ */
+function event_update_4() {
+  $is_existing = db_result(db_query("SELECT * FROM {node_type} WHERE type = '%s'", 'event'));
+  if ($is_existing != 1) {
+    // Create default event type
+    $type = array(
+      'type' => 'event',
+      'name' => t('Event'),
+      'module' => 'node',
+      'description' => t('Events have a start date and an optional end date as well as a teaser and a body. They can be extended by other modules, too.'),
+      'custom' => TRUE,
+      'modified' => TRUE,
+      'locked' => FALSE,
+      );
+    $type = (object) _node_type_set_defaults($type);
+    node_type_save($type);
+    variable_set('event_nodeapi_event', 'all');
+    drupal_set_message('A content type "event" was created.');
+  }
+  $basicevent = db_result(db_query("SELECT * FROM {system} WHERE name = '%s' AND status = 1", 'basicevent'));
+  if ($basicevent) {
+    db_query("UPDATE {system} SET status = 0 WHERE name = '%s'", 'basicevent');
+    drupal_set_message(t('The basicevent module is no longer supported, it was disabled during the upgrade process.'));
+  }
+
+  $basicevent = db_result(db_query("SELECT * FROM {node_type} WHERE module = '%s'", 'basicevent'));
+  if ($basicevent) {
+    db_query("UPDATE {node_type} SET module = 'node' WHERE module = '%s'", 'basicevent');
+  }
+
+  return array();
+}
+
+/**
+ * Set DST
+ */
+function event_update_5() {
+  $ret = array();
+  switch ($GLOBALS['db_type']) {
+    case 'pgsql':
+      db_add_column($ret, 'event_timezones', 'is_dst', 'integer', array('default' => 0, 'not null' => TRUE));
+      break;
+    case 'mysql':
+    case 'mysqli':
+      $ret[] = update_sql("ALTER TABLE {event_timezones} ADD is_dst int NOT NULL default 0");
+      break;
+  }
+  // There's a bug in core that will runn this update funcvtion even
+  // if the module is not enabled.
+  if (!function_exists('_event_user_time')) {
+    include_once(drupal_get_path('module', 'event') .'/event.module');
+  }
+  $time = _event_user_time();
+  // Loop over the 21 supported DST regions.
+  for ($i = 0; $i <= 20;  $i++) {
+    $is_dst = event_is_dst($i, $time);
+    $ret[] = update_sql("UPDATE {event_timezones} SET is_dst = $is_dst WHERE dst_region = $i");
+  }
+  return $ret;
+}
+
+/**
+ * Add keys
+ */
+function event_update_6() {
+  $ret = array();
+  switch ($GLOBALS['db_type']) {
+    case 'pgsql':
+      $ret[] = update_sql('CREATE INDEX {event}_event_start_idx ON {event} (event_start)');
+      $ret[] = update_sql('CREATE INDEX {event}_event_end_idx ON {event} (event_end)');
+      break;
+    case 'mysql':
+    case 'mysqli':
+      $ret[] = update_sql("ALTER TABLE {event} ADD KEY event_start (event_start)");
+      $ret[] = update_sql("ALTER TABLE {event} ADD KEY event_end (event_end)");
+      break;
+  }
+  return $ret;
+}
+
+/**
+ * Add all_day/end_date columns
+ */
+function event_update_7() {
+  $ret = array();
+  switch ($GLOBALS['db_type']) {
+    case 'pgsql':
+      db_add_column($ret, 'event', 'has_time', 'integer', array('default' => 1, 'not null' => TRUE));
+      db_add_column($ret, 'event', 'has_end_date', 'integer', array('default' => 1, 'not null' => TRUE));
+      break;
+    case 'mysql':
+    case 'mysqli':
+      $ret[] = update_sql("ALTER TABLE {event} ADD has_time int NOT NULL default 1");
+      $ret[] = update_sql("ALTER TABLE {event} ADD has_end_date int NOT NULL default 1");
+      break;
+  }
+  return $ret;
+}
+
+/**
+ * Update all_day/end_date columns
+ */
+function event_update_8() {
+  $ret = array();
+  switch ($GLOBALS['db_type']) {
+    case 'pgsql':
+      $ret[] = update_sql('UPDATE {event} SET has_end_date = 0 WHERE event_start = event_end');
+      // TODO: Check
+      $ret[] = update_sql("UPDATE {event} SET has_time = 0 WHERE EXTRACT(HOUR_SECOND FROM event_start) = 0 AND EXTRACT(HOUR_SECOND FROM event_end) = 235900");
+      break;
+    case 'mysql':
+    case 'mysqli':
+      $ret[] = update_sql('UPDATE {event} SET has_end_date = 0 WHERE event_start = event_end');
+      $ret[] = update_sql("UPDATE {event} SET has_time = 0 WHERE EXTRACT(HOUR_SECOND FROM event_start) = 0 AND EXTRACT(HOUR_SECOND FROM event_end) = 235900");
+      break;
+  }
+  return $ret;
+}
+
+/**
+ * Fix broken event_timezones table
+ */
+function event_update_6000() {
+  db_query('DROP TABLE {event_timezones}');
+  // Schema API doesn't have a TIME field reverting to old method.
+  switch ($GLOBALS['db_type']) {
+    case 'mysql':
+    case 'mysqli':
+      db_query("CREATE TABLE {event_timezones} (
+                timezone int NOT NULL default '0',
+                name varchar(255) NOT NULL default '',
+                offset TIME NOT NULL default '0',
+                offset_dst TIME NOT NULL default '0',
+                dst_region int NOT NULL default '0',
+                is_dst int NOT NULL default '0',
+                PRIMARY KEY (timezone)
+                ) /*!40100 DEFAULT CHARACTER SET utf8 */;");
+      break;
+    case 'pgsql':
+      db_query("CREATE TABLE {event_timezones} (
+                timezone integer NOT NULL default '0',
+                name varchar(255) NOT NULL default '',
+                \"offset\" interval NOT NULL default '0 seconds',
+                offset_dst interval NOT NULL default '0 seconds',
+                dst_region integer NOT NULL default '0',
+                is_dst integer NOT NULL default '0',
+                PRIMARY KEY (timezone)
+                ) ");
+      break;
+  }
+  $zones = event_install_timezones();
+  foreach ($zones as $zone => $value) {
+    switch ($GLOBALS['db_type']) {
+      case 'mysql':
+      case 'mysqli':
+        db_query("INSERT INTO {event_timezones} (timezone, name, offset, offset_dst, dst_region) VALUES (%d, '%s', '%s', '%s', %d)", $zone, $value['timezone'], $value['offset'], $value['offset_dst'], $value['dst_region']);
+        break;
+      case 'pgsql':
+        db_query("INSERT INTO {event_timezones} (timezone, name, \"offset\", offset_dst, dst_region) VALUES (%d, '%s', '%s', '%s', %d)", $zone, $value['timezone'], $value['offset'], $value['offset_dst'], $value['dst_region']);
+        break;
+    }
+  }
+  return array();
+}
+
+/**
+ * Truncate cache because of new theme functions.
+ */
+function event_update_6001() {
+  db_query('TRUNCATE {cache}');
+  return array();
+}
+
+/**
+ * Truncate cache because of new theme functions.
+ */
+function event_update_6002() {
+  db_query('TRUNCATE {cache}');
+  return array();
+}
+
+/**
+ * Truncate cache because of new theme functions.
+ */
+function event_update_6003() {
+  db_query('TRUNCATE {cache}');
+  return array();
+}
+
+/**
+ * Update DST in timezones, might be screwed up.
+ */
+function event_update_6004() {
+  include_once(drupal_get_path('module', 'event') .'/event.module');
+  $timezones = event_install_timezones();
+  foreach ($timezones as $id => $timezone) {
+    $timezone = event_zonelist_by_id($id);
+    $status = event_is_dst($timezone['dst_region'], gmdate('Y-m-d H:i', time()));
+    db_query('UPDATE {event_timezones} SET is_dst = %d WHERE timezone = %d', $status, $id);
+  }
+  return array();
+}
+
+/**
+ * Update DST in events, might be screwed up.
+ */
+function event_update_6005() {
+  include_once(drupal_get_path('module', 'event') .'/event.module');
+  // get all events
+  $result = db_query('SELECT e.* FROM {event} e');
+  while ($event = db_fetch_object($result)) {
+    $timezone = event_zonelist_by_id($event->timezone);
+    $status_start = event_is_dst($timezone['dst_region'], $event->event_start);
+    $status_end = event_is_dst($timezone['dst_region'], $event->event_end);
+    if ($event->start_in_dst != $status_start || $event->end_in_dst != $status_end) {
+      db_query('UPDATE {event} SET start_in_dst = %d, end_in_dst = %d WHERE nid = %d', $status_start, $status_end, $event->nid);
+    }
+  }
+  return array();
+}
+
+/**
+ * Timezones table used only during installation.
+ */
+function event_install_timezones() {
+  return array(1 => array('timezone' => 'Africa/Addis Ababa', 'offset' => '3:00:00', 'offset_dst' => '3:00:00', 'dst_region' => '0'),
+    2 => array('timezone' => 'Africa/Algiers', 'offset' => '1:00:00', 'offset_dst' => '1:00:00', 'dst_region' => '0'),
+    3 => array('timezone' => 'Africa/Asmera', 'offset' => '3:00:00', 'offset_dst' => '3:00:00', 'dst_region' => '0'),
+    4 => array('timezone' => 'Africa/Bangui', 'offset' => '1:00:00', 'offset_dst' => '1:00:00', 'dst_region' => '0'),
+    5 => array('timezone' => 'Africa/Blantyre', 'offset' => '2:00:00', 'offset_dst' => '2:00:00', 'dst_region' => '0'),
+    6 => array('timezone' => 'Africa/Brazzaville', 'offset' => '1:00:00', 'offset_dst' => '1:00:00', 'dst_region' => '0'),
+    7 => array('timezone' => 'Africa/Bujumbura', 'offset' => '2:00:00', 'offset_dst' => '2:00:00', 'dst_region' => '0'),
+    8 => array('timezone' => 'Africa/Cairo', 'offset' => '2:00:00', 'offset_dst' => '3:00:00', 'dst_region' => '1'),
+    9 => array('timezone' => 'Africa/Ceuta', 'offset' => '1:00:00', 'offset_dst' => '2:00:00', 'dst_region' => '1'),
+    10 => array('timezone' => 'Africa/Dar es Salaam', 'offset' => '3:00:00', 'offset_dst' => '3:00:00', 'dst_region' => '0'),
+    11 => array('timezone' => 'Africa/Djibouti', 'offset' => '3:00:00', 'offset_dst' => '3:00:00', 'dst_region' => '0'),
+    12 => array('timezone' => 'Africa/Douala', 'offset' => '1:00:00', 'offset_dst' => '1:00:00', 'dst_region' => '0'),
+    13 => array('timezone' => 'Africa/Gaborone', 'offset' => '2:00:00', 'offset_dst' => '2:00:00', 'dst_region' => '0'),
+    14 => array('timezone' => 'Africa/Harare', 'offset' => '2:00:00', 'offset_dst' => '2:00:00', 'dst_region' => '0'),
+    15 => array('timezone' => 'Africa/Johannesburg', 'offset' => '2:00:00', 'offset_dst' => '2:00:00', 'dst_region' => '0'),
+    16 => array('timezone' => 'Africa/Kampala', 'offset' => '3:00:00', 'offset_dst' => '3:00:00', 'dst_region' => '0'),
+    17 => array('timezone' => 'Africa/Khartoum', 'offset' => '3:00:00', 'offset_dst' => '3:00:00', 'dst_region' => '0'),
+    18 => array('timezone' => 'Africa/Kigali', 'offset' => '2:00:00', 'offset_dst' => '2:00:00', 'dst_region' => '0'),
+    19 => array('timezone' => 'Africa/Kinshasa', 'offset' => '1:00:00', 'offset_dst' => '1:00:00', 'dst_region' => '0'),
+    20 => array('timezone' => 'Africa/Lagos', 'offset' => '1:00:00', 'offset_dst' => '1:00:00', 'dst_region' => '0'),
+    21 => array('timezone' => 'Africa/Libreville', 'offset' => '1:00:00', 'offset_dst' => '1:00:00', 'dst_region' => '0'),
+    22 => array('timezone' => 'Africa/Luanda', 'offset' => '1:00:00', 'offset_dst' => '1:00:00', 'dst_region' => '0'),
+    23 => array('timezone' => 'Africa/Lubumbashi', 'offset' => '2:00:00', 'offset_dst' => '2:00:00', 'dst_region' => '0'),
+    24 => array('timezone' => 'Africa/Lusaka', 'offset' => '2:00:00', 'offset_dst' => '2:00:00', 'dst_region' => '0'),
+    25 => array('timezone' => 'Africa/Malabo', 'offset' => '1:00:00', 'offset_dst' => '1:00:00', 'dst_region' => '0'),
+    26 => array('timezone' => 'Africa/Maputo', 'offset' => '2:00:00', 'offset_dst' => '2:00:00', 'dst_region' => '0'),
+    27 => array('timezone' => 'Africa/Maseru', 'offset' => '2:00:00', 'offset_dst' => '2:00:00', 'dst_region' => '0'),
+    28 => array('timezone' => 'Africa/Mbabane', 'offset' => '2:00:00', 'offset_dst' => '2:00:00', 'dst_region' => '0'),
+    29 => array('timezone' => 'Africa/Mogadishu', 'offset' => '3:00:00', 'offset_dst' => '3:00:00', 'dst_region' => '0'),
+    30 => array('timezone' => 'Africa/Nairobi', 'offset' => '3:00:00', 'offset_dst' => '3:00:00', 'dst_region' => '0'),
+    31 => array('timezone' => 'Africa/Ndjamena', 'offset' => '1:00:00', 'offset_dst' => '1:00:00', 'dst_region' => '0'),
+    32 => array('timezone' => 'Africa/Niamey', 'offset' => '1:00:00', 'offset_dst' => '1:00:00', 'dst_region' => '0'),
+    33 => array('timezone' => 'Africa/Porto-Novo', 'offset' => '1:00:00', 'offset_dst' => '1:00:00', 'dst_region' => '0'),
+    34 => array('timezone' => 'Africa/Tripoli', 'offset' => '2:00:00', 'offset_dst' => '2:00:00', 'dst_region' => '0'),
+    35 => array('timezone' => 'Africa/Tunis', 'offset' => '1:00:00', 'offset_dst' => '1:00:00', 'dst_region' => '0'),
+    36 => array('timezone' => 'Africa/Windhoek', 'offset' => '2:00:00', 'offset_dst' => '1:00:00', 'dst_region' => '2'),
+    37 => array('timezone' => 'America/Adak', 'offset' => '-10:00:00', 'offset_dst' => '-9:00:00', 'dst_region' => '15'),
+    38 => array('timezone' => 'America/Anchorage', 'offset' => '-9:00:00', 'offset_dst' => '-8:00:00', 'dst_region' => '15'),
+    39 => array('timezone' => 'America/Anguilla', 'offset' => '-4:00:00', 'offset_dst' => '-4:00:00', 'dst_region' => '0'),
+    40 => array('timezone' => 'America/Antigua', 'offset' => '-4:00:00', 'offset_dst' => '-4:00:00', 'dst_region' => '0'),
+    41 => array('timezone' => 'America/Araguaina', 'offset' => '-2:00:00', 'offset_dst' => '-3:00:00', 'dst_region' => '17'),
+    42 => array('timezone' => 'America/Aruba', 'offset' => '-4:00:00', 'offset_dst' => '-4:00:00', 'dst_region' => '0'),
+    43 => array('timezone' => 'America/Asuncion', 'offset' => '-3:00:00', 'offset_dst' => '-4:00:00', 'dst_region' => '20'),
+    44 => array('timezone' => 'America/Atka', 'offset' => '-10:00:00', 'offset_dst' => '-9:00:00', 'dst_region' => '15'),
+    45 => array('timezone' => 'America/Barbados', 'offset' => '-4:00:00', 'offset_dst' => '-4:00:00', 'dst_region' => '0'),
+    46 => array('timezone' => 'America/Belem', 'offset' => '-3:00:00', 'offset_dst' => '-3:00:00', 'dst_region' => '0'),
+    47 => array('timezone' => 'America/Belize', 'offset' => '-6:00:00', 'offset_dst' => '-6:00:00', 'dst_region' => '0'),
+    48 => array('timezone' => 'America/Boa Vista', 'offset' => '-4:00:00', 'offset_dst' => '-4:00:00', 'dst_region' => '0'),
+    49 => array('timezone' => 'America/Bogota', 'offset' => '-5:00:00', 'offset_dst' => '-5:00:00', 'dst_region' => '0'),
+    50 => array('timezone' => 'America/Boise', 'offset' => '-7:00:00', 'offset_dst' => '-6:00:00', 'dst_region' => '15'),
+    51 => array('timezone' => 'America/Buenos Aires', 'offset' => '-3:00:00', 'offset_dst' => '-3:00:00', 'dst_region' => '0'),
+    52 => array('timezone' => 'America/Cambridge Bay', 'offset' => '-7:00:00', 'offset_dst' => '-6:00:00', 'dst_region' => '15'),
+    53 => array('timezone' => 'America/Cancun', 'offset' => '-6:00:00', 'offset_dst' => '-5:00:00', 'dst_region' => '15'),
+    54 => array('timezone' => 'America/Caracas', 'offset' => '-4:00:00', 'offset_dst' => '-4:00:00', 'dst_region' => '0'),
+    55 => array('timezone' => 'America/Catamarca', 'offset' => '-3:00:00', 'offset_dst' => '-3:00:00', 'dst_region' => '0'),
+    56 => array('timezone' => 'America/Cayenne', 'offset' => '-3:00:00', 'offset_dst' => '-3:00:00', 'dst_region' => '0'),
+    57 => array('timezone' => 'America/Cayman', 'offset' => '-5:00:00', 'offset_dst' => '-5:00:00', 'dst_region' => '0'),
+    58 => array('timezone' => 'America/Chicago', 'offset' => '-6:00:00', 'offset_dst' => '-5:00:00', 'dst_region' => '15'),
+    59 => array('timezone' => 'America/Chihuahua', 'offset' => '-7:00:00', 'offset_dst' => '-6:00:00', 'dst_region' => '15'),
+    60 => array('timezone' => 'America/Cordoba', 'offset' => '-3:00:00', 'offset_dst' => '-3:00:00', 'dst_region' => '0'),
+    61 => array('timezone' => 'America/Costa Rica', 'offset' => '-6:00:00', 'offset_dst' => '-6:00:00', 'dst_region' => '0'),
+    62 => array('timezone' => 'America/Cuiaba', 'offset' => '-3:00:00', 'offset_dst' => '-4:00:00', 'dst_region' => '17'),
+    63 => array('timezone' => 'America/Curacao', 'offset' => '-4:00:00', 'offset_dst' => '-4:00:00', 'dst_region' => '0'),
+    64 => array('timezone' => 'America/Dawson', 'offset' => '-8:00:00', 'offset_dst' => '-7:00:00', 'dst_region' => '15'),
+    65 => array('timezone' => 'America/Dawson Creek', 'offset' => '-7:00:00', 'offset_dst' => '-7:00:00', 'dst_region' => '0'),
+    66 => array('timezone' => 'America/Denver', 'offset' => '-7:00:00', 'offset_dst' => '-6:00:00', 'dst_region' => '15'),
+    67 => array('timezone' => 'America/Detroit', 'offset' => '-5:00:00', 'offset_dst' => '-4:00:00', 'dst_region' => '15'),
+    68 => array('timezone' => 'America/Dominica', 'offset' => '-4:00:00', 'offset_dst' => '-4:00:00', 'dst_region' => '0'),
+    69 => array('timezone' => 'America/Edmonton', 'offset' => '-7:00:00', 'offset_dst' => '-6:00:00', 'dst_region' => '15'),
+    70 => array('timezone' => 'America/Eirunepe', 'offset' => '-5:00:00', 'offset_dst' => '-5:00:00', 'dst_region' => '0'),
+    71 => array('timezone' => 'America/El Salvador', 'offset' => '-6:00:00', 'offset_dst' => '-6:00:00', 'dst_region' => '0'),
+    72 => array('timezone' => 'America/Ensenada', 'offset' => '-8:00:00', 'offset_dst' => '-7:00:00', 'dst_region' => '15'),
+    73 => array('timezone' => 'America/Fort Wayne', 'offset' => '-5:00:00', 'offset_dst' => '-5:00:00', 'dst_region' => '0'),
+    74 => array('timezone' => 'America/Fortaleza', 'offset' => '-3:00:00', 'offset_dst' => '-3:00:00', 'dst_region' => '0'),
+    75 => array('timezone' => 'America/Glace Bay', 'offset' => '-4:00:00', 'offset_dst' => '-3:00:00', 'dst_region' => '15'),
+    76 => array('timezone' => 'America/Godthab', 'offset' => '-3:00:00', 'offset_dst' => '-2:00:00', 'dst_region' => '15'),
+    77 => array('timezone' => 'America/Goose Bay', 'offset' => '-4:00:00', 'offset_dst' => '-3:00:00', 'dst_region' => '15'),
+    78 => array('timezone' => 'America/Grand Turk', 'offset' => '-5:00:00', 'offset_dst' => '-4:00:00', 'dst_region' => '16'),
+    79 => array('timezone' => 'America/Grenada', 'offset' => '-4:00:00', 'offset_dst' => '-4:00:00', 'dst_region' => '0'),
+    80 => array('timezone' => 'America/Guadeloupe', 'offset' => '-4:00:00', 'offset_dst' => '-4:00:00', 'dst_region' => '0'),
+    81 => array('timezone' => 'America/Guatemala', 'offset' => '-6:00:00', 'offset_dst' => '-6:00:00', 'dst_region' => '0'),
+    82 => array('timezone' => 'America/Guayaquil', 'offset' => '-5:00:00', 'offset_dst' => '-5:00:00', 'dst_region' => '0'),
+    83 => array('timezone' => 'America/Guyana', 'offset' => '-4:00:00', 'offset_dst' => '-4:00:00', 'dst_region' => '0'),
+    84 => array('timezone' => 'America/Halifax', 'offset' => '-4:00:00', 'offset_dst' => '-3:00:00', 'dst_region' => '15'),
+    85 => array('timezone' => 'America/Havana', 'offset' => '-5:00:00', 'offset_dst' => '-4:00:00', 'dst_region' => '16'),
+    86 => array('timezone' => 'America/Hermosillo', 'offset' => '-7:00:00', 'offset_dst' => '-7:00:00', 'dst_region' => '0'),
+    87 => array('timezone' => 'America/Indiana/Indianapolis', 'offset' => '-5:00:00', 'offset_dst' => '-5:00:00', 'dst_region' => '0'),
+    88 => array('timezone' => 'America/Indiana/Knox', 'offset' => '-5:00:00', 'offset_dst' => '-5:00:00', 'dst_region' => '0'),
+    89 => array('timezone' => 'America/Indiana/Marengo', 'offset' => '-5:00:00', 'offset_dst' => '-5:00:00', 'dst_region' => '0'),
+    90 => array('timezone' => 'America/Indiana/Vevay', 'offset' => '-5:00:00', 'offset_dst' => '-5:00:00', 'dst_region' => '0'),
+    91 => array('timezone' => 'America/Indianapolis', 'offset' => '-5:00:00', 'offset_dst' => '-5:00:00', 'dst_region' => '0'),
+    92 => array('timezone' => 'America/Inuvik', 'offset' => '-7:00:00', 'offset_dst' => '-6:00:00', 'dst_region' => '15'),
+    93 => array('timezone' => 'America/Iqaluit', 'offset' => '-5:00:00', 'offset_dst' => '-4:00:00', 'dst_region' => '15'),
+    94 => array('timezone' => 'America/Jamaica', 'offset' => '-5:00:00', 'offset_dst' => '-5:00:00', 'dst_region' => '0'),
+    95 => array('timezone' => 'America/Jujuy', 'offset' => '-3:00:00', 'offset_dst' => '-3:00:00', 'dst_region' => '0'),
+    96 => array('timezone' => 'America/Juneau', 'offset' => '-9:00:00', 'offset_dst' => '-8:00:00', 'dst_region' => '15'),
+    97 => array('timezone' => 'America/Kentucky/Louisville', 'offset' => '-5:00:00', 'offset_dst' => '-4:00:00', 'dst_region' => '15'),
+    98 => array('timezone' => 'America/Kentucky/Monticello', 'offset' => '-5:00:00', 'offset_dst' => '-4:00:00', 'dst_region' => '15'),
+    99 => array('timezone' => 'America/Knox IN', 'offset' => '-5:00:00', 'offset_dst' => '-5:00:00', 'dst_region' => '0'),
+    100 => array('timezone' => 'America/La Paz', 'offset' => '-4:00:00', 'offset_dst' => '-4:00:00', 'dst_region' => '0'),
+    101 => array('timezone' => 'America/Lima', 'offset' => '-5:00:00', 'offset_dst' => '-5:00:00', 'dst_region' => '0'),
+    102 => array('timezone' => 'America/Los Angeles', 'offset' => '-8:00:00', 'offset_dst' => '-7:00:00', 'dst_region' => '15'),
+    103 => array('timezone' => 'America/Louisville', 'offset' => '-5:00:00', 'offset_dst' => '-4:00:00', 'dst_region' => '15'),
+    104 => array('timezone' => 'America/Maceio', 'offset' => '-3:00:00', 'offset_dst' => '-3:00:00', 'dst_region' => '0'),
+    105 => array('timezone' => 'America/Managua', 'offset' => '-6:00:00', 'offset_dst' => '-6:00:00', 'dst_region' => '0'),
+    106 => array('timezone' => 'America/Manaus', 'offset' => '-4:00:00', 'offset_dst' => '-4:00:00', 'dst_region' => '0'),
+    107 => array('timezone' => 'America/Martinique', 'offset' => '-4:00:00', 'offset_dst' => '-4:00:00', 'dst_region' => '0'),
+    108 => array('timezone' => 'America/Mazatlan', 'offset' => '-7:00:00', 'offset_dst' => '-6:00:00', 'dst_region' => '15'),
+    109 => array('timezone' => 'America/Mendoza', 'offset' => '-3:00:00', 'offset_dst' => '-3:00:00', 'dst_region' => '0'),
+    110 => array('timezone' => 'America/Menominee', 'offset' => '-6:00:00', 'offset_dst' => '-5:00:00', 'dst_region' => '15'),
+    111 => array('timezone' => 'America/Merida', 'offset' => '-6:00:00', 'offset_dst' => '-5:00:00', 'dst_region' => '15'),
+    112 => array('timezone' => 'America/Mexico City', 'offset' => '-6:00:00', 'offset_dst' => '-5:00:00', 'dst_region' => '15'),
+    113 => array('timezone' => 'America/Miquelon', 'offset' => '-3:00:00', 'offset_dst' => '-2:00:00', 'dst_region' => '15'),
+    114 => array('timezone' => 'America/Monterrey', 'offset' => '-6:00:00', 'offset_dst' => '-5:00:00', 'dst_region' => '15'),
+    115 => array('timezone' => 'America/Montevideo', 'offset' => '-3:00:00', 'offset_dst' => '-3:00:00', 'dst_region' => '0'),
+    116 => array('timezone' => 'America/Montreal', 'offset' => '-5:00:00', 'offset_dst' => '-4:00:00', 'dst_region' => '15'),
+    117 => array('timezone' => 'America/Montserrat', 'offset' => '-4:00:00', 'offset_dst' => '-4:00:00', 'dst_region' => '0'),
+    118 => array('timezone' => 'America/Nassau', 'offset' => '-5:00:00', 'offset_dst' => '-4:00:00', 'dst_region' => '15'),
+    119 => array('timezone' => 'America/New York', 'offset' => '-5:00:00', 'offset_dst' => '-4:00:00', 'dst_region' => '15'),
+    120 => array('timezone' => 'America/Nipigon', 'offset' => '-5:00:00', 'offset_dst' => '-4:00:00', 'dst_region' => '15'),
+    121 => array('timezone' => 'America/Nome', 'offset' => '-9:00:00', 'offset_dst' => '-8:00:00', 'dst_region' => '15'),
+    122 => array('timezone' => 'America/Noronha', 'offset' => '-2:00:00', 'offset_dst' => '-2:00:00', 'dst_region' => '0'),
+    123 => array('timezone' => 'America/Panama', 'offset' => '-5:00:00', 'offset_dst' => '-5:00:00', 'dst_region' => '0'),
+    124 => array('timezone' => 'America/Pangnirtung', 'offset' => '-5:00:00', 'offset_dst' => '-4:00:00', 'dst_region' => '15'),
+    125 => array('timezone' => 'America/Paramaribo', 'offset' => '-3:00:00', 'offset_dst' => '-3:00:00', 'dst_region' => '0'),
+    126 => array('timezone' => 'America/Phoenix', 'offset' => '-7:00:00', 'offset_dst' => '-7:00:00', 'dst_region' => '0'),
+    127 => array('timezone' => 'America/Port-au-Prince', 'offset' => '-5:00:00', 'offset_dst' => '-5:00:00', 'dst_region' => '0'),
+    128 => array('timezone' => 'America/Port of Spain', 'offset' => '-4:00:00', 'offset_dst' => '-4:00:00', 'dst_region' => '0'),
+    129 => array('timezone' => 'America/Porto Acre', 'offset' => '-5:00:00', 'offset_dst' => '-5:00:00', 'dst_region' => '0'),
+    130 => array('timezone' => 'America/Porto Velho', 'offset' => '-4:00:00', 'offset_dst' => '-4:00:00', 'dst_region' => '0'),
+    131 => array('timezone' => 'America/Puerto Rico', 'offset' => '-4:00:00', 'offset_dst' => '-4:00:00', 'dst_region' => '0'),
+    132 => array('timezone' => 'America/Rainy River', 'offset' => '-6:00:00', 'offset_dst' => '-5:00:00', 'dst_region' => '15'),
+    133 => array('timezone' => 'America/Rankin Inlet', 'offset' => '-6:00:00', 'offset_dst' => '-5:00:00', 'dst_region' => '15'),
+    134 => array('timezone' => 'America/Recife', 'offset' => '-3:00:00', 'offset_dst' => '-3:00:00', 'dst_region' => '0'),
+    135 => array('timezone' => 'America/Regina', 'offset' => '-6:00:00', 'offset_dst' => '-6:00:00', 'dst_region' => '0'),
+    136 => array('timezone' => 'America/Rio Branco', 'offset' => '-5:00:00', 'offset_dst' => '-5:00:00', 'dst_region' => '0'),
+    137 => array('timezone' => 'America/Rosario', 'offset' => '-3:00:00', 'offset_dst' => '-3:00:00', 'dst_region' => '0'),
+    138 => array('timezone' => 'America/Santiago', 'offset' => '-3:00:00', 'offset_dst' => '-4:00:00', 'dst_region' => '15'),
+    139 => array('timezone' => 'America/Santo Domingo', 'offset' => '-4:00:00', 'offset_dst' => '-4:00:00', 'dst_region' => '0'),
+    140 => array('timezone' => 'America/Sao Paulo', 'offset' => '-2:00:00', 'offset_dst' => '-3:00:00', 'dst_region' => '15'),
+    141 => array('timezone' => 'America/Scoresbysund', 'offset' => '-1:00:00', 'offset_dst' => '00:00:00', 'dst_region' => '15'),
+    142 => array('timezone' => 'America/Shiprock', 'offset' => '-7:00:00', 'offset_dst' => '-6:00:00', 'dst_region' => '15'),
+    143 => array('timezone' => 'America/St Johns', 'offset' => '-3:30:00', 'offset_dst' => '-2:30:00', 'dst_region' => '15'),
+    144 => array('timezone' => 'America/St Kitts', 'offset' => '-4:00:00', 'offset_dst' => '-4:00:00', 'dst_region' => '0'),
+    145 => array('timezone' => 'America/St Lucia', 'offset' => '-4:00:00', 'offset_dst' => '-4:00:00', 'dst_region' => '0'),
+    146 => array('timezone' => 'America/St Thomas', 'offset' => '-4:00:00', 'offset_dst' => '-4:00:00', 'dst_region' => '0'),
+    147 => array('timezone' => 'America/St Vincent', 'offset' => '-4:00:00', 'offset_dst' => '-4:00:00', 'dst_region' => '0'),
+    148 => array('timezone' => 'America/Swift Current', 'offset' => '-6:00:00', 'offset_dst' => '-6:00:00', 'dst_region' => '0'),
+    149 => array('timezone' => 'America/Tegucigalpa', 'offset' => '-6:00:00', 'offset_dst' => '-6:00:00', 'dst_region' => '0'),
+    150 => array('timezone' => 'America/Thule', 'offset' => '-4:00:00', 'offset_dst' => '-3:00:00', 'dst_region' => '15'),
+    151 => array('timezone' => 'America/Thunder Bay', 'offset' => '-5:00:00', 'offset_dst' => '-4:00:00', 'dst_region' => '15'),
+    152 => array('timezone' => 'America/Tijuana', 'offset' => '-8:00:00', 'offset_dst' => '-7:00:00', 'dst_region' => '15'),
+    153 => array('timezone' => 'America/Tortola', 'offset' => '-4:00:00', 'offset_dst' => '-4:00:00', 'dst_region' => '0'),
+    154 => array('timezone' => 'America/Vancouver', 'offset' => '-8:00:00', 'offset_dst' => '-7:00:00', 'dst_region' => '15'),
+    155 => array('timezone' => 'America/Virgin', 'offset' => '-4:00:00', 'offset_dst' => '-4:00:00', 'dst_region' => '0'),
+    156 => array('timezone' => 'America/Whitehorse', 'offset' => '-8:00:00', 'offset_dst' => '-7:00:00', 'dst_region' => '15'),
+    157 => array('timezone' => 'America/Winnipeg', 'offset' => '-6:00:00', 'offset_dst' => '-5:00:00', 'dst_region' => '15'),
+    158 => array('timezone' => 'America/Yakutat', 'offset' => '-9:00:00', 'offset_dst' => '-8:00:00', 'dst_region' => '15'),
+    159 => array('timezone' => 'America/Yellowknife', 'offset' => '-7:00:00', 'offset_dst' => '-6:00:00', 'dst_region' => '15'),
+    160 => array('timezone' => 'Antarctica/Casey', 'offset' => '8:00:00', 'offset_dst' => '8:00:00', 'dst_region' => '0'),
+    161 => array('timezone' => 'Antarctica/Davis', 'offset' => '7:00:00', 'offset_dst' => '7:00:00', 'dst_region' => '0'),
+    162 => array('timezone' => 'Antarctica/DumontDUrville', 'offset' => '10:00:00', 'offset_dst' => '10:00:00', 'dst_region' => '0'),
+    163 => array('timezone' => 'Antarctica/Mawson', 'offset' => '6:00:00', 'offset_dst' => '6:00:00', 'dst_region' => '0'),
+    164 => array('timezone' => 'Antarctica/McMurdo', 'offset' => '13:00:00', 'offset_dst' => '12:00:00', 'dst_region' => '11'),
+    165 => array('timezone' => 'Antarctica/Palmer', 'offset' => '-3:00:00', 'offset_dst' => '-4:00:00', 'dst_region' => '18'),
+    166 => array('timezone' => 'Antarctica/South Pole', 'offset' => '13:00:00', 'offset_dst' => '12:00:00', 'dst_region' => '11'),
+    167 => array('timezone' => 'Antarctica/Syowa', 'offset' => '3:00:00', 'offset_dst' => '3:00:00', 'dst_region' => '0'),
+    168 => array('timezone' => 'Antarctica/Vostok', 'offset' => '6:00:00', 'offset_dst' => '6:00:00', 'dst_region' => '0'),
+    169 => array('timezone' => 'Arctic/Longyearbyen', 'offset' => '1:00:00', 'offset_dst' => '2:00:00', 'dst_region' => '14'),
+    170 => array('timezone' => 'Asia/Aden', 'offset' => '3:00:00', 'offset_dst' => '3:00:00', 'dst_region' => '0'),
+    171 => array('timezone' => 'Asia/Almaty', 'offset' => '6:00:00', 'offset_dst' => '6:00:00', 'dst_region' => '0'),
+    172 => array('timezone' => 'Asia/Amman', 'offset' => '2:00:00', 'offset_dst' => '3:00:00', 'dst_region' => '8'),
+    173 => array('timezone' => 'Asia/Anadyr', 'offset' => '12:00:00', 'offset_dst' => '13:00:00', 'dst_region' => '3'),
+    174 => array('timezone' => 'Asia/Aqtau', 'offset' => '4:00:00', 'offset_dst' => '5:00:00', 'dst_region' => '3'),
+    175 => array('timezone' => 'Asia/Aqtobe', 'offset' => '5:00:00', 'offset_dst' => '6:00:00', 'dst_region' => '3'),
+    176 => array('timezone' => 'Asia/Ashgabat', 'offset' => '5:00:00', 'offset_dst' => '5:00:00', 'dst_region' => '0'),
+    177 => array('timezone' => 'Asia/Ashkhabad', 'offset' => '5:00:00', 'offset_dst' => '5:00:00', 'dst_region' => '0'),
+    178 => array('timezone' => 'Asia/Baghdad', 'offset' => '3:00:00', 'offset_dst' => '4:00:00', 'dst_region' => '4'),
+    179 => array('timezone' => 'Asia/Bahrain', 'offset' => '3:00:00', 'offset_dst' => '3:00:00', 'dst_region' => '0'),
+    180 => array('timezone' => 'Asia/Baku', 'offset' => '4:00:00', 'offset_dst' => '5:00:00', 'dst_region' => '3'),
+    181 => array('timezone' => 'Asia/Bangkok', 'offset' => '7:00:00', 'offset_dst' => '7:00:00', 'dst_region' => '0'),
+    182 => array('timezone' => 'Asia/Beirut', 'offset' => '2:00:00', 'offset_dst' => '3:00:00', 'dst_region' => '6'),
+    183 => array('timezone' => 'Asia/Bishkek', 'offset' => '5:00:00', 'offset_dst' => '6:00:00', 'dst_region' => '6'),
+    184 => array('timezone' => 'Asia/Brunei', 'offset' => '8:00:00', 'offset_dst' => '8:00:00', 'dst_region' => '0'),
+    185 => array('timezone' => 'Asia/Calcutta', 'offset' => '5:30:00', 'offset_dst' => '5:30:30', 'dst_region' => '0'),
+    186 => array('timezone' => 'Asia/Chungking', 'offset' => '8:00:00', 'offset_dst' => '8:00:00', 'dst_region' => '0'),
+    187 => array('timezone' => 'Asia/Colombo', 'offset' => '6:00:00', 'offset_dst' => '6:00:00', 'dst_region' => '0'),
+    188 => array('timezone' => 'Asia/Dacca', 'offset' => '6:00:00', 'offset_dst' => '6:00:00', 'dst_region' => '0'),
+    189 => array('timezone' => 'Asia/Damascus', 'offset' => '2:00:00', 'offset_dst' => '3:00:00', 'dst_region' => '4'),
+    190 => array('timezone' => 'Asia/Dhaka', 'offset' => '6:00:00', 'offset_dst' => '6:00:00', 'dst_region' => '0'),
+    191 => array('timezone' => 'Asia/Dili', 'offset' => '9:00:00', 'offset_dst' => '9:00:00', 'dst_region' => '0'),
+    192 => array('timezone' => 'Asia/Dubai', 'offset' => '4:00:00', 'offset_dst' => '4:00:00', 'dst_region' => '0'),
+    193 => array('timezone' => 'Asia/Dushanbe', 'offset' => '5:00:00', 'offset_dst' => '5:00:00', 'dst_region' => '0'),
+    194 => array('timezone' => 'Asia/Gaza', 'offset' => '2:00:00', 'offset_dst' => '3:00:00', 'dst_region' => '7'),
+    195 => array('timezone' => 'Asia/Harbin', 'offset' => '8:00:00', 'offset_dst' => '8:00:00', 'dst_region' => '0'),
+    196 => array('timezone' => 'Asia/Hong Kong', 'offset' => '8:00:00', 'offset_dst' => '8:00:00', 'dst_region' => '0'),
+    197 => array('timezone' => 'Asia/Hovd', 'offset' => '7:00:00', 'offset_dst' => '7:00:00', 'dst_region' => '0'),
+    198 => array('timezone' => 'Asia/Irkutsk', 'offset' => '8:00:00', 'offset_dst' => '9:00:00', 'dst_region' => '3'),
+    199 => array('timezone' => 'Asia/Istanbul', 'offset' => '2:00:00', 'offset_dst' => '3:00:00', 'dst_region' => '3'),
+    200 => array('timezone' => 'Asia/Jakarta', 'offset' => '7:00:00', 'offset_dst' => '7:00:00', 'dst_region' => '0'),
+    201 => array('timezone' => 'Asia/Jayapura', 'offset' => '9:00:00', 'offset_dst' => '9:00:00', 'dst_region' => '0'),
+    202 => array('timezone' => 'Asia/Jerusalem', 'offset' => '2:00:00', 'offset_dst' => '3:00:00', 'dst_region' => '5'),
+    203 => array('timezone' => 'Asia/Kabul', 'offset' => '4:30:00', 'offset_dst' => '4:30:00', 'dst_region' => '0'),
+    204 => array('timezone' => 'Asia/Kamchatka', 'offset' => '12:00:00', 'offset_dst' => '13:00:00', 'dst_region' => '3'),
+    205 => array('timezone' => 'Asia/Karachi', 'offset' => '5:00:00', 'offset_dst' => '5:00:00', 'dst_region' => '0'),
+    206 => array('timezone' => 'Asia/Kashgar', 'offset' => '8:00:00', 'offset_dst' => '8:00:00', 'dst_region' => '0'),
+    207 => array('timezone' => 'Asia/Katmandu', 'offset' => '5:45:00', 'offset_dst' => '5:45:00', 'dst_region' => '0'),
+    208 => array('timezone' => 'Asia/Krasnoyarsk', 'offset' => '7:00:00', 'offset_dst' => '8:00:00', 'dst_region' => '3'),
+    209 => array('timezone' => 'Asia/Kuala Lumpur', 'offset' => '8:00:00', 'offset_dst' => '8:00:00', 'dst_region' => '0'),
+    210 => array('timezone' => 'Asia/Kuching', 'offset' => '8:00:00', 'offset_dst' => '8:00:00', 'dst_region' => '0'),
+    211 => array('timezone' => 'Asia/Kuwait', 'offset' => '3:00:00', 'offset_dst' => '3:00:00', 'dst_region' => '0'),
+    212 => array('timezone' => 'Asia/Macao', 'offset' => '8:00:00', 'offset_dst' => '8:00:00', 'dst_region' => '0'),
+    213 => array('timezone' => 'Asia/Magadan', 'offset' => '11:00:00', 'offset_dst' => '12:00:00', 'dst_region' => '3'),
+    214 => array('timezone' => 'Asia/Manila', 'offset' => '8:00:00', 'offset_dst' => '8:00:00', 'dst_region' => '0'),
+    215 => array('timezone' => 'Asia/Muscat', 'offset' => '4:00:00', 'offset_dst' => '4:00:00', 'dst_region' => '0'),
+    216 => array('timezone' => 'Asia/Nicosia', 'offset' => '2:00:00', 'offset_dst' => '3:00:00', 'dst_region' => '3'),
+    217 => array('timezone' => 'Asia/Novosibirsk', 'offset' => '6:00:00', 'offset_dst' => '7:00:00', 'dst_region' => '3'),
+    218 => array('timezone' => 'Asia/Omsk', 'offset' => '6:00:00', 'offset_dst' => '7:00:00', 'dst_region' => '3'),
+    219 => array('timezone' => 'Asia/Phnom Penh', 'offset' => '7:00:00', 'offset_dst' => '7:00:00', 'dst_region' => '0'),
+    220 => array('timezone' => 'Asia/Pyongyang', 'offset' => '9:00:00', 'offset_dst' => '9:00:00', 'dst_region' => '0'),
+    221 => array('timezone' => 'Asia/Qatar', 'offset' => '3:00:00', 'offset_dst' => '3:00:00', 'dst_region' => '0'),
+    222 => array('timezone' => 'Asia/Rangoon', 'offset' => '6:30:00', 'offset_dst' => '6:30:00', 'dst_region' => '0'),
+    223 => array('timezone' => 'Asia/Riyadh', 'offset' => '3:00:00', 'offset_dst' => '3:00:00', 'dst_region' => '0'),
+    224 => array('timezone' => 'Asia/Riyadh87', 'offset' => '3:07:04', 'offset_dst' => '3:07:04', 'dst_region' => '0'),
+    225 => array('timezone' => 'Asia/Riyadh88', 'offset' => '3:07:04', 'offset_dst' => '3:07:04', 'dst_region' => '0'),
+    226 => array('timezone' => 'Asia/Riyadh89', 'offset' => '3:07:04', 'offset_dst' => '3:07:04', 'dst_region' => '0'),
+    227 => array('timezone' => 'Asia/Saigon', 'offset' => '7:00:00', 'offset_dst' => '7:00:00', 'dst_region' => '0'),
+    228 => array('timezone' => 'Asia/Samarkand', 'offset' => '5:00:00', 'offset_dst' => '5:00:00', 'dst_region' => '0'),
+    229 => array('timezone' => 'Asia/Seoul', 'offset' => '9:00:00', 'offset_dst' => '9:00:00', 'dst_region' => '0'),
+    230 => array('timezone' => 'Asia/Shanghai', 'offset' => '8:00:00', 'offset_dst' => '8:00:00', 'dst_region' => '0'),
+    231 => array('timezone' => 'Asia/Singapore', 'offset' => '8:00:00', 'offset_dst' => '8:00:00', 'dst_region' => '0'),
+    232 => array('timezone' => 'Asia/Taipei', 'offset' => '8:00:00', 'offset_dst' => '8:00:00', 'dst_region' => '0'),
+    233 => array('timezone' => 'Asia/Tashkent', 'offset' => '5:00:00', 'offset_dst' => '5:00:00', 'dst_region' => '0'),
+    234 => array('timezone' => 'Asia/Tbilisi', 'offset' => '4:00:00', 'offset_dst' => '5:00:00', 'dst_region' => '3'),
+    235 => array('timezone' => 'Asia/Tehran', 'offset' => '3:30:00', 'offset_dst' => '4:30:00', 'dst_region' => '8'),
+    236 => array('timezone' => 'Asia/Tel Aviv', 'offset' => '2:00:00', 'offset_dst' => '3:00:00', 'dst_region' => '5'),
+    237 => array('timezone' => 'Asia/Thimbu', 'offset' => '6:00:00', 'offset_dst' => '6:00:00', 'dst_region' => '0'),
+    238 => array('timezone' => 'Asia/Thimphu', 'offset' => '6:00:00', 'offset_dst' => '6:00:00', 'dst_region' => '0'),
+    239 => array('timezone' => 'Asia/Tokyo', 'offset' => '9:00:00', 'offset_dst' => '9:00:00', 'dst_region' => '0'),
+    240 => array('timezone' => 'Asia/Ujung Pandang', 'offset' => '8:00:00', 'offset_dst' => '8:00:00', 'dst_region' => '0'),
+    241 => array('timezone' => 'Asia/Ulaanbaatar', 'offset' => '8:00:00', 'offset_dst' => '8:00:00', 'dst_region' => '0'),
+    242 => array('timezone' => 'Asia/Ulan Bator', 'offset' => '8:00:00', 'offset_dst' => '8:00:00', 'dst_region' => '0'),
+    243 => array('timezone' => 'Asia/Urumqi', 'offset' => '8:00:00', 'offset_dst' => '8:00:00', 'dst_region' => '0'),
+    244 => array('timezone' => 'Asia/Vientiane', 'offset' => '7:00:00', 'offset_dst' => '7:00:00', 'dst_region' => '0'),
+    245 => array('timezone' => 'Asia/Vladivostok', 'offset' => '10:00:00', 'offset_dst' => '11:00:00', 'dst_region' => '3'),
+    246 => array('timezone' => 'Asia/Yakutsk', 'offset' => '9:00:00', 'offset_dst' => '10:00:00', 'dst_region' => '3'),
+    247 => array('timezone' => 'Asia/Yekaterinburg', 'offset' => '5:00:00', 'offset_dst' => '6:00:00', 'dst_region' => '3'),
+    248 => array('timezone' => 'Asia/Yerevan', 'offset' => '4:00:00', 'offset_dst' => '5:00:00', 'dst_region' => '3'),
+    249 => array('timezone' => 'Atlantic/Azores', 'offset' => '-1:00:00', 'offset_dst' => '00:00:00', 'dst_region' => '13'),
+    250 => array('timezone' => 'Atlantic/Bermuda', 'offset' => '-4:00:00', 'offset_dst' => '-3:00:00', 'dst_region' => '15'),
+    251 => array('timezone' => 'Atlantic/Canary', 'offset' => '00:00:00', 'offset_dst' => '1:00:00', 'dst_region' => '15'),
+    252 => array('timezone' => 'Atlantic/Cape Verde', 'offset' => '-1:00:00', 'offset_dst' => '-1:00:00', 'dst_region' => '0'),
+    253 => array('timezone' => 'Atlantic/Faeroe', 'offset' => '00:00:00', 'offset_dst' => '1:00:00', 'dst_region' => '13'),
+    254 => array('timezone' => 'Atlantic/Jan Mayen', 'offset' => '-1:00:00', 'offset_dst' => '-1:00:00', 'dst_region' => '0'),
+    255 => array('timezone' => 'Atlantic/Madeira', 'offset' => '00:00:00', 'offset_dst' => '1:00:00', 'dst_region' => '13'),
+    256 => array('timezone' => 'Atlantic/South Georgia', 'offset' => '-2:00:00', 'offset_dst' => '-2:00:00', 'dst_region' => '0'),
+    257 => array('timezone' => 'Atlantic/Stanley', 'offset' => '-3:00:00', 'offset_dst' => '-4:00:00', 'dst_region' => '19'),
+    258 => array('timezone' => 'Australia/ACT', 'offset' => '10:00:00', 'offset_dst' => '11:00:00', 'dst_region' => '9'),
+    259 => array('timezone' => 'Australia/Adelaide', 'offset' => '10:30:00', 'offset_dst' => '9:30:00', 'dst_region' => '9'),
+    260 => array('timezone' => 'Australia/Brisbane', 'offset' => '10:00:00', 'offset_dst' => '10:00:00', 'dst_region' => '0'),
+    261 => array('timezone' => 'Australia/Broken Hill', 'offset' => '10:30:00', 'offset_dst' => '9:30:00', 'dst_region' => '9'),
+    262 => array('timezone' => 'Australia/Canberra', 'offset' => '11:00:00', 'offset_dst' => '10:00:00', 'dst_region' => '9'),
+    263 => array('timezone' => 'Australia/Darwin', 'offset' => '9:30:00', 'offset_dst' => '9:30:00', 'dst_region' => '0'),
+    264 => array('timezone' => 'Australia/Hobart', 'offset' => '11:00:00', 'offset_dst' => '10:00:00', 'dst_region' => '10'),
+    265 => array('timezone' => 'Australia/LHI', 'offset' => '11:00:00', 'offset_dst' => '10:30:00', 'dst_region' => '9'),
+    266 => array('timezone' => 'Australia/Lindeman', 'offset' => '10:00:00', 'offset_dst' => '10:00:00', 'dst_region' => '0'),
+    267 => array('timezone' => 'Australia/Lord Howe', 'offset' => '11:00:00', 'offset_dst' => '10:30:00', 'dst_region' => '9'),
+    268 => array('timezone' => 'Australia/Melbourne', 'offset' => '10:00:00', 'offset_dst' => '11:00:00', 'dst_region' => '10'),
+    269 => array('timezone' => 'Australia/NSW', 'offset' => '10:00:00', 'offset_dst' => '11:00:00', 'dst_region' => '9'),
+    270 => array('timezone' => 'Australia/North', 'offset' => '9:30:00', 'offset_dst' => '9:30:00', 'dst_region' => '0'),
+    271 => array('timezone' => 'Australia/Perth', 'offset' => '8:00:00', 'offset_dst' => '8:00:00', 'dst_region' => '0'),
+    272 => array('timezone' => 'Australia/Queensland', 'offset' => '10:00:00', 'offset_dst' => '10:00:00', 'dst_region' => '0'),
+    273 => array('timezone' => 'Australia/South', 'offset' => '10:30:00', 'offset_dst' => '9:30:00', 'dst_region' => '9'),
+    274 => array('timezone' => 'Australia/Sydney', 'offset' => '10:00:00', 'offset_dst' => '11:00:00', 'dst_region' => '10'),
+    275 => array('timezone' => 'Australia/Tasmania', 'offset' => '10:00:00', 'offset_dst' => '11:00:00', 'dst_region' => '9'),
+    276 => array('timezone' => 'Australia/Victoria', 'offset' => '10:00:00', 'offset_dst' => '11:00:00', 'dst_region' => '9'),
+    277 => array('timezone' => 'Australia/West', 'offset' => '8:00:00', 'offset_dst' => '8:00:00', 'dst_region' => '0'),
+    278 => array('timezone' => 'Australia/Yancowinna', 'offset' => '10:30:00', 'offset_dst' => '9:30:00', 'dst_region' => '10'),
+    279 => array('timezone' => 'Brazil/Acre', 'offset' => '-5:00:00', 'offset_dst' => '-5:00:00', 'dst_region' => '0'),
+    280 => array('timezone' => 'Brazil/DeNoronha', 'offset' => '-2:00:00', 'offset_dst' => '-2:00:00', 'dst_region' => '0'),
+    281 => array('timezone' => 'Brazil/East', 'offset' => '-2:00:00', 'offset_dst' => '-3:00:00', 'dst_region' => '17'),
+    282 => array('timezone' => 'Brazil/West', 'offset' => '-4:00:00', 'offset_dst' => '-4:00:00', 'dst_region' => '0'),
+    285 => array('timezone' => 'Canada/Atlantic', 'offset' => '-4:00:00', 'offset_dst' => '-3:00:00', 'dst_region' => '15'),
+    286 => array('timezone' => 'Canada/Central', 'offset' => '-6:00:00', 'offset_dst' => '-5:00:00', 'dst_region' => '15'),
+    287 => array('timezone' => 'Canada/Central-Saskatchewan', 'offset' => '-6:00:00', 'offset_dst' => '-6:00:00', 'dst_region' => '0'),
+    288 => array('timezone' => 'Canada/Eastern', 'offset' => '-5:00:00', 'offset_dst' => '-4:00:00', 'dst_region' => '15'),
+    289 => array('timezone' => 'Canada/Mountain', 'offset' => '-7:00:00', 'offset_dst' => '-6:00:00', 'dst_region' => '15'),
+    290 => array('timezone' => 'Canada/Newfoundland', 'offset' => '-3:30:00', 'offset_dst' => '-2:30:00', 'dst_region' => '15'),
+    291 => array('timezone' => 'Canada/Pacific', 'offset' => '-8:00:00', 'offset_dst' => '-7:00:00', 'dst_region' => '15'),
+    292 => array('timezone' => 'Canada/Saskatchewan', 'offset' => '-6:00:00', 'offset_dst' => '-6:00:00', 'dst_region' => '0'),
+    293 => array('timezone' => 'Canada/Yukon', 'offset' => '-8:00:00', 'offset_dst' => '-7:00:00', 'dst_region' => '15'),
+    294 => array('timezone' => 'Chile/Continental', 'offset' => '-3:00:00', 'offset_dst' => '-4:00:00', 'dst_region' => '18'),
+    295 => array('timezone' => 'Chile/EasterIsland', 'offset' => '-5:00:00', 'offset_dst' => '-6:00:00', 'dst_region' => '18'),
+    296 => array('timezone' => 'Cuba', 'offset' => '-5:00:00', 'offset_dst' => '-4:00:00', 'dst_region' => '16'),
+    298 => array('timezone' => 'EST', 'offset' => '-5:00:00', 'offset_dst' => '-5:00:00', 'dst_region' => '0'),
+    300 => array('timezone' => 'Egypt', 'offset' => '2:00:00', 'offset_dst' => '3:00:00', 'dst_region' => '1'),
+    301 => array('timezone' => 'Eire', 'offset' => '00:00:00', 'offset_dst' => '1:00:00', 'dst_region' => '13'),
+    302 => array('timezone' => 'Etc/GMT-1', 'offset' => '-1:00:00', 'offset_dst' => '-1:00:00', 'dst_region' => '0'),
+    303 => array('timezone' => 'Etc/GMT-10', 'offset' => '-10:00:00', 'offset_dst' => '-10:00:00', 'dst_region' => '0'),
+    304 => array('timezone' => 'Etc/GMT-11', 'offset' => '-11:00:00', 'offset_dst' => '-11:00:00', 'dst_region' => '0'),
+    305 => array('timezone' => 'Etc/GMT-12', 'offset' => '-12:00:00', 'offset_dst' => '-12:00:00', 'dst_region' => '0'),
+    306 => array('timezone' => 'Etc/GMT-2', 'offset' => '-2:00:00', 'offset_dst' => '-2:00:00', 'dst_region' => '0'),
+    307 => array('timezone' => 'Etc/GMT-3', 'offset' => '-3:00:00', 'offset_dst' => '-3:00:00', 'dst_region' => '0'),
+    308 => array('timezone' => 'Etc/GMT-4', 'offset' => '-4:00:00', 'offset_dst' => '-4:00:00', 'dst_region' => '0'),
+    309 => array('timezone' => 'Etc/GMT-5', 'offset' => '-5:00:00', 'offset_dst' => '-5:00:00', 'dst_region' => '0'),
+    310 => array('timezone' => 'Etc/GMT-6', 'offset' => '-6:00:00', 'offset_dst' => '-6:00:00', 'dst_region' => '0'),
+    311 => array('timezone' => 'Etc/GMT-7', 'offset' => '-7:00:00', 'offset_dst' => '-7:00:00', 'dst_region' => '0'),
+    312 => array('timezone' => 'Etc/GMT-8', 'offset' => '-8:00:00', 'offset_dst' => '-8:00:00', 'dst_region' => '0'),
+    313 => array('timezone' => 'Etc/GMT-9', 'offset' => '-9:00:00', 'offset_dst' => '-9:00:00', 'dst_region' => '0'),
+    487 => array('timezone' => 'Etc/GMT', 'offset' => '00:00:00', 'offset_dst' => '00:00:00', 'dst_region' => '0'),
+    314 => array('timezone' => 'Etc/GMT+1', 'offset' => '1:00:00', 'offset_dst' => '1:00:00', 'dst_region' => '0'),
+    315 => array('timezone' => 'Etc/GMT+10', 'offset' => '10:00:00', 'offset_dst' => '10:00:00', 'dst_region' => '0'),
+    316 => array('timezone' => 'Etc/GMT+11', 'offset' => '11:00:00', 'offset_dst' => '11:00:00', 'dst_region' => '0'),
+    317 => array('timezone' => 'Etc/GMT+12', 'offset' => '12:00:00', 'offset_dst' => '12:00:00', 'dst_region' => '0'),
+    318 => array('timezone' => 'Etc/GMT+13', 'offset' => '13:00:00', 'offset_dst' => '13:00:00', 'dst_region' => '0'),
+    319 => array('timezone' => 'Etc/GMT+14', 'offset' => '14:00:00', 'offset_dst' => '14:00:00', 'dst_region' => '0'),
+    320 => array('timezone' => 'Etc/GMT+2', 'offset' => '2:00:00', 'offset_dst' => '2:00:00', 'dst_region' => '0'),
+    321 => array('timezone' => 'Etc/GMT+3', 'offset' => '3:00:00', 'offset_dst' => '3:00:00', 'dst_region' => '0'),
+    322 => array('timezone' => 'Etc/GMT+4', 'offset' => '4:00:00', 'offset_dst' => '4:00:00', 'dst_region' => '0'),
+    323 => array('timezone' => 'Etc/GMT+5', 'offset' => '5:00:00', 'offset_dst' => '5:00:00', 'dst_region' => '0'),
+    324 => array('timezone' => 'Etc/GMT+6', 'offset' => '6:00:00', 'offset_dst' => '6:00:00', 'dst_region' => '0'),
+    325 => array('timezone' => 'Etc/GMT+7', 'offset' => '7:00:00', 'offset_dst' => '7:00:00', 'dst_region' => '0'),
+    326 => array('timezone' => 'Etc/GMT+8', 'offset' => '8:00:00', 'offset_dst' => '8:00:00', 'dst_region' => '0'),
+    327 => array('timezone' => 'Etc/GMT+9', 'offset' => '9:00:00', 'offset_dst' => '9:00:00', 'dst_region' => '0'),
+    328 => array('timezone' => 'Europe/Amsterdam', 'offset' => '1:00:00', 'offset_dst' => '2:00:00', 'dst_region' => '13'),
+    329 => array('timezone' => 'Europe/Andorra', 'offset' => '1:00:00', 'offset_dst' => '2:00:00', 'dst_region' => '13'),
+    330 => array('timezone' => 'Europe/Athens', 'offset' => '2:00:00', 'offset_dst' => '3:00:00', 'dst_region' => '13'),
+    331 => array('timezone' => 'Europe/Belfast', 'offset' => '00:00:00', 'offset_dst' => '1:00:00', 'dst_region' => '13'),
+    332 => array('timezone' => 'Europe/Belgrade', 'offset' => '1:00:00', 'offset_dst' => '2:00:00', 'dst_region' => '13'),
+    333 => array('timezone' => 'Europe/Berlin', 'offset' => '1:00:00', 'offset_dst' => '2:00:00', 'dst_region' => '13'),
+    334 => array('timezone' => 'Europe/Bratislava', 'offset' => '1:00:00', 'offset_dst' => '2:00:00', 'dst_region' => '13'),
+    335 => array('timezone' => 'Europe/Brussels', 'offset' => '1:00:00', 'offset_dst' => '2:00:00', 'dst_region' => '13'),
+    336 => array('timezone' => 'Europe/Bucharest', 'offset' => '2:00:00', 'offset_dst' => '3:00:00', 'dst_region' => '13'),
+    337 => array('timezone' => 'Europe/Budapest', 'offset' => '1:00:00', 'offset_dst' => '2:00:00', 'dst_region' => '13'),
+    338 => array('timezone' => 'Europe/Chisinau', 'offset' => '2:00:00', 'offset_dst' => '3:00:00', 'dst_region' => '13'),
+    339 => array('timezone' => 'Europe/Copenhagen', 'offset' => '1:00:00', 'offset_dst' => '2:00:00', 'dst_region' => '13'),
+    340 => array('timezone' => 'Europe/Dublin', 'offset' => '00:00:00', 'offset_dst' => '1:00:00', 'dst_region' => '13'),
+    341 => array('timezone' => 'Europe/Gibraltar', 'offset' => '1:00:00', 'offset_dst' => '2:00:00', 'dst_region' => '13'),
+    342 => array('timezone' => 'Europe/Helsinki', 'offset' => '2:00:00', 'offset_dst' => '3:00:00', 'dst_region' => '13'),
+    343 => array('timezone' => 'Europe/Istanbul', 'offset' => '2:00:00', 'offset_dst' => '3:00:00', 'dst_region' => '13'),
+    344 => array('timezone' => 'Europe/Kaliningrad', 'offset' => '2:00:00', 'offset_dst' => '3:00:00', 'dst_region' => '13'),
+    345 => array('timezone' => 'Europe/Kiev', 'offset' => '2:00:00', 'offset_dst' => '3:00:00', 'dst_region' => '13'),
+    346 => array('timezone' => 'Europe/Lisbon', 'offset' => '00:00:00', 'offset_dst' => '1:00:00', 'dst_region' => '13'),
+    347 => array('timezone' => 'Europe/Ljubljana', 'offset' => '1:00:00', 'offset_dst' => '2:00:00', 'dst_region' => '13'),
+    348 => array('timezone' => 'Europe/London', 'offset' => '00:00:00', 'offset_dst' => '1:00:00', 'dst_region' => '13'),
+    349 => array('timezone' => 'Europe/Luxembourg', 'offset' => '1:00:00', 'offset_dst' => '2:00:00', 'dst_region' => '13'),
+    350 => array('timezone' => 'Europe/Madrid', 'offset' => '1:00:00', 'offset_dst' => '2:00:00', 'dst_region' => '13'),
+    351 => array('timezone' => 'Europe/Malta', 'offset' => '1:00:00', 'offset_dst' => '2:00:00', 'dst_region' => '13'),
+    352 => array('timezone' => 'Europe/Minsk', 'offset' => '2:00:00', 'offset_dst' => '3:00:00', 'dst_region' => '13'),
+    353 => array('timezone' => 'Europe/Monaco', 'offset' => '1:00:00', 'offset_dst' => '2:00:00', 'dst_region' => '13'),
+    354 => array('timezone' => 'Europe/Moscow', 'offset' => '3:00:00', 'offset_dst' => '4:00:00', 'dst_region' => '14'),
+    355 => array('timezone' => 'Europe/Nicosia', 'offset' => '2:00:00', 'offset_dst' => '3:00:00', 'dst_region' => '13'),
+    356 => array('timezone' => 'Europe/Oslo', 'offset' => '1:00:00', 'offset_dst' => '2:00:00', 'dst_region' => '13'),
+    357 => array('timezone' => 'Europe/Paris', 'offset' => '1:00:00', 'offset_dst' => '2:00:00', 'dst_region' => '13'),
+    358 => array('timezone' => 'Europe/Prague', 'offset' => '1:00:00', 'offset_dst' => '2:00:00', 'dst_region' => '13'),
+    359 => array('timezone' => 'Europe/Riga', 'offset' => '2:00:00', 'offset_dst' => '3:00:00', 'dst_region' => '13'),
+    360 => array('timezone' => 'Europe/Rome', 'offset' => '1:00:00', 'offset_dst' => '2:00:00', 'dst_region' => '13'),
+    361 => array('timezone' => 'Europe/Samara', 'offset' => '4:00:00', 'offset_dst' => '5:00:00', 'dst_region' => '13'),
+    362 => array('timezone' => 'Europe/San Marino', 'offset' => '1:00:00', 'offset_dst' => '2:00:00', 'dst_region' => '13'),
+    363 => array('timezone' => 'Europe/Sarajevo', 'offset' => '1:00:00', 'offset_dst' => '2:00:00', 'dst_region' => '13'),
+    364 => array('timezone' => 'Europe/Simferopol', 'offset' => '2:00:00', 'offset_dst' => '3:00:00', 'dst_region' => '13'),
+    365 => array('timezone' => 'Europe/Skopje', 'offset' => '1:00:00', 'offset_dst' => '2:00:00', 'dst_region' => '13'),
+    366 => array('timezone' => 'Europe/Sofia', 'offset' => '2:00:00', 'offset_dst' => '3:00:00', 'dst_region' => '13'),
+    367 => array('timezone' => 'Europe/Stockholm', 'offset' => '1:00:00', 'offset_dst' => '2:00:00', 'dst_region' => '13'),
+    368 => array('timezone' => 'Europe/Tallinn', 'offset' => '2:00:00', 'offset_dst' => '2:00:00', 'dst_region' => '0'),
+    369 => array('timezone' => 'Europe/Tirane', 'offset' => '1:00:00', 'offset_dst' => '2:00:00', 'dst_region' => '13'),
+    370 => array('timezone' => 'Europe/Tiraspol', 'offset' => '2:00:00', 'offset_dst' => '3:00:00', 'dst_region' => '13'),
+    371 => array('timezone' => 'Europe/Uzhgorod', 'offset' => '2:00:00', 'offset_dst' => '3:00:00', 'dst_region' => '13'),
+    372 => array('timezone' => 'Europe/Vaduz', 'offset' => '1:00:00', 'offset_dst' => '2:00:00', 'dst_region' => '13'),
+    373 => array('timezone' => 'Europe/Vatican', 'offset' => '1:00:00', 'offset_dst' => '2:00:00', 'dst_region' => '13'),
+    374 => array('timezone' => 'Europe/Vienna', 'offset' => '1:00:00', 'offset_dst' => '2:00:00', 'dst_region' => '13'),
+    375 => array('timezone' => 'Europe/Vilnius', 'offset' => '2:00:00', 'offset_dst' => '2:00:00', 'dst_region' => '0'),
+    376 => array('timezone' => 'Europe/Warsaw', 'offset' => '1:00:00', 'offset_dst' => '2:00:00', 'dst_region' => '13'),
+    377 => array('timezone' => 'Europe/Zagreb', 'offset' => '1:00:00', 'offset_dst' => '2:00:00', 'dst_region' => '13'),
+    378 => array('timezone' => 'Europe/Zaporozhye', 'offset' => '2:00:00', 'offset_dst' => '3:00:00', 'dst_region' => '13'),
+    379 => array('timezone' => 'Europe/Zurich', 'offset' => '1:00:00', 'offset_dst' => '2:00:00', 'dst_region' => '13'),
+    380 => array('timezone' => 'GB', 'offset' => '00:00:00', 'offset_dst' => '1:00:00', 'dst_region' => '13'),
+    381 => array('timezone' => 'GB-Eire', 'offset' => '00:00:00', 'offset_dst' => '1:00:00', 'dst_region' => '13'),
+    383 => array('timezone' => 'Hongkong', 'offset' => '8:00:00', 'offset_dst' => '8:00:00', 'dst_region' => '0'),
+    384 => array('timezone' => 'Indian/Antananarivo', 'offset' => '3:00:00', 'offset_dst' => '3:00:00', 'dst_region' => '0'),
+    385 => array('timezone' => 'Indian/Chagos', 'offset' => '5:00:00', 'offset_dst' => '5:00:00', 'dst_region' => '0'),
+    386 => array('timezone' => 'Indian/Christmas', 'offset' => '7:00:00', 'offset_dst' => '7:00:00', 'dst_region' => '0'),
+    387 => array('timezone' => 'Indian/Cocos', 'offset' => '6:30:00', 'offset_dst' => '6:30:00', 'dst_region' => '0'),
+    388 => array('timezone' => 'Indian/Comoro', 'offset' => '3:00:00', 'offset_dst' => '3:00:00', 'dst_region' => '0'),
+    389 => array('timezone' => 'Indian/Kerguelen', 'offset' => '5:00:00', 'offset_dst' => '5:00:00', 'dst_region' => '0'),
+    390 => array('timezone' => 'Indian/Mahe', 'offset' => '4:00:00', 'offset_dst' => '4:00:00', 'dst_region' => '0'),
+    391 => array('timezone' => 'Indian/Maldives', 'offset' => '5:00:00', 'offset_dst' => '5:00:00', 'dst_region' => '0'),
+    392 => array('timezone' => 'Indian/Mauritius', 'offset' => '4:00:00', 'offset_dst' => '4:00:00', 'dst_region' => '0'),
+    393 => array('timezone' => 'Indian/Mayotte', 'offset' => '3:00:00', 'offset_dst' => '3:00:00', 'dst_region' => '0'),
+    394 => array('timezone' => 'Indian/Reunion', 'offset' => '4:00:00', 'offset_dst' => '4:00:00', 'dst_region' => '0'),
+    395 => array('timezone' => 'Iran', 'offset' => '3:30:00', 'offset_dst' => '4:30:00', 'dst_region' => '8'),
+    396 => array('timezone' => 'Israel', 'offset' => '2:00:00', 'offset_dst' => '3:00:00', 'dst_region' => '5'),
+    397 => array('timezone' => 'Jamaica', 'offset' => '-5:00:00', 'offset_dst' => '-5:00:00', 'dst_region' => '0'),
+    398 => array('timezone' => 'Japan', 'offset' => '9:00:00', 'offset_dst' => '9:00:00', 'dst_region' => '0'),
+    399 => array('timezone' => 'Kwajalein', 'offset' => '12:00:00', 'offset_dst' => '12:00:00', 'dst_region' => '0'),
+    400 => array('timezone' => 'Libya', 'offset' => '2:00:00', 'offset_dst' => '2:00:00', 'dst_region' => '0'),
+    404 => array('timezone' => 'Mexico/BajaNorte', 'offset' => '-8:00:00', 'offset_dst' => '-7:00:00', 'dst_region' => '15'),
+    405 => array('timezone' => 'Mexico/BajaSur', 'offset' => '-7:00:00', 'offset_dst' => '-6:00:00', 'dst_region' => '15'),
+    406 => array('timezone' => 'Mexico/General', 'offset' => '-6:00:00', 'offset_dst' => '-5:00:00', 'dst_region' => '15'),
+    407 => array('timezone' => 'Mideast/Riyadh87', 'offset' => '3:07:04', 'offset_dst' => '3:07:04', 'dst_region' => '0'),
+    408 => array('timezone' => 'Mideast/Riyadh88', 'offset' => '3:07:04', 'offset_dst' => '3:07:04', 'dst_region' => '0'),
+    409 => array('timezone' => 'Mideast/Riyadh89', 'offset' => '3:07:04', 'offset_dst' => '3:07:04', 'dst_region' => '0'),
+    410 => array('timezone' => 'NZ', 'offset' => '13:00:00', 'offset_dst' => '12:00:00', 'dst_region' => '11'),
+    412 => array('timezone' => 'Navajo', 'offset' => '-7:00:00', 'offset_dst' => '-6:00:00', 'dst_region' => '15'),
+    415 => array('timezone' => 'Pacific/Apia', 'offset' => '-11:00:00', 'offset_dst' => '-11:00:00', 'dst_region' => '0'),
+    416 => array('timezone' => 'Pacific/Auckland', 'offset' => '13:00:00', 'offset_dst' => '12:00:00', 'dst_region' => '15'),
+    417 => array('timezone' => 'Pacific/Chatham', 'offset' => '13:45:00', 'offset_dst' => '12:45:00', 'dst_region' => '15'),
+    418 => array('timezone' => 'Pacific/Easter', 'offset' => '-5:00:00', 'offset_dst' => '-6:00:00', 'dst_region' => '0'),
+    419 => array('timezone' => 'Pacific/Efate', 'offset' => '11:00:00', 'offset_dst' => '11:00:00', 'dst_region' => '0'),
+    420 => array('timezone' => 'Pacific/Enderbury', 'offset' => '13:00:00', 'offset_dst' => '13:00:00', 'dst_region' => '0'),
+    421 => array('timezone' => 'Pacific/Fakaofo', 'offset' => '-10:00:00', 'offset_dst' => '-10:00:00', 'dst_region' => '0'),
+    422 => array('timezone' => 'Pacific/Fiji', 'offset' => '12:00:00', 'offset_dst' => '12:00:00', 'dst_region' => '0'),
+    423 => array('timezone' => 'Pacific/Funafuti', 'offset' => '12:00:00', 'offset_dst' => '12:00:00', 'dst_region' => '0'),
+    424 => array('timezone' => 'Pacific/Galapagos', 'offset' => '-6:00:00', 'offset_dst' => '-6:00:00', 'dst_region' => '0'),
+    425 => array('timezone' => 'Pacific/Gambier', 'offset' => '-9:00:00', 'offset_dst' => '-9:00:00', 'dst_region' => '0'),
+    426 => array('timezone' => 'Pacific/Guadalcanal', 'offset' => '11:00:00', 'offset_dst' => '11:00:00', 'dst_region' => '0'),
+    427 => array('timezone' => 'Pacific/Guam', 'offset' => '10:00:00', 'offset_dst' => '10:00:00', 'dst_region' => '0'),
+    428 => array('timezone' => 'Pacific/Honolulu', 'offset' => '-10:00:00', 'offset_dst' => '-10:00:00', 'dst_region' => '0'),
+    429 => array('timezone' => 'Pacific/Johnston', 'offset' => '-10:00:00', 'offset_dst' => '-10:00:00', 'dst_region' => '0'),
+    430 => array('timezone' => 'Pacific/Kiritimati', 'offset' => '14:00:00', 'offset_dst' => '14:00:00', 'dst_region' => '0'),
+    431 => array('timezone' => 'Pacific/Kosrae', 'offset' => '11:00:00', 'offset_dst' => '11:00:00', 'dst_region' => '0'),
+    432 => array('timezone' => 'Pacific/Kwajalein', 'offset' => '12:00:00', 'offset_dst' => '12:00:00', 'dst_region' => '0'),
+    433 => array('timezone' => 'Pacific/Majuro', 'offset' => '12:00:00', 'offset_dst' => '12:00:00', 'dst_region' => '0'),
+    434 => array('timezone' => 'Pacific/Marquesas', 'offset' => '-9:30:00', 'offset_dst' => '-9:30:00', 'dst_region' => '0'),
+    435 => array('timezone' => 'Pacific/Midway', 'offset' => '-11:00:00', 'offset_dst' => '-11:00:00', 'dst_region' => '0'),
+    436 => array('timezone' => 'Pacific/Nauru', 'offset' => '12:00:00', 'offset_dst' => '12:00:00', 'dst_region' => '0'),
+    437 => array('timezone' => 'Pacific/Niue', 'offset' => '-11:00:00', 'offset_dst' => '-11:00:00', 'dst_region' => '0'),
+    438 => array('timezone' => 'Pacific/Norfolk', 'offset' => '11:30:00', 'offset_dst' => '11:30:00', 'dst_region' => '0'),
+    439 => array('timezone' => 'Pacific/Noumea', 'offset' => '11:00:00', 'offset_dst' => '11:00:00', 'dst_region' => '0'),
+    440 => array('timezone' => 'Pacific/Pago Pago', 'offset' => '-11:00:00', 'offset_dst' => '-11:00:00', 'dst_region' => '0'),
+    441 => array('timezone' => 'Pacific/Palau', 'offset' => '9:00:00', 'offset_dst' => '9:00:00', 'dst_region' => '0'),
+    442 => array('timezone' => 'Pacific/Pitcairn', 'offset' => '-8:00:00', 'offset_dst' => '-8:00:00', 'dst_region' => '0'),
+    443 => array('timezone' => 'Pacific/Ponape', 'offset' => '11:00:00', 'offset_dst' => '11:00:00', 'dst_region' => '0'),
+    444 => array('timezone' => 'Pacific/Port Moresby', 'offset' => '10:00:00', 'offset_dst' => '10:00:00', 'dst_region' => '0'),
+    445 => array('timezone' => 'Pacific/Rarotonga', 'offset' => '-10:00:00', 'offset_dst' => '-10:00:00', 'dst_region' => '0'),
+    446 => array('timezone' => 'Pacific/Saipan', 'offset' => '10:00:00', 'offset_dst' => '10:00:00', 'dst_region' => '0'),
+    447 => array('timezone' => 'Pacific/Samoa', 'offset' => '-11:00:00', 'offset_dst' => '-11:00:00', 'dst_region' => '0'),
+    448 => array('timezone' => 'Pacific/Tahiti', 'offset' => '-10:00:00', 'offset_dst' => '-10:00:00', 'dst_region' => '0'),
+    449 => array('timezone' => 'Pacific/Tarawa', 'offset' => '12:00:00', 'offset_dst' => '12:00:00', 'dst_region' => '0'),
+    450 => array('timezone' => 'Pacific/Tongatapu', 'offset' => '13:00:00', 'offset_dst' => '13:00:00', 'dst_region' => '0'),
+    451 => array('timezone' => 'Pacific/Truk', 'offset' => '10:00:00', 'offset_dst' => '10:00:00', 'dst_region' => '0'),
+    452 => array('timezone' => 'Pacific/Wake', 'offset' => '12:00:00', 'offset_dst' => '12:00:00', 'dst_region' => '0'),
+    453 => array('timezone' => 'Pacific/Wallis', 'offset' => '12:00:00', 'offset_dst' => '12:00:00', 'dst_region' => '0'),
+    454 => array('timezone' => 'Pacific/Yap', 'offset' => '10:00:00', 'offset_dst' => '10:00:00', 'dst_region' => '0'),
+    455 => array('timezone' => 'Poland', 'offset' => '1:00:00', 'offset_dst' => '2:00:00', 'dst_region' => '13'),
+    456 => array('timezone' => 'Portugal', 'offset' => '00:00:00', 'offset_dst' => '1:00:00', 'dst_region' => '13'),
+    459 => array('timezone' => 'Singapore', 'offset' => '8:00:00', 'offset_dst' => '8:00:00', 'dst_region' => '0'),
+    473 => array('timezone' => 'Turkey', 'offset' => '2:00:00', 'offset_dst' => '3:00:00', 'dst_region' => '13'),
+    474 => array('timezone' => 'US/Alaska', 'offset' => '-9:00:00', 'offset_dst' => '-8:00:00', 'dst_region' => '15'),
+    475 => array('timezone' => 'US/Aleutian', 'offset' => '-10:00:00', 'offset_dst' => '-9:00:00', 'dst_region' => '15'),
+    476 => array('timezone' => 'US/Arizona', 'offset' => '-7:00:00', 'offset_dst' => '-7:00:00', 'dst_region' => '0'),
+    477 => array('timezone' => 'US/Central', 'offset' => '-6:00:00', 'offset_dst' => '-5:00:00', 'dst_region' => '15'),
+    478 => array('timezone' => 'US/East-Indiana', 'offset' => '-5:00:00', 'offset_dst' => '-5:00:00', 'dst_region' => '0'),
+    479 => array('timezone' => 'US/Eastern', 'offset' => '-5:00:00', 'offset_dst' => '-4:00:00', 'dst_region' => '15'),
+    480 => array('timezone' => 'US/Hawaii', 'offset' => '-10:00:00', 'offset_dst' => '-10:00:00', 'dst_region' => '0'),
+    481 => array('timezone' => 'US/Indiana-Starke', 'offset' => '-5:00:00', 'offset_dst' => '-5:00:00', 'dst_region' => '0'),
+    482 => array('timezone' => 'US/Michigan', 'offset' => '-5:00:00', 'offset_dst' => '-4:00:00', 'dst_region' => '15'),
+    483 => array('timezone' => 'US/Mountain', 'offset' => '-7:00:00', 'offset_dst' => '-6:00:00', 'dst_region' => '15'),
+    484 => array('timezone' => 'US/Pacific', 'offset' => '-8:00:00', 'offset_dst' => '-7:00:00', 'dst_region' => '15'),
+    485 => array('timezone' => 'US/Samoa', 'offset' => '-11:00:00', 'offset_dst' => '-11:00:00', 'dst_region' => '0'),
+    486 => array('timezone' => 'Pacific/French Polynesia-Marquesas Islands', 'offset' => '-9:30:00', 'offset_dst' => '-9:30:00', 'dst_region' => '0'));
+}
+
+/**
+ * Returns the dates when TZ switches happen from 1970 to 2010.
+ */
+function _event_install_get_dst_dates($zone) {
+  switch ($zone) {
+    case 1:
+      return '(9763200 <= %date <= 22982400) OR (41817600 <= %date <= 55036800) OR (73267200 <= %date <= 86486400) OR (104716800 <= %date <= 117936000) OR (136166400 <= %date <= 149385600) OR (167616000 <= %date <= 180835200) OR (199670400 <= %date <= 212889600) OR (231120000 <= %date <= 244339200) OR (262569600 <= %date <= 275788800) OR (294019200 <= %date <= 307238400) OR (325468800 <= %date <= 338688000) OR (356918400 <= %date <= 370137600) OR (388972800 <= %date <= 402192000) OR (420422400 <= %date <= 433641600) OR (451872000 <= %date <= 465091200) OR (483321600 <= %date <= 496540800) OR (514771200 <= %date <= 527990400) OR (546220800 <= %date <= 559440000) OR (578275200 <= %date <= 591494400) OR (609724800 <= %date <= 622944000) OR (641174400 <= %date <= 654393600) OR (672624000 <= %date <= 685843200) OR (704073600 <= %date <= 717292800) OR (736128000 <= %date <= 749347200) OR (767577600 <= %date <= 780796800) OR (799027200 <= %date <= 812246400) OR (830476800 <= %date <= 843696000) OR (861926400 <= %date <= 875145600) OR (893376000 <= %date <= 906595200) OR (925430400 <= %date <= 938649600) OR (956880000 <= %date <= 970099200) OR (988329600 <= %date <= 1001548800) OR (1019779200 <= %date <= 1032998400) OR (1051228800 <= %date <= 1064448000) OR (1083283200 <= %date <= 1096502400) OR (1114732800 <= %date <= 1127952000) OR (1146182400 <= %date <= 1159401600) OR (1177632000 <= %date <= 1190851200) OR (1209081600 <= %date <= 1222300800) OR (1240531200 <= %date <= 1253750400) OR (1272585600 <= %date <= 1285804800)';
+    case 2:
+      return '(22032000 <= %date <= 8726400) OR (53481600 <= %date <= 40176000) OR (84931200 <= %date <= 71625600) OR (116380800 <= %date <= 103075200) OR (147830400 <= %date <= 135129600) OR (179884800 <= %date <= 166579200) OR (211334400 <= %date <= 198028800) OR (242784000 <= %date <= 229478400) OR (274233600 <= %date <= 260928000) OR (305683200 <= %date <= 292377600) OR (337737600 <= %date <= 324432000) OR (369187200 <= %date <= 355881600) OR (400636800 <= %date <= 387331200) OR (432086400 <= %date <= 418780800) OR (463536000 <= %date <= 450230400) OR (494985600 <= %date <= 482284800) OR (527040000 <= %date <= 513734400) OR (558489600 <= %date <= 545184000) OR (589939200 <= %date <= 576633600) OR (621388800 <= %date <= 608083200) OR (652838400 <= %date <= 639532800) OR (684288000 <= %date <= 671587200) OR (716342400 <= %date <= 703036800) OR (747792000 <= %date <= 734486400) OR (779241600 <= %date <= 765936000) OR (810691200 <= %date <= 797385600) OR (842140800 <= %date <= 829440000) OR (874195200 <= %date <= 860889600) OR (905644800 <= %date <= 892339200) OR (937094400 <= %date <= 923788800) OR (968544000 <= %date <= 955238400) OR (999993600 <= %date <= 986688000) OR (1031443200 <= %date <= 1018742400) OR (1063497600 <= %date <= 1050192000) OR (1094947200 <= %date <= 1081641600) OR (1126396800 <= %date <= 1113091200) OR (1157846400 <= %date <= 1144540800) OR (1189296000 <= %date <= 1175990400) OR (1221350400 <= %date <= 1208044800) OR (1252800000 <= %date <= 1239494400) OR (1284249600 <= %date <= 1270944000)';
+    case 3:
+      return '(7516800 <= %date <= 25660800) OR (38966400 <= %date <= 57715200) OR (70416000 <= %date <= 89164800) OR (101865600 <= %date <= 120614400) OR (133920000 <= %date <= 152064000) OR (165369600 <= %date <= 183513600) OR (196819200 <= %date <= 215568000) OR (228268800 <= %date <= 247017600) OR (259718400 <= %date <= 278467200) OR (291168000 <= %date <= 309916800) OR (323222400 <= %date <= 341366400) OR (354672000 <= %date <= 372816000) OR (386121600 <= %date <= 404870400) OR (417571200 <= %date <= 436320000) OR (449020800 <= %date <= 467769600) OR (481075200 <= %date <= 499219200) OR (512524800 <= %date <= 530668800) OR (543974400 <= %date <= 562118400) OR (575424000 <= %date <= 594172800) OR (606873600 <= %date <= 625622400) OR (638323200 <= %date <= 657072000) OR (670377600 <= %date <= 688521600) OR (701827200 <= %date <= 719971200) OR (733276800 <= %date <= 752025600) OR (764726400 <= %date <= 783475200) OR (796176000 <= %date <= 814924800) OR (828230400 <= %date <= 846374400) OR (859680000 <= %date <= 877824000) OR (891129600 <= %date <= 909273600) OR (922579200 <= %date <= 941328000) OR (954028800 <= %date <= 972777600) OR (985478400 <= %date <= 1004227200) OR (1017532800 <= %date <= 1035676800) OR (1048982400 <= %date <= 1067126400) OR (1080432000 <= %date <= 1099180800) OR (1111881600 <= %date <= 1130630400) OR (1143331200 <= %date <= 1162080000) OR (1174780800 <= %date <= 1193529600) OR (1206835200 <= %date <= 1224979200) OR (1238284800 <= %date <= 1256428800) OR (1269734400 <= %date <= 1288483200)';
+    case 4:
+      return '(7776000 <= %date <= 23587200) OR (39312000 <= %date <= 55123200) OR (70934400 <= %date <= 86745600) OR (102470400 <= %date <= 118281600) OR (134006400 <= %date <= 149817600) OR (165542400 <= %date <= 181353600) OR (197164800 <= %date <= 212976000) OR (228700800 <= %date <= 244512000) OR (260236800 <= %date <= 276048000) OR (291772800 <= %date <= 307584000) OR (323395200 <= %date <= 339206400) OR (354931200 <= %date <= 370742400) OR (386467200 <= %date <= 402278400) OR (418003200 <= %date <= 433814400) OR (449625600 <= %date <= 465436800) OR (481161600 <= %date <= 496972800) OR (512697600 <= %date <= 528508800) OR (544233600 <= %date <= 560044800) OR (575856000 <= %date <= 591667200) OR (607392000 <= %date <= 623203200) OR (638928000 <= %date <= 654739200) OR (670464000 <= %date <= 686275200) OR (702086400 <= %date <= 717897600) OR (733622400 <= %date <= 749433600) OR (765158400 <= %date <= 780969600) OR (796694400 <= %date <= 812505600) OR (828316800 <= %date <= 844128000) OR (859852800 <= %date <= 875664000) OR (891388800 <= %date <= 907200000) OR (922924800 <= %date <= 938736000) OR (954547200 <= %date <= 970358400) OR (986083200 <= %date <= 1001894400) OR (1017619200 <= %date <= 1033430400) OR (1049155200 <= %date <= 1064966400) OR (1080777600 <= %date <= 1096588800) OR (1112313600 <= %date <= 1128124800) OR (1143849600 <= %date <= 1159660800) OR (1175385600 <= %date <= 1191196800) OR (1207008000 <= %date <= 1222819200) OR (1238544000 <= %date <= 1254355200) OR (1270080000 <= %date <= 1285891200)';
+    case 5:
+      return '(7344000 <= %date <= 24364800) OR (38793600 <= %date <= 55814400) OR (70848000 <= %date <= 87264000) OR (102297600 <= %date <= 118713600) OR (133747200 <= %date <= 150768000) OR (165196800 <= %date <= 182217600) OR (196646400 <= %date <= 213667200) OR (228700800 <= %date <= 245116800) OR (260150400 <= %date <= 276566400) OR (291600000 <= %date <= 308016000) OR (323049600 <= %date <= 340070400) OR (354499200 <= %date <= 371520000) OR (385948800 <= %date <= 402969600) OR (418003200 <= %date <= 434419200) OR (449452800 <= %date <= 465868800) OR (480902400 <= %date <= 497923200) OR (512352000 <= %date <= 529372800) OR (543801600 <= %date <= 560822400) OR (575856000 <= %date <= 592272000) OR (607305600 <= %date <= 623721600) OR (638755200 <= %date <= 655171200) OR (670204800 <= %date <= 687225600) OR (701654400 <= %date <= 718675200) OR (733104000 <= %date <= 750124800) OR (765158400 <= %date <= 781574400) OR (796608000 <= %date <= 813024000) OR (828057600 <= %date <= 845078400) OR (859507200 <= %date <= 876528000) OR (890956800 <= %date <= 907977600) OR (922406400 <= %date <= 939427200) OR (954460800 <= %date <= 970948800) OR (985910400 <= %date <= 1002398460) OR (1017360000 <= %date <= 1034452920) OR (1048809600 <= %date <= 1065902580) OR (1080259200 <= %date <= 1097352240) OR (1112313600 <= %date <= 1128801900) OR (1143763200 <= %date <= 1160251560) OR (1175212800 <= %date <= 1189886820) OR (1206662400 <= %date <= 1223150880) OR (1238112000 <= %date <= 1253995740) OR (1269561600 <= %date <= 1284235800)';
+    case 6:
+      return '(7516800 <= %date <= 25660800) OR (38966400 <= %date <= 57715200) OR (70416000 <= %date <= 89164800) OR (101865600 <= %date <= 120614400) OR (133920000 <= %date <= 152064000) OR (165369600 <= %date <= 183513600) OR (196819200 <= %date <= 215568000) OR (228268800 <= %date <= 247017600) OR (259718400 <= %date <= 278467200) OR (291168000 <= %date <= 309916800) OR (323222400 <= %date <= 341366400) OR (354672000 <= %date <= 372816000) OR (386121600 <= %date <= 404870400) OR (417571200 <= %date <= 436320000) OR (449020800 <= %date <= 467769600) OR (481075200 <= %date <= 499219200) OR (512524800 <= %date <= 530668800) OR (543974400 <= %date <= 562118400) OR (575424000 <= %date <= 594172800) OR (606873600 <= %date <= 625622400) OR (638323200 <= %date <= 657072000) OR (670377600 <= %date <= 688521600) OR (701827200 <= %date <= 719971200) OR (733276800 <= %date <= 752025600) OR (764726400 <= %date <= 783475200) OR (796176000 <= %date <= 814924800) OR (828230400 <= %date <= 846374400) OR (859680000 <= %date <= 877824000) OR (891129600 <= %date <= 909273600) OR (922579200 <= %date <= 941328000) OR (954028800 <= %date <= 972777600) OR (985478400 <= %date <= 1004227200) OR (1017532800 <= %date <= 1035676800) OR (1048982400 <= %date <= 1067126400) OR (1080432000 <= %date <= 1099180800) OR (1111881600 <= %date <= 1130630400) OR (1143331200 <= %date <= 1162080000) OR (1174780800 <= %date <= 1193529600) OR (1206835200 <= %date <= 1224979200) OR (1238284800 <= %date <= 1256428800) OR (1269734400 <= %date <= 1288483200)';
+    case 7:
+      return '(9158400 <= %date <= 24883200) OR (40608000 <= %date <= 56332800) OR (72662400 <= %date <= 88387200) OR (104112000 <= %date <= 119836800) OR (135561600 <= %date <= 151286400) OR (167011200 <= %date <= 182736000) OR (198460800 <= %date <= 214185600) OR (229910400 <= %date <= 246240000) OR (261964800 <= %date <= 277689600) OR (293414400 <= %date <= 309139200) OR (324864000 <= %date <= 340588800) OR (356313600 <= %date <= 372038400) OR (387763200 <= %date <= 403488000) OR (419212800 <= %date <= 435542400) OR (451267200 <= %date <= 466992000) OR (482716800 <= %date <= 498441600) OR (514166400 <= %date <= 529891200) OR (545616000 <= %date <= 561340800) OR (577065600 <= %date <= 593395200) OR (609120000 <= %date <= 624844800) OR (640569600 <= %date <= 656294400) OR (672019200 <= %date <= 687744000) OR (703468800 <= %date <= 719193600) OR (734918400 <= %date <= 750643200) OR (766368000 <= %date <= 782697600) OR (798422400 <= %date <= 814147200) OR (829872000 <= %date <= 845596800) OR (861321600 <= %date <= 877046400) OR (892771200 <= %date <= 908496000) OR (924220800 <= %date <= 939945600) OR (956275200 <= %date <= 972000000) OR (987724800 <= %date <= 1003449600) OR (1019174400 <= %date <= 1034899200) OR (1050624000 <= %date <= 1066348800) OR (1082073600 <= %date <= 1097798400) OR (1113523200 <= %date <= 1129852800) OR (1145577600 <= %date <= 1161302400) OR (1177027200 <= %date <= 1192752000) OR (1208476800 <= %date <= 1224201600) OR (1239926400 <= %date <= 1255651200) OR (1271376000 <= %date <= 1287100800)';
+    case 8:
+      return '(6825600 <= %date <= 22896000) OR (38361600 <= %date <= 54432000) OR (69984000 <= %date <= 86054400) OR (101520000 <= %date <= 117590400) OR (133056000 <= %date <= 149126400) OR (164592000 <= %date <= 180662400) OR (196214400 <= %date <= 212284800) OR (227750400 <= %date <= 243820800) OR (259286400 <= %date <= 275356800) OR (290822400 <= %date <= 306892800) OR (322444800 <= %date <= 338515200) OR (353980800 <= %date <= 370051200) OR (385516800 <= %date <= 401587200) OR (417052800 <= %date <= 433123200) OR (448675200 <= %date <= 464745600) OR (480211200 <= %date <= 496281600) OR (511747200 <= %date <= 527817600) OR (543283200 <= %date <= 559353600) OR (574905600 <= %date <= 590976000) OR (606441600 <= %date <= 622512000) OR (637977600 <= %date <= 654048000) OR (669513600 <= %date <= 685584000) OR (701136000 <= %date <= 717206400) OR (732672000 <= %date <= 748742400) OR (764208000 <= %date <= 780278400) OR (795744000 <= %date <= 811814400) OR (827366400 <= %date <= 843436800) OR (858902400 <= %date <= 874972800) OR (890438400 <= %date <= 906508800) OR (921974400 <= %date <= 938044800) OR (953596800 <= %date <= 969667200) OR (985132800 <= %date <= 1001203200) OR (1016668800 <= %date <= 1032739200) OR (1048204800 <= %date <= 1064275200) OR (1079827200 <= %date <= 1095897600) OR (1111363200 <= %date <= 1127433600) OR (1142899200 <= %date <= 1158969600) OR (1174435200 <= %date <= 1190505600) OR (1206057600 <= %date <= 1222128000) OR (1237593600 <= %date <= 1253664000) OR (1269129600 <= %date <= 1285200000)';
+    case 9:
+      return '(25660800 <= %date <= 7516800) OR (57715200 <= %date <= 38966400) OR (89164800 <= %date <= 70416000) OR (120614400 <= %date <= 101865600) OR (152064000 <= %date <= 133920000) OR (183513600 <= %date <= 165369600) OR (215568000 <= %date <= 196819200) OR (247017600 <= %date <= 228268800) OR (278467200 <= %date <= 259718400) OR (309916800 <= %date <= 291168000) OR (341366400 <= %date <= 323222400) OR (372816000 <= %date <= 354672000) OR (404870400 <= %date <= 386121600) OR (436320000 <= %date <= 417571200) OR (467769600 <= %date <= 449020800) OR (499219200 <= %date <= 481075200) OR (530668800 <= %date <= 512524800) OR (562118400 <= %date <= 543974400) OR (594172800 <= %date <= 575424000) OR (625622400 <= %date <= 606873600) OR (657072000 <= %date <= 638323200) OR (688521600 <= %date <= 670377600) OR (719971200 <= %date <= 701827200) OR (752025600 <= %date <= 733276800) OR (783475200 <= %date <= 764726400) OR (814924800 <= %date <= 796176000) OR (846374400 <= %date <= 828230400) OR (877824000 <= %date <= 859680000) OR (909273600 <= %date <= 891129600) OR (941328000 <= %date <= 922579200) OR (972777600 <= %date <= 954028800) OR (1004227200 <= %date <= 985478400) OR (1035676800 <= %date <= 1017532800) OR (1067126400 <= %date <= 1048982400) OR (1099180800 <= %date <= 1080432000) OR (1130630400 <= %date <= 1111881600) OR (1162080000 <= %date <= 1143331200) OR (1193529600 <= %date <= 1174780800) OR (1224979200 <= %date <= 1206835200) OR (1256428800 <= %date <= 1238284800) OR (1288483200 <= %date <= 1269734400)';
+    case 10:
+      return '(24451200 <= %date <= 7516800) OR (55900800 <= %date <= 38966400) OR (87350400 <= %date <= 70416000) OR (119404800 <= %date <= 101865600) OR (150854400 <= %date <= 133920000) OR (182304000 <= %date <= 165369600) OR (213753600 <= %date <= 196819200) OR (245203200 <= %date <= 228268800) OR (276652800 <= %date <= 259718400) OR (308707200 <= %date <= 291168000) OR (340156800 <= %date <= 323222400) OR (371606400 <= %date <= 354672000) OR (403056000 <= %date <= 386121600) OR (434505600 <= %date <= 417571200) OR (466560000 <= %date <= 449020800) OR (498009600 <= %date <= 481075200) OR (529459200 <= %date <= 512524800) OR (560908800 <= %date <= 543974400) OR (592358400 <= %date <= 575424000) OR (623808000 <= %date <= 606873600) OR (655862400 <= %date <= 638323200) OR (687312000 <= %date <= 670377600) OR (718761600 <= %date <= 701827200) OR (750211200 <= %date <= 733276800) OR (781660800 <= %date <= 764726400) OR (813110400 <= %date <= 796176000) OR (845164800 <= %date <= 828230400) OR (876614400 <= %date <= 859680000) OR (908064000 <= %date <= 891129600) OR (939513600 <= %date <= 922579200) OR (970963200 <= %date <= 954028800) OR (1003017600 <= %date <= 985478400) OR (1034467200 <= %date <= 1017532800) OR (1065916800 <= %date <= 1048982400) OR (1097366400 <= %date <= 1080432000) OR (1128816000 <= %date <= 1111881600) OR (1160265600 <= %date <= 1143331200) OR (1192320000 <= %date <= 1174780800) OR (1223769600 <= %date <= 1206835200) OR (1255219200 <= %date <= 1238284800) OR (1286668800 <= %date <= 1269734400)';
+    case 11:
+      return '(24451200 <= %date <= 6912000) OR (55900800 <= %date <= 38966400) OR (87350400 <= %date <= 70416000) OR (119404800 <= %date <= 101865600) OR (150854400 <= %date <= 133315200) OR (182304000 <= %date <= 164764800) OR (213753600 <= %date <= 196819200) OR (245203200 <= %date <= 228268800) OR (276652800 <= %date <= 259718400) OR (308707200 <= %date <= 291168000) OR (340156800 <= %date <= 322617600) OR (371606400 <= %date <= 354067200) OR (403056000 <= %date <= 386121600) OR (434505600 <= %date <= 417571200) OR (466560000 <= %date <= 449020800) OR (498009600 <= %date <= 480470400) OR (529459200 <= %date <= 511920000) OR (560908800 <= %date <= 543369600) OR (592358400 <= %date <= 575424000) OR (623808000 <= %date <= 606873600) OR (655862400 <= %date <= 638323200) OR (687312000 <= %date <= 669772800) OR (718761600 <= %date <= 701222400) OR (750211200 <= %date <= 733276800) OR (781660800 <= %date <= 764726400) OR (813110400 <= %date <= 796176000) OR (845164800 <= %date <= 827625600) OR (876614400 <= %date <= 859075200) OR (908064000 <= %date <= 890524800) OR (939513600 <= %date <= 922579200) OR (970963200 <= %date <= 954028800) OR (1003017600 <= %date <= 985478400) OR (1034467200 <= %date <= 1016928000) OR (1065916800 <= %date <= 1048377600) OR (1097366400 <= %date <= 1080432000) OR (1128816000 <= %date <= 1111881600) OR (1160265600 <= %date <= 1143331200) OR (1192320000 <= %date <= 1174780800) OR (1223769600 <= %date <= 1206230400) OR (1255219200 <= %date <= 1237680000) OR (1286668800 <= %date <= 1269734400)';
+    case 12:
+      return '(26870400 <= %date <= 2073600) OR (58924800 <= %date <= 34128000) OR (90374400 <= %date <= 65577600) OR (121824000 <= %date <= 97027200) OR (153273600 <= %date <= 128476800) OR (184723200 <= %date <= 159926400) OR (216777600 <= %date <= 191376000) OR (248227200 <= %date <= 223430400) OR (279676800 <= %date <= 254880000) OR (311126400 <= %date <= 286329600) OR (342576000 <= %date <= 317779200) OR (374025600 <= %date <= 349228800) OR (406080000 <= %date <= 381283200) OR (437529600 <= %date <= 412732800) OR (468979200 <= %date <= 444182400) OR (500428800 <= %date <= 475632000) OR (531878400 <= %date <= 507081600) OR (563328000 <= %date <= 538531200) OR (595382400 <= %date <= 570585600) OR (626832000 <= %date <= 602035200) OR (658281600 <= %date <= 633484800) OR (689731200 <= %date <= 664934400) OR (721180800 <= %date <= 696384000) OR (753235200 <= %date <= 728438400) OR (784684800 <= %date <= 759888000) OR (816134400 <= %date <= 791337600) OR (847584000 <= %date <= 822787200) OR (879033600 <= %date <= 854236800) OR (910483200 <= %date <= 885686400) OR (942537600 <= %date <= 917740800) OR (973987200 <= %date <= 949190400) OR (1005436800 <= %date <= 980640000) OR (1036886400 <= %date <= 1012089600) OR (1068336000 <= %date <= 1043539200) OR (1100390400 <= %date <= 1074988800) OR (1131840000 <= %date <= 1107043200) OR (1163289600 <= %date <= 1138492800) OR (1194739200 <= %date <= 1169942400) OR (1226188800 <= %date <= 1201392000) OR (1257638400 <= %date <= 1232841600) OR (1289692800 <= %date <= 1264896000)';
+    case 13:
+      return '(7520400 <= %date <= 25664400) OR (38970000 <= %date <= 57718800) OR (70419600 <= %date <= 89168400) OR (101869200 <= %date <= 120618000) OR (133923600 <= %date <= 152067600) OR (165373200 <= %date <= 183517200) OR (196822800 <= %date <= 215571600) OR (228272400 <= %date <= 247021200) OR (259722000 <= %date <= 278470800) OR (291171600 <= %date <= 309920400) OR (323226000 <= %date <= 341370000) OR (354675600 <= %date <= 372819600) OR (386125200 <= %date <= 404874000) OR (417574800 <= %date <= 436323600) OR (449024400 <= %date <= 467773200) OR (481078800 <= %date <= 499222800) OR (512528400 <= %date <= 530672400) OR (543978000 <= %date <= 562122000) OR (575427600 <= %date <= 594176400) OR (606877200 <= %date <= 625626000) OR (638326800 <= %date <= 657075600) OR (670381200 <= %date <= 688525200) OR (701830800 <= %date <= 719974800) OR (733280400 <= %date <= 752029200) OR (764730000 <= %date <= 783478800) OR (796179600 <= %date <= 814928400) OR (828234000 <= %date <= 846378000) OR (859683600 <= %date <= 877827600) OR (891133200 <= %date <= 909277200) OR (922582800 <= %date <= 941331600) OR (954032400 <= %date <= 972781200) OR (985482000 <= %date <= 1004230800) OR (1017536400 <= %date <= 1035680400) OR (1048986000 <= %date <= 1067130000) OR (1080435600 <= %date <= 1099184400) OR (1111885200 <= %date <= 1130634000) OR (1143334800 <= %date <= 1162083600) OR (1174784400 <= %date <= 1193533200) OR (1206838800 <= %date <= 1224982800) OR (1238288400 <= %date <= 1256432400) OR (1269738000 <= %date <= 1288486800)';
+    case 14:
+      return '(7524000 <= %date <= 25668000) OR (38973600 <= %date <= 57722400) OR (70423200 <= %date <= 89172000) OR (101872800 <= %date <= 120621600) OR (133927200 <= %date <= 152071200) OR (165376800 <= %date <= 183520800) OR (196826400 <= %date <= 215575200) OR (228276000 <= %date <= 247024800) OR (259725600 <= %date <= 278474400) OR (291175200 <= %date <= 309924000) OR (323229600 <= %date <= 341373600) OR (354679200 <= %date <= 372823200) OR (386128800 <= %date <= 404877600) OR (417578400 <= %date <= 436327200) OR (449028000 <= %date <= 467776800) OR (481082400 <= %date <= 499226400) OR (512532000 <= %date <= 530676000) OR (543981600 <= %date <= 562125600) OR (575431200 <= %date <= 594180000) OR (606880800 <= %date <= 625629600) OR (638330400 <= %date <= 657079200) OR (670384800 <= %date <= 688528800) OR (701834400 <= %date <= 719978400) OR (733284000 <= %date <= 752032800) OR (764733600 <= %date <= 783482400) OR (796183200 <= %date <= 814932000) OR (828237600 <= %date <= 846381600) OR (859687200 <= %date <= 877831200) OR (891136800 <= %date <= 909280800) OR (922586400 <= %date <= 941335200) OR (954036000 <= %date <= 972784800) OR (985485600 <= %date <= 1004234400) OR (1017540000 <= %date <= 1035684000) OR (1048989600 <= %date <= 1067133600) OR (1080439200 <= %date <= 1099188000) OR (1111888800 <= %date <= 1130637600) OR (1143338400 <= %date <= 1162087200) OR (1174788000 <= %date <= 1193536800) OR (1206842400 <= %date <= 1224986400) OR (1238292000 <= %date <= 1256436000) OR (1269741600 <= %date <= 1288490400)';
+    case 15:
+      return '(8128800 <= %date <= 25668000) OR (39578400 <= %date <= 57722400) OR (71028000 <= %date <= 89172000) OR (102477600 <= %date <= 120621600) OR (134532000 <= %date <= 152071200) OR (165981600 <= %date <= 183520800) OR (197431200 <= %date <= 215575200) OR (228880800 <= %date <= 247024800) OR (260330400 <= %date <= 278474400) OR (291780000 <= %date <= 309924000) OR (323834400 <= %date <= 341373600) OR (355284000 <= %date <= 372823200) OR (386733600 <= %date <= 404877600) OR (418183200 <= %date <= 436327200) OR (449632800 <= %date <= 467776800) OR (481687200 <= %date <= 499226400) OR (513136800 <= %date <= 530676000) OR (544586400 <= %date <= 562125600) OR (576036000 <= %date <= 594180000) OR (607485600 <= %date <= 625629600) OR (638935200 <= %date <= 657079200) OR (670989600 <= %date <= 688528800) OR (702439200 <= %date <= 719978400) OR (733888800 <= %date <= 752032800) OR (765338400 <= %date <= 783482400) OR (796788000 <= %date <= 814932000) OR (828842400 <= %date <= 846381600) OR (860292000 <= %date <= 877831200) OR (891741600 <= %date <= 909280800) OR (923191200 <= %date <= 941335200) OR (954640800 <= %date <= 972784800) OR (986090400 <= %date <= 1004234400) OR (1018144800 <= %date <= 1035684000) OR (1049594400 <= %date <= 1067133600) OR (1081044000 <= %date <= 1099188000) OR (1112493600 <= %date <= 1130637600) OR (1143943200 <= %date <= 1162087200) OR (1173578400 <= %date <= 1193536800) OR (1205028000 <= %date <= 1224986400) OR (1236477600 <= %date <= 1256436000) OR (1268532000 <= %date <= 1288490400)';
+    case 16:
+      return '(7776000 <= %date <= 25660800) OR (39312000 <= %date <= 57715200) OR (70934400 <= %date <= 89164800) OR (102470400 <= %date <= 120614400) OR (134006400 <= %date <= 152064000) OR (165542400 <= %date <= 183513600) OR (197164800 <= %date <= 215568000) OR (228700800 <= %date <= 247017600) OR (260236800 <= %date <= 278467200) OR (291772800 <= %date <= 309916800) OR (323395200 <= %date <= 341366400) OR (354931200 <= %date <= 372816000) OR (386467200 <= %date <= 404870400) OR (418003200 <= %date <= 436320000) OR (449625600 <= %date <= 467769600) OR (481161600 <= %date <= 499219200) OR (512697600 <= %date <= 530668800) OR (544233600 <= %date <= 562118400) OR (575856000 <= %date <= 594172800) OR (607392000 <= %date <= 625622400) OR (638928000 <= %date <= 657072000) OR (670464000 <= %date <= 688521600) OR (702086400 <= %date <= 719971200) OR (733622400 <= %date <= 752025600) OR (765158400 <= %date <= 783475200) OR (796694400 <= %date <= 814924800) OR (828316800 <= %date <= 846374400) OR (859852800 <= %date <= 877824000) OR (891388800 <= %date <= 909273600) OR (922924800 <= %date <= 941328000) OR (954547200 <= %date <= 972777600) OR (986083200 <= %date <= 1004227200) OR (1017619200 <= %date <= 1035676800) OR (1049155200 <= %date <= 1067126400) OR (1080777600 <= %date <= 1099180800) OR (1112313600 <= %date <= 1130630400) OR (1143849600 <= %date <= 1162080000) OR (1175385600 <= %date <= 1193529600) OR (1207008000 <= %date <= 1224979200) OR (1238544000 <= %date <= 1256428800) OR (1270080000 <= %date <= 1288483200)';
+    case 17:
+      return '(26870400 <= %date <= 4492800) OR (58924800 <= %date <= 36547200) OR (90374400 <= %date <= 67996800) OR (121824000 <= %date <= 99446400) OR (153273600 <= %date <= 130896000) OR (184723200 <= %date <= 162345600) OR (216777600 <= %date <= 193795200) OR (248227200 <= %date <= 225849600) OR (279676800 <= %date <= 257299200) OR (311126400 <= %date <= 288748800) OR (342576000 <= %date <= 320198400) OR (374025600 <= %date <= 351648000) OR (406080000 <= %date <= 383702400) OR (437529600 <= %date <= 415152000) OR (468979200 <= %date <= 446601600) OR (500428800 <= %date <= 478051200) OR (531878400 <= %date <= 509500800) OR (563328000 <= %date <= 540950400) OR (595382400 <= %date <= 573004800) OR (626832000 <= %date <= 604454400) OR (658281600 <= %date <= 635904000) OR (689731200 <= %date <= 667353600) OR (721180800 <= %date <= 698803200) OR (753235200 <= %date <= 730857600) OR (784684800 <= %date <= 762307200) OR (816134400 <= %date <= 793756800) OR (847584000 <= %date <= 825206400) OR (879033600 <= %date <= 856656000) OR (910483200 <= %date <= 888105600) OR (942537600 <= %date <= 920160000) OR (973987200 <= %date <= 951609600) OR (1005436800 <= %date <= 983059200) OR (1036886400 <= %date <= 1014508800) OR (1068336000 <= %date <= 1045958400) OR (1100390400 <= %date <= 1077408000) OR (1131840000 <= %date <= 1109462400) OR (1163289600 <= %date <= 1140912000) OR (1194739200 <= %date <= 1172361600) OR (1226188800 <= %date <= 1203811200) OR (1257638400 <= %date <= 1235260800) OR (1289692800 <= %date <= 1267315200)';
+    case 18:
+      return '(24969600 <= %date <= 6307200) OR (56419200 <= %date <= 38361600) OR (88473600 <= %date <= 69811200) OR (119923200 <= %date <= 101260800) OR (151372800 <= %date <= 132710400) OR (182822400 <= %date <= 164160000) OR (214272000 <= %date <= 196214400) OR (245721600 <= %date <= 227664000) OR (277776000 <= %date <= 259113600) OR (309225600 <= %date <= 290563200) OR (340675200 <= %date <= 322012800) OR (372124800 <= %date <= 353462400) OR (403574400 <= %date <= 385516800) OR (435024000 <= %date <= 416966400) OR (467078400 <= %date <= 448416000) OR (498528000 <= %date <= 479865600) OR (529977600 <= %date <= 511315200) OR (561427200 <= %date <= 542764800) OR (592876800 <= %date <= 574819200) OR (624931200 <= %date <= 606268800) OR (656380800 <= %date <= 637718400) OR (687830400 <= %date <= 669168000) OR (719280000 <= %date <= 700617600) OR (750729600 <= %date <= 732672000) OR (782179200 <= %date <= 764121600) OR (814233600 <= %date <= 795571200) OR (845683200 <= %date <= 827020800) OR (877132800 <= %date <= 858470400) OR (908582400 <= %date <= 889920000) OR (940032000 <= %date <= 921974400) OR (972086400 <= %date <= 953424000) OR (1003536000 <= %date <= 984873600) OR (1034985600 <= %date <= 1016323200) OR (1066435200 <= %date <= 1047772800) OR (1097884800 <= %date <= 1079827200) OR (1129334400 <= %date <= 1111276800) OR (1161388800 <= %date <= 1142726400) OR (1192838400 <= %date <= 1174176000) OR (1224288000 <= %date <= 1205625600) OR (1255737600 <= %date <= 1237075200) OR (1287187200 <= %date <= 1269129600)';
+    case 19:
+      return '(22032000 <= %date <= 8726400) OR (53481600 <= %date <= 40176000) OR (84931200 <= %date <= 71625600) OR (116380800 <= %date <= 103075200) OR (147830400 <= %date <= 134524800) OR (179884800 <= %date <= 165974400) OR (211334400 <= %date <= 198028800) OR (242784000 <= %date <= 229478400) OR (274233600 <= %date <= 260928000) OR (305683200 <= %date <= 292377600) OR (337737600 <= %date <= 323827200) OR (369187200 <= %date <= 355881600) OR (400636800 <= %date <= 387331200) OR (432086400 <= %date <= 418780800) OR (463536000 <= %date <= 450230400) OR (494985600 <= %date <= 481680000) OR (527040000 <= %date <= 513129600) OR (558489600 <= %date <= 545184000) OR (589939200 <= %date <= 576633600) OR (621388800 <= %date <= 608083200) OR (652838400 <= %date <= 639532800) OR (684288000 <= %date <= 670982400) OR (716342400 <= %date <= 703036800) OR (747792000 <= %date <= 734486400) OR (779241600 <= %date <= 765936000) OR (810691200 <= %date <= 797385600) OR (842140800 <= %date <= 828835200) OR (874195200 <= %date <= 860284800) OR (905644800 <= %date <= 892339200) OR (937094400 <= %date <= 923788800) OR (968544000 <= %date <= 955238400) OR (999993600 <= %date <= 986688000) OR (1031443200 <= %date <= 1018137600) OR (1063497600 <= %date <= 1049587200) OR (1094947200 <= %date <= 1081641600) OR (1126396800 <= %date <= 1113091200) OR (1157846400 <= %date <= 1144540800) OR (1189296000 <= %date <= 1175990400) OR (1221350400 <= %date <= 1207440000) OR (1252800000 <= %date <= 1239494400) OR (1284249600 <= %date <= 1270944000)';
+    case 20:
+      return '(22032000 <= %date <= 8726400) OR (53481600 <= %date <= 40176000) OR (84931200 <= %date <= 71625600) OR (116380800 <= %date <= 103075200) OR (147830400 <= %date <= 135129600) OR (179884800 <= %date <= 166579200) OR (211334400 <= %date <= 198028800) OR (242784000 <= %date <= 229478400) OR (274233600 <= %date <= 260928000) OR (305683200 <= %date <= 292377600) OR (337737600 <= %date <= 324432000) OR (369187200 <= %date <= 355881600) OR (400636800 <= %date <= 387331200) OR (432086400 <= %date <= 418780800) OR (463536000 <= %date <= 450230400) OR (494985600 <= %date <= 482284800) OR (527040000 <= %date <= 513734400) OR (558489600 <= %date <= 545184000) OR (589939200 <= %date <= 576633600) OR (621388800 <= %date <= 608083200) OR (652838400 <= %date <= 639532800) OR (684288000 <= %date <= 671587200) OR (716342400 <= %date <= 703036800) OR (747792000 <= %date <= 734486400) OR (779241600 <= %date <= 765936000) OR (810691200 <= %date <= 797385600) OR (842140800 <= %date <= 829440000) OR (874195200 <= %date <= 860889600) OR (905644800 <= %date <= 892339200) OR (937094400 <= %date <= 923788800) OR (968544000 <= %date <= 955238400) OR (999993600 <= %date <= 986688000) OR (1031443200 <= %date <= 1018742400) OR (1063497600 <= %date <= 1050192000) OR (1094947200 <= %date <= 1081641600) OR (1126396800 <= %date <= 1113091200) OR (1157846400 <= %date <= 1144540800) OR (1189296000 <= %date <= 1175990400) OR (1221350400 <= %date <= 1208044800) OR (1252800000 <= %date <= 1239494400) OR (1284249600 <= %date <= 1270944000)';
+  }
+}
+
+/**
+ * These strings exist only for the extractor to pick them up and make
+ * available for translation.
+ * 
+t('Africa/Algiers') 
+t('Africa/Asmera') 
+t('Africa/Bangui') 
+t('Africa/Blantyre') 
+t('Africa/Brazzaville') 
+t('Africa/Bujumbura') 
+t('Africa/Cairo') 
+t('Africa/Ceuta') 
+t('Africa/Dar es Salaam') 
+t('Africa/Djibouti') 
+t('Africa/Douala') 
+t('Africa/Gaborone') 
+t('Africa/Harare') 
+t('Africa/Johannesburg') 
+t('Africa/Kampala') 
+t('Africa/Khartoum') 
+t('Africa/Kigali') 
+t('Africa/Kinshasa') 
+t('Africa/Lagos') 
+t('Africa/Libreville') 
+t('Africa/Luanda') 
+t('Africa/Lubumbashi') 
+t('Africa/Lusaka') 
+t('Africa/Malabo') 
+t('Africa/Maputo') 
+t('Africa/Maseru') 
+t('Africa/Mbabane') 
+t('Africa/Mogadishu') 
+t('Africa/Nairobi') 
+t('Africa/Ndjamena') 
+t('Africa/Niamey') 
+t('Africa/Porto-Novo') 
+t('Africa/Tripoli') 
+t('Africa/Tunis') 
+t('Africa/Windhoek') 
+t('America/Adak') 
+t('America/Anchorage') 
+t('America/Anguilla') 
+t('America/Antigua') 
+t('America/Araguaina') 
+t('America/Aruba') 
+t('America/Asuncion') 
+t('America/Atka') 
+t('America/Barbados') 
+t('America/Belem') 
+t('America/Belize') 
+t('America/Boa Vista') 
+t('America/Bogota') 
+t('America/Boise') 
+t('America/Buenos Aires') 
+t('America/Cambridge Bay') 
+t('America/Cancun') 
+t('America/Caracas') 
+t('America/Catamarca') 
+t('America/Cayenne') 
+t('America/Cayman') 
+t('America/Chicago') 
+t('America/Chihuahua') 
+t('America/Cordoba') 
+t('America/Costa Rica') 
+t('America/Cuiaba') 
+t('America/Curacao') 
+t('America/Dawson') 
+t('America/Dawson Creek') 
+t('America/Denver') 
+t('America/Detroit') 
+t('America/Dominica') 
+t('America/Edmonton') 
+t('America/Eirunepe') 
+t('America/El Salvador') 
+t('America/Ensenada') 
+t('America/Fort Wayne') 
+t('America/Fortaleza') 
+t('America/Glace Bay') 
+t('America/Godthab') 
+t('America/Goose Bay') 
+t('America/Grand Turk') 
+t('America/Grenada') 
+t('America/Guadeloupe') 
+t('America/Guatemala') 
+t('America/Guayaquil') 
+t('America/Guyana') 
+t('America/Halifax') 
+t('America/Havana') 
+t('America/Hermosillo') 
+t('America/Indiana/Indianapolis') 
+t('America/Indiana/Knox') 
+t('America/Indiana/Marengo') 
+t('America/Indiana/Vevay') 
+t('America/Indianapolis') 
+t('America/Inuvik') 
+t('America/Iqaluit') 
+t('America/Jamaica') 
+t('America/Jujuy') 
+t('America/Juneau') 
+t('America/Kentucky/Louisville') 
+t('America/Kentucky/Monticello') 
+t('America/Knox IN') 
+t('America/La Paz') 
+t('America/Lima') 
+t('America/Los Angeles') 
+t('America/Louisville') 
+t('America/Maceio') 
+t('America/Managua') 
+t('America/Manaus') 
+t('America/Martinique') 
+t('America/Mazatlan') 
+t('America/Mendoza') 
+t('America/Menominee') 
+t('America/Merida') 
+t('America/Mexico City') 
+t('America/Miquelon') 
+t('America/Monterrey') 
+t('America/Montevideo') 
+t('America/Montreal') 
+t('America/Montserrat') 
+t('America/Nassau') 
+t('America/New York') 
+t('America/Nipigon') 
+t('America/Nome') 
+t('America/Noronha') 
+t('America/Panama') 
+t('America/Pangnirtung') 
+t('America/Paramaribo') 
+t('America/Phoenix') 
+t('America/Port-au-Prince') 
+t('America/Port of Spain') 
+t('America/Porto Acre') 
+t('America/Porto Velho') 
+t('America/Puerto Rico') 
+t('America/Rainy River') 
+t('America/Rankin Inlet') 
+t('America/Recife') 
+t('America/Regina') 
+t('America/Rio Branco') 
+t('America/Rosario') 
+t('America/Santiago') 
+t('America/Santo Domingo') 
+t('America/Sao Paulo') 
+t('America/Scoresbysund') 
+t('America/Shiprock') 
+t('America/St Johns') 
+t('America/St Kitts') 
+t('America/St Lucia') 
+t('America/St Thomas') 
+t('America/St Vincent') 
+t('America/Swift Current') 
+t('America/Tegucigalpa') 
+t('America/Thule') 
+t('America/Thunder Bay') 
+t('America/Tijuana') 
+t('America/Tortola') 
+t('America/Vancouver') 
+t('America/Virgin') 
+t('America/Whitehorse') 
+t('America/Winnipeg') 
+t('America/Yakutat') 
+t('America/Yellowknife') 
+t('Antarctica/Casey') 
+t('Antarctica/Davis') 
+t('Antarctica/DumontDUrville') 
+t('Antarctica/Mawson') 
+t('Antarctica/McMurdo') 
+t('Antarctica/Palmer') 
+t('Antarctica/South Pole') 
+t('Antarctica/Syowa') 
+t('Antarctica/Vostok') 
+t('Arctic/Longyearbyen') 
+t('Asia/Aden') 
+t('Asia/Almaty') 
+t('Asia/Amman') 
+t('Asia/Anadyr') 
+t('Asia/Aqtau') 
+t('Asia/Aqtobe') 
+t('Asia/Ashgabat') 
+t('Asia/Ashkhabad') 
+t('Asia/Baghdad') 
+t('Asia/Bahrain') 
+t('Asia/Baku') 
+t('Asia/Bangkok') 
+t('Asia/Beirut') 
+t('Asia/Bishkek') 
+t('Asia/Brunei') 
+t('Asia/Calcutta') 
+t('Asia/Chungking') 
+t('Asia/Colombo') 
+t('Asia/Dacca') 
+t('Asia/Damascus') 
+t('Asia/Dhaka') 
+t('Asia/Dili') 
+t('Asia/Dubai') 
+t('Asia/Dushanbe') 
+t('Asia/Gaza') 
+t('Asia/Harbin') 
+t('Asia/Hong Kong') 
+t('Asia/Hovd') 
+t('Asia/Irkutsk') 
+t('Asia/Istanbul') 
+t('Asia/Jakarta') 
+t('Asia/Jayapura') 
+t('Asia/Jerusalem') 
+t('Asia/Kabul') 
+t('Asia/Kamchatka') 
+t('Asia/Karachi') 
+t('Asia/Kashgar') 
+t('Asia/Katmandu') 
+t('Asia/Krasnoyarsk') 
+t('Asia/Kuala Lumpur') 
+t('Asia/Kuching') 
+t('Asia/Kuwait') 
+t('Asia/Macao') 
+t('Asia/Magadan') 
+t('Asia/Manila') 
+t('Asia/Muscat') 
+t('Asia/Nicosia') 
+t('Asia/Novosibirsk') 
+t('Asia/Omsk') 
+t('Asia/Phnom Penh') 
+t('Asia/Pyongyang') 
+t('Asia/Qatar') 
+t('Asia/Rangoon') 
+t('Asia/Riyadh') 
+t('Asia/Riyadh87') 
+t('Asia/Riyadh88') 
+t('Asia/Riyadh89') 
+t('Asia/Saigon') 
+t('Asia/Samarkand') 
+t('Asia/Seoul') 
+t('Asia/Shanghai') 
+t('Asia/Singapore') 
+t('Asia/Taipei') 
+t('Asia/Tashkent') 
+t('Asia/Tbilisi') 
+t('Asia/Tehran') 
+t('Asia/Tel Aviv') 
+t('Asia/Thimbu') 
+t('Asia/Thimphu') 
+t('Asia/Tokyo') 
+t('Asia/Ujung Pandang') 
+t('Asia/Ulaanbaatar') 
+t('Asia/Ulan Bator') 
+t('Asia/Urumqi') 
+t('Asia/Vientiane') 
+t('Asia/Vladivostok') 
+t('Asia/Yakutsk') 
+t('Asia/Yekaterinburg') 
+t('Asia/Yerevan') 
+t('Atlantic/Azores') 
+t('Atlantic/Bermuda') 
+t('Atlantic/Canary') 
+t('Atlantic/Cape Verde') 
+t('Atlantic/Faeroe') 
+t('Atlantic/Jan Mayen') 
+t('Atlantic/Madeira') 
+t('Atlantic/South Georgia') 
+t('Atlantic/Stanley') 
+t('Australia/ACT') 
+t('Australia/Adelaide') 
+t('Australia/Brisbane') 
+t('Australia/Broken Hill') 
+t('Australia/Canberra') 
+t('Australia/Darwin') 
+t('Australia/Hobart') 
+t('Australia/LHI') 
+t('Australia/Lindeman') 
+t('Australia/Lord Howe') 
+t('Australia/Melbourne') 
+t('Australia/NSW') 
+t('Australia/North') 
+t('Australia/Perth') 
+t('Australia/Queensland') 
+t('Australia/South') 
+t('Australia/Sydney') 
+t('Australia/Tasmania') 
+t('Australia/Victoria') 
+t('Australia/West') 
+t('Australia/Yancowinna') 
+t('Brazil/Acre') 
+t('Brazil/DeNoronha') 
+t('Brazil/East') 
+t('Brazil/West') 
+t('Canada/Atlantic') 
+t('Canada/Central') 
+t('Canada/Central-Saskatchewan') 
+t('Canada/Eastern') 
+t('Canada/Mountain') 
+t('Canada/Newfoundland') 
+t('Canada/Pacific') 
+t('Canada/Saskatchewan') 
+t('Canada/Yukon') 
+t('Chile/Continental') 
+t('Chile/EasterIsland') 
+t('Cuba') 
+t('EST') 
+t('Egypt') 
+t('Eire') 
+t('Etc/GMT-1') 
+t('Etc/GMT-10') 
+t('Etc/GMT-11') 
+t('Etc/GMT-12') 
+t('Etc/GMT-2') 
+t('Etc/GMT-3') 
+t('Etc/GMT-4') 
+t('Etc/GMT-5') 
+t('Etc/GMT-6') 
+t('Etc/GMT-7') 
+t('Etc/GMT-8') 
+t('Etc/GMT-9') 
+t('Etc/GMT') 
+t('Etc/GMT+1') 
+t('Etc/GMT+10') 
+t('Etc/GMT+11') 
+t('Etc/GMT+12') 
+t('Etc/GMT+13') 
+t('Etc/GMT+14') 
+t('Etc/GMT+2') 
+t('Etc/GMT+3') 
+t('Etc/GMT+4') 
+t('Etc/GMT+5') 
+t('Etc/GMT+6') 
+t('Etc/GMT+7') 
+t('Etc/GMT+8') 
+t('Etc/GMT+9') 
+t('Europe/Amsterdam') 
+t('Europe/Andorra') 
+t('Europe/Athens') 
+t('Europe/Belfast') 
+t('Europe/Belgrade') 
+t('Europe/Berlin') 
+t('Europe/Bratislava') 
+t('Europe/Brussels') 
+t('Europe/Bucharest') 
+t('Europe/Budapest') 
+t('Europe/Chisinau') 
+t('Europe/Copenhagen') 
+t('Europe/Dublin') 
+t('Europe/Gibraltar') 
+t('Europe/Helsinki') 
+t('Europe/Istanbul') 
+t('Europe/Kaliningrad') 
+t('Europe/Kiev') 
+t('Europe/Lisbon') 
+t('Europe/Ljubljana') 
+t('Europe/London') 
+t('Europe/Luxembourg') 
+t('Europe/Madrid') 
+t('Europe/Malta') 
+t('Europe/Minsk') 
+t('Europe/Monaco') 
+t('Europe/Moscow') 
+t('Europe/Nicosia') 
+t('Europe/Oslo') 
+t('Europe/Paris') 
+t('Europe/Prague') 
+t('Europe/Riga') 
+t('Europe/Rome') 
+t('Europe/Samara') 
+t('Europe/San Marino') 
+t('Europe/Sarajevo') 
+t('Europe/Simferopol') 
+t('Europe/Skopje') 
+t('Europe/Sofia') 
+t('Europe/Stockholm') 
+t('Europe/Tallinn') 
+t('Europe/Tirane') 
+t('Europe/Tiraspol') 
+t('Europe/Uzhgorod') 
+t('Europe/Vaduz') 
+t('Europe/Vatican') 
+t('Europe/Vienna') 
+t('Europe/Vilnius') 
+t('Europe/Warsaw') 
+t('Europe/Zagreb') 
+t('Europe/Zaporozhye') 
+t('Europe/Zurich') 
+t('GB') 
+t('GB-Eire') 
+t('Hongkong') 
+t('Indian/Antananarivo') 
+t('Indian/Chagos') 
+t('Indian/Christmas') 
+t('Indian/Cocos') 
+t('Indian/Comoro') 
+t('Indian/Kerguelen') 
+t('Indian/Mahe') 
+t('Indian/Maldives') 
+t('Indian/Mauritius') 
+t('Indian/Mayotte') 
+t('Indian/Reunion') 
+t('Iran') 
+t('Israel') 
+t('Jamaica') 
+t('Japan') 
+t('Kwajalein') 
+t('Libya') 
+t('Mexico/BajaNorte') 
+t('Mexico/BajaSur') 
+t('Mexico/General') 
+t('Mideast/Riyadh87') 
+t('Mideast/Riyadh88') 
+t('Mideast/Riyadh89') 
+t('NZ') 
+t('Navajo') 
+t('Pacific/Apia') 
+t('Pacific/Auckland') 
+t('Pacific/Chatham') 
+t('Pacific/Easter') 
+t('Pacific/Efate') 
+t('Pacific/Enderbury') 
+t('Pacific/Fakaofo') 
+t('Pacific/Fiji') 
+t('Pacific/Funafuti') 
+t('Pacific/Galapagos') 
+t('Pacific/Gambier') 
+t('Pacific/Guadalcanal') 
+t('Pacific/Guam') 
+t('Pacific/Honolulu') 
+t('Pacific/Johnston') 
+t('Pacific/Kiritimati') 
+t('Pacific/Kosrae') 
+t('Pacific/Kwajalein') 
+t('Pacific/Majuro') 
+t('Pacific/Marquesas') 
+t('Pacific/Midway') 
+t('Pacific/Nauru') 
+t('Pacific/Niue') 
+t('Pacific/Norfolk') 
+t('Pacific/Noumea') 
+t('Pacific/Pago Pago') 
+t('Pacific/Palau') 
+t('Pacific/Pitcairn') 
+t('Pacific/Ponape') 
+t('Pacific/Port Moresby') 
+t('Pacific/Rarotonga') 
+t('Pacific/Saipan') 
+t('Pacific/Samoa') 
+t('Pacific/Tahiti') 
+t('Pacific/Tarawa') 
+t('Pacific/Tongatapu') 
+t('Pacific/Truk') 
+t('Pacific/Wake') 
+t('Pacific/Wallis') 
+t('Pacific/Yap') 
+t('Poland') 
+t('Portugal') 
+t('Singapore') 
+t('Turkey') 
+t('US/Alaska') 
+t('US/Aleutian') 
+t('US/Arizona') 
+t('US/Central') 
+t('US/East-Indiana') 
+t('US/Eastern') 
+t('US/Hawaii') 
+t('US/Indiana-Starke') 
+t('US/Michigan') 
+t('US/Mountain') 
+t('US/Pacific') 
+t('US/Samoa') 
+t('Pacific/French Polynesia-Marquesas Islands')
+*/

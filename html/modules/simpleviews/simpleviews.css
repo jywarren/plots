@@ -1,0 +1,28 @@
+#simpleviews-elements span.form-required {
+  display: none;
+}
+
+#simpleview-preview-img {
+  width: 170px;
+  height: 225px;
+  float: right;
+  border: 1px solid black;
+  background-image: url(images/preview.png);
+  overflow: hidden;
+  margin-right: 1em;
+}
+
+#simpleviews-elements div.form-item label {
+  float: left;
+  width: 5em;
+}
+
+#simpleviews-elements div.form-item label.option {
+  float: inherit;
+  width: inherit;
+  padding-left: 5em;
+}
+
+#simpleviews-elements div.form-item select, #simpleviews-form div.form-item input  {
+  width: 18em;
+}

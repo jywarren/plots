@@ -1,0 +1,246 @@
+ /\  __|_.  ._|_
+/~~\(_ | |\/| |\/
+               /
+Development specifications and integration
+==========================================
+ *for more details please see the handbook at http://drupal.org/node/328429
+
+_Hooks:
+------------------------------------------
+hook_activity_info()
+  Register a module to work with Activity's hook_action_info() implementation. All properties
+  marked with * are required
+
+  Properties:
+    api*         - specifies the version of Activity you are registering with
+    name*        - the name of the module
+    object_type  - the object type that is used in token replacement.
+                   @see activity_record(). This is needed because the $object
+                   parameter is not available, so we need a key name in order to
+                   reference the object from within the $context parameter.
+    eid_field    - the field of the object_type that identifies this activity.
+                   For instance, comment module uses this as 'cid' so that all
+                   activities dealing with that comment can be retrieved or deleted.
+    objects      - corresponds to the objects that are passed as properties of
+                   the $context array within a module's hook_trigger_name(). @see
+                   the example in flag_friend.module - compare it's
+                   hook_trigger_name() and hook_activity_info(). The key/s to
+                   this array are used as the labels fo rthe form elements.
+    hooks        - a list of available hook that this action should operate upon.
+                   @see activity_action_info(). This allows other modules to
+                   extend the scope of what can be recorded by the activity
+                   action.
+    type_options - an array keyed (value => english name) for types. For instance,
+                   node_activity_info() returns something like
+                   array('page' => 'Page'). These types are to be used in conjuction
+                   with hook_activity_type_check().
+    realms       - a structured array, keyed by realm_id that points to a human 
+                   readable name (note don't use t()) 
+                   ex: realm_id => 'My Human Readable name'
+
+  Return value:
+    An object with the above properties.
+
+  Example:
+    /**
+     * Implementation of hook_activity_info().
+     */
+    function flag_friend_activity_info() {
+      $info = new stdClass();
+      $info->api = 2;
+      $info->name = 'flag_friend';
+      $info->object_type = 'flag_friend';
+      $info->objects = array('requestor' => 'user', 'requestee' => 'flag_friend'); // array keys are the labels
+      $info->hooks = array('flag_friend' => array('approve', 'request', 'deny', 'remove'));
+      $info->realms = array('flag_friend' => 'Flag Friend');
+      $info->type_options = array();
+      return $info;
+    }
+------------------------------------------
+hook_activity_grants($activity)
+  Provides a means to record what should have access to any particular message.
+
+  Parameters:
+    $activity - an object that holds a full activity record from the database.
+
+  Return value:
+    A list of keyed by reaml of ids to be stored into the access_table with the above properties.
+  
+  Example:
+    For instance, flag_friend returns a one element array of the creator of the 
+    activity. For OG, it would return all the groups that the node belongs in 
+    for instance.
+
+    /**
+     * Implementation of hook_activity_grants().
+     */
+    function flag_friend_activity_grants($activity) {
+      return array(
+        'flag_friend' => array($activity->uid), // the module_id that will be used
+      );
+    }
+------------------------------------------
+hook_activity_access_grants($account)
+  Provide a means for other modules to determine who can have access to any
+  given activity message.
+
+  Parameters:
+    $account - the account of the message that we're determining access for.
+
+  Return value:
+    The an array keyed by realm of Ids for the module that the user will have access too.
+
+  Example:
+    /**
+     * Implementation of hook_activity_access_grants().
+     */
+    function flag_friend_activity_access_grants($acccount) {
+      $friends = flag_friend_get_friends($account->uid);
+      $realm_ids = array();
+      if (!empty($friends)) {
+        foreach ($friends as $friend) {
+          $realm_ids['flag_friend'][] = $friend;
+        }
+      }
+      return $realm_ids;
+    }
+------------------------------------------
+hook_activity_record_alter(&$record, $context)
+  Provide a means to alter an activity record before it is inserted into the db.
+
+  Parameters:
+    $record  - the record for insertion, containing uid, op, type,
+               author_message, everyone_message, nid, and created.
+    $context - the context from the trigger, containing hook, op, object,
+               author-pattern, and everyone-pattern.
+
+  Return value:
+    $record is passed by reference in order to make changes to it before insert
+
+  Example:
+    /**
+     * Implementation of hook_activity_records_alter().
+     */
+    function example_activity_records_alter(&$record, $context) {
+      // If we have a story node rather than another type, we can change the
+      // token pattern.
+      if ($object->type == 'story') {
+        $author_pattern = $context['author-pattern'] .' - [node-type]';
+        $record->author_message = token_replace($author_pattern, $record->type, $context[$record->type]);
+      }
+    }
+------------------------------------------
+hook_activity_messages_alter(&$messages, $type)
+  Provides a means to alter the activity messages before they are inserted.
+
+  Parameters:
+    $messages - the translated messages keyed by uid which have already had
+                their tokens replaced.
+    $type     - the type of activity message as defined by the implementing
+                module.
+
+  Example:
+    /**
+     * Implementation of hook_activity_messages_alter().
+     */
+    function example_activity_messages_alter(&$messages, $type) {
+      if ($type == 'nodeapi') {
+        // You should probably never do this, but it illustrates the $message
+        // structure. Do no record Anonymous messages.
+        unset($messages[0]);
+        // Most use cases will actually be string replacement methods on the
+        // $messages[$uid] so that you can target a specific message that will
+        // show up for a particular user.
+      }
+    }
+------------------------------------------
+hook_activity_message_recorded($record, $context)
+  Provides a means to do something with a record after it has been saved.
+
+  Parameters:
+    These are the same as hook_activity_record_alter() except that since the
+    $record has been saved, it now has a $record->amid.
+
+  Example:
+    /**
+     * Implementation of hook_activity_message_recorded().
+     */
+    function activity_user_status_activity_message_recorded($record) {
+      // After a message has been recorded with activity, we then save it's id so
+      // that we can reference it as a foreign key.
+      if ($record->type == 'activity_user_status') {
+        db_query("UPDATE {activity_user_status} SET amid = %d WHERE uid = %d", $record->amid, $record->uid);
+      }
+    }
+------------------------------------------
+hook_activity_access_records_alter(&$grants)
+  Provides a mean to alter the grants that are recorded to the activity_access
+  table.
+
+  Parameters:
+    $grants  - these are the grants that come back from other modules whom have
+               implemented hook_activity_grants().
+    $record  - This is the activity record in the database
+
+  Example:
+    /**
+     * Implementation of hook_activity_access_records_alter().
+     * This example removes any access records except og. Prevents friend
+     * modules from providing access.
+     */
+    function example_activity_access_records_alter(&$grants, $record) {
+      foreach ($grants as $realm => $value) {
+         if ($realm != 'og') {
+             unset($grants[$module]);
+         }
+      }
+    }
+-------------------------------------------
+hook_activity_type_check($token_objects, $types)
+  This hook is called when a module implements hook_activity_info() and provides configurable
+  types. These types need to be checked against the objects loaded up for this activity.
+  
+  Parameters
+    $token_objects  - This array of objects are objects that will be used during token_replace. 
+                      These objects generally match those defined in $info->objects
+
+    $types          - These are the types selected from the options provided in $info->types. 
+                      For instance, when the activity template is created, the users chooses 
+                      for node insert activity, type of page and story. Then the $types array
+                      will contain two elements, array('page', 'story').
+
+Example:
+/**
+ * Implementation of hook_activity_type_check().
+ */
+function node_activity_type_check($token_objects, $types) {
+  return (in_array($token_objects['node']->type, $types));
+}
+---------------------------------------------
+hook_activity_objects_alter(&token_$objects, $activity_type)
+  This hook is called for each activity record. It gives modules the
+	oppurtunity to change the objects based on activity_type which
+	corresponds to the type column in the activity table.
+
+  Parameters
+    $token_objects - This arrya of objects will be used during
+    token_replace.
+
+   $activity_type  - The type of activity being recorded. i.e. 'node',
+   'comment', 'user'
+
+Example:
+/**
+ * Implementation of hook_activity_objects_alter().
+ */
+function comment_activity_objects_alter(&$token_objects, $activity_type) {
+  if ($type == 'comment') {
+    $objects['node'] = node_load($objects['comment']->nid);
+    $objects['user'] = $GLOBALS['user'];
+
+    // If the comment and the node are the same, provide an object for it.
+    if (isset($objects['comment']) && $objects['node']->uid == $objects['comment']->uid) {
+      $objects['node_comment_author'] = $objects['comment'];
+    }
+  }
+}

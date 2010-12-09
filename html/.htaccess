@@ -16,6 +16,9 @@ Options +FollowSymLinks
 # Make Drupal handle any 404 errors.
 ErrorDocument 404 /index.php
 
+php_value upload_max_filesize 10M
+php_value post_max_size 20M
+
 # Force simple error message for requests for non-existent favicon.ico.
 <Files favicon.ico>
   # There is no end quote below, for compatibility with Apache 1.3.

@@ -1,0 +1,9 @@
+TODO
+----
+
+In no particular order.
+
+- provide support for vCalendar/iCalendar see:
+  http://www.phpbuilder.com/columns/chow20021007.php3?print_mode=1
+  Suggested by Kristijan.
+  Export done, import still needed.

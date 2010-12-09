@@ -1,0 +1,381 @@
+<?php
+// $Id: dashboard.module,v 1.39 2010/05/22 15:02:21 techsoldaten Exp $
+
+/**
+ * @file
+ * Dashboard module main file.
+ * This file stores core Drupal hooks and the common functions
+ * required by Dashboard module, including internal hooks.
+ */
+
+/**
+ * Implement hook_menu().
+ */
+function dashboard_menu() {
+  $items = array(
+    'admin/settings/dashboard' => array(
+      'title' => 'Dashboard',
+      'page callback' => 'drupal_get_form',
+      'page arguments' => array('dashboard_settings_form'),
+      'access arguments' => array('administer dashboard defaults'),
+      'description' => t('Administer general dashboard settings.'),
+      'file' => 'dashboard.admin.inc',
+    ),
+    // TODO we need an add/edit call back
+    'admin/settings/dashboard/default' => array(
+      'title' => 'General',
+      'type' => MENU_DEFAULT_LOCAL_TASK,
+    ),
+    'admin/settings/dashboard/widgets' => array(
+      'title' => 'Widgets',
+      'page callback' => 'dashboard_overview',
+      'access arguments' => array('administer dashboard defaults'),
+      'description' => t('Shows all available widgets on a the site.'),
+      'file' => 'dashboard.admin.inc',
+      'type' => MENU_LOCAL_TASK,
+    ),
+    'admin/settings/dashboard/add/modal' => array(
+      'page callback' => 'dashboard_wizard_modal',
+      'access arguments' => array('administer dashboard defaults'),
+      'file' => 'dashboard.admin.inc',
+    ),
+    'admin/settings/dashboard/ajax/autocomplete/tag' => array(
+      'page callback' => 'dashboard_autocomplete_tag',
+      'access arguments' => array('administer dashboard defaults'),
+      'file' => 'dashboard.admin.inc',
+      'type' => MENU_CALLBACK,
+    ),
+    'admin/settings/dashboard/ajax/autocomplete/node' => array(
+      'page callback' => 'dashboard_autocomplete_node',
+      'access arguments' => array('administer dashboard defaults'),
+      'file' => 'dashboard.admin.inc',
+      'type' => MENU_CALLBACK,
+    ),
+    'admin/settings/dashboard/ajax/autocomplete/block' => array(
+      'page callback' => 'dashboard_autocomplete_block',
+      'access arguments' => array('administer dashboard defaults'),
+      'file' => 'dashboard.admin.inc',
+      'type' => MENU_CALLBACK,
+    ),
+    // Delete default widget
+    'admin/settings/dashboard/widget/%/delete' => array(
+      'title' => 'Delete',
+      'page callback' => 'drupal_get_form',
+      'page arguments' => array('dashboard_default_widget_delete_confirm', 4),
+      'access arguments' => array('administer dashboard defaults'),
+      'file' => 'dashboard.admin.inc',
+      'type' => MENU_CALLBACK
+    ),
+    // Edit default widget
+    'admin/settings/dashboard/widget/%/edit' => array(
+      'title' => 'Delete',
+      'page callback' => 'dashboard_wizard_modal',
+      'access arguments' => array('administer dashboard defaults'),
+      'file' => 'dashboard.admin.inc',
+      'type' => MENU_CALLBACK
+    ),
+    'dashboard/widgets' => array(
+      'title callback' => 'dashboard_page_title',
+      'page callback' => 'dashboard_widgets_page',
+      'page arguments' => array(1),
+      'access arguments' => array('access dashboard browser'),
+      'type' => MENU_CALLBACK,
+      'file' => 'dashboard.page.inc',
+    ),
+
+  );
+  // Create default menu items for all Dashboard implementations.
+  foreach (module_invoke_all('dashboard') as $type => $info) {
+    $items += array(
+      $info['path'] => array(
+        'title callback' => 'dashboard_page_title',
+        'page callback' => 'dashboard_page',
+        'access arguments' => array('access '. $type .' dashboard'),
+        'type' => MENU_CALLBACK,
+        'file' => 'dashboard.page.inc',
+      ),
+      $info['path'] .'/%dashboard_'. $type .'_page' => array(
+        'title callback' => 'dashboard_page_title',
+        'page callback' => 'dashboard_page',
+        'page arguments' => array(1),
+        'access arguments' => array('access '. $type .' dashboard'),
+        'type' => MENU_CALLBACK,
+        'file' => 'dashboard.page.inc',
+      ),
+      $info['path'] .'/%dashboard_'. $type .'_page/reorder-pages' => array(
+        'page callback' => 'dashboard_page_reorder',
+        'access callback' => 'dashboard_valid_token',
+        'access arguments' => array(1),
+        'type' => MENU_CALLBACK,
+        'file' => 'dashboard.page.inc',
+      ),
+      $info['path'] .'/%dashboard_'. $type .'_page/reorder-widgets' => array(
+        'page callback' => 'dashboard_widget_reorder',
+        'page arguments' => array(1),
+        'access callback' => 'dashboard_valid_token',
+        'access arguments' => array(1),
+        'type' => MENU_CALLBACK,
+        'file' => 'dashboard.page.inc',
+      ),
+      $info['path'] .'/%dashboard_'. $type .'_page/add-widget' => array(
+        'page callback' => 'dashboard_widget_add',
+        'access callback' => 'dashboard_valid_token',
+        'access arguments' => array(1),
+        'type' => MENU_CALLBACK,
+        'file' => 'dashboard.page.inc',
+      ),
+      $info['path'] .'/%dashboard_'. $type .'_page/remove-widget' => array(
+        'page callback' => 'dashboard_widget_remove',
+        'access callback' => 'dashboard_valid_token',
+        'access arguments' => array(1),
+        'type' => MENU_CALLBACK,
+        'file' => 'dashboard.page.inc',
+      ),
+      $info['path'] .'/%dashboard_'. $type .'_page/rename' => array(
+        'page callback' => 'dashboard_page_rename',
+        'page arguments' => array(1),
+        'access arguments' => array('update '. $type .' dashboard'),
+        'type' => MENU_CALLBACK,
+        'file' => 'dashboard.page.inc',
+      ),
+      // TODO this page will provide a list of all available widgets
+      // with the ability to enable for a dashboard and make default
+      /*
+      'admin/settings/dashboard/'. $type => array(
+        'title' => $info['name'],
+        'page callback' => 'drupal_get_form',
+        'page arguments' => array('dashboard_settings_form', 3),
+        'access arguments' => array('administer '. $type .' dashboard'),
+        'description' => t('Administer default dashboard settings.'),
+        'type' => MENU_LOCAL_TASK,
+        'weight' => $info['weight'],
+        'file' => 'dashboard.admin.inc',
+      ),
+      */
+    );
+  }
+
+  return $items;
+}
+
+/**
+ * Implement hook_perm().
+ */
+function dashboard_perm() {
+  $perms = array('administer dashboard defaults', 'access dashboard browser', 'add personal dashboard');
+  $dashboards = module_invoke_all('dashboard');
+  foreach ($dashboards as $type => $dashboard) {
+    foreach(array('access', 'update', 'delete', 'administer') as $perm) {
+      $perms[] = $perm .' '. $type .' dashboard';
+    }
+  }
+  return $perms;
+}
+
+/**
+ * Implement hook_theme().
+ */
+function dashboard_theme() {
+  $path = drupal_get_path('module', 'dashboard') . '/templates';
+  require_once "./". drupal_get_path('module', 'dashboard') ."/dashboard.admin.inc";
+  return array(
+    'dashboard_page' => array(
+      'arguments' => array(
+        'tabs' => array(),
+        'widgets' => array(),
+      ),
+      'path' => $path,
+      'template' => 'dashboard-page',
+    ),
+    'dashboard_widget' => array(
+      'arguments' => array(
+        'widget' => array(),
+      ),
+      'path' => $path,
+      'template' => 'dashboard-widget',
+    ),
+    'dashboard_list_widget' => array(
+      'path' => $path,
+      'template' => 'dashboard-list-widget',
+    ),
+    'dashboard_widget_browser' => array(
+      'path' => $path,
+      'template' => 'dashboard-browse-widgets',
+    ),
+    'dashboard_display_widget' => array(
+      'path' => $path,
+      'template' => 'dashboard-display-widget',
+      'arguments' => array(
+        'widget' => array(),
+      ),
+    ),
+  );
+}
+
+/**
+ * Ensure that AJAX callbacks are not XSRF.
+ */
+function dashboard_valid_token($page) {
+  return drupal_valid_token($_POST['token'], 'dashboard '. $page->page_id);
+}
+
+/**
+ * Generate a page title for a dashboard.
+ *
+ * TODO: Genericize this function.
+ */
+function dashboard_page_title() {
+  global $user;
+  return $user->name;
+}
+
+/**
+ * Wrapper function to load Ctools and other dependencies.
+ * Note that these are separated from the UI functions.
+ */
+function dashboard_add_tools() {
+  ctools_include('content');
+}
+
+/**
+ * Implement hook_dashboard().
+ */
+function dashboard_dashboard() {
+  return array(
+    'user' => array(
+      'path' => 'dashboard',
+      'name' => 'User dashboard',
+      'weight' => 0,
+    ),
+  );
+}
+
+/**
+ * Load information for a user dashboard.
+ * This menu loader function is the default implementation
+ * of a Dashboard.
+ *
+ * @param $path
+ *   Optional path to a specific tab.
+ * @return
+ *   If $path is specified, an object with page_id, path, title, and weight for
+ *   the tab. Otherwise, a sorted array of every tab.
+ */
+function dashboard_user_page_load($path = NULL) {
+  global $user;
+  static $pages;
+
+  if (!isset($pages)) {
+    $result = db_query('SELECT page_id, path, title, weight FROM {dashboard_page} WHERE uid = %d ORDER BY weight', $user->uid);
+    while ($page = db_fetch_object($result)) {
+      $pages[$page->path] = $page;
+      if (!isset($pages[''])) {
+        $pages[''] = $page;
+      }
+    }
+
+    // Create a fresh dashboard for new users.
+    if (count($pages) === 0) {
+      unset($pages);
+      include './' . drupal_get_path('module', 'dashboard') . '/dashboard.defaults.inc';
+      dashboard_defaults($user->uid);
+      return dashboard_user_page_load($path);
+    }
+  }
+
+  if (is_null($path)) {
+    return $pages;
+  }
+  else {
+    return $pages[$path];
+  }
+}
+
+/**
+ * Return a links array of tabs for the dashboard page.
+ */
+function dashboard_user_tabs() {
+  $links = array();
+  $pages = dashboard_user_page_load();
+  foreach ($pages as $path => $page) {
+    $key = 'dashboard-page-' . $page->page_id .' dashboard-path-'. $page->path;
+    $href = ($path === '') ? 'dashboard' : 'dashboard/' . $page->path;
+    if ($href === $_GET['q']) {
+      // Make a place to add an edit icon sprite for the active link.
+      $links[$key . ' active'] = array(
+        //'title' => l(check_plain($page->title) . '<span class="edit-icon"></span>', $_GET['q'], array('attributes' => array('class' => 'edit', 'title' => t('Edit tab')), 'html' => TRUE)) . '<a href="#" title="' . t('Delete tab') . '" class="delete"></a>',
+        'title' => check_plain($page->title),
+        'html' => TRUE,
+        'attributes' => array('class' => 'nav-tab'),
+      );
+    }
+    elseif ($path !== $pages['']->path) {
+      $links[$key] = array(
+        'title' => $page->title,
+        'href' => $href,
+        'attributes' => array('class' => 'nav-tab'),
+      );
+    }
+  }
+  $links['dashboard-widgets'] = array(
+    'title' => t('More Widgets'),
+    'href' => 'dashboard/widgets',
+    'attributes' => array('class' => 'nav-tab'),
+  );
+
+  $allow_personal_dashboard = variable_get('dashboard_personal_dashboards', 0);
+  if ($allow_personal_dashboard) {
+    // Check "add personal dashboard" permission
+    //if (user_access('add personal dashboard')) {
+    //  $links['dashboard-link-add'] = array(
+    //    'title' => t('Add a tab <strong>+</strong>'),
+    //    'href' => 'dashboard/add',
+    //    'html' => TRUE,
+    //    'attributes' => array('class' => 'nav-tab'),
+    //  );
+    //}
+  }
+
+  return $links;
+}
+
+/**
+ * Add dashboard.js for user profile page.
+ */
+function dashboard_user($op, &$edit, &$account, $category = NULL) {
+  global $user;
+
+  if ($op == 'view' && $account->uid == $user->uid) {
+    include './' . drupal_get_path('module', 'dashboard') . '/dashboard.page.inc';
+    dashboard_add_ui();
+  }
+}
+
+/**
+ * Load widgets for a certain dashboard page.
+ *
+ * @param $page
+ *   A page object as returned by dashboard_user_page_load().
+ * @return array
+ *   If $path is specified, an object with page_id, path, title, and weight for
+ *   the tab. Otherwise, a sorted array of every tab.
+ */
+function dashboard_load_widgets($page = NULL) {
+  static $widgets = array();
+
+  if (empty($page)) {
+    $page = dashboard_user_page_load('');
+  }
+
+  if (empty($widgets[$page->page_id])) {
+    $widgets[$page->page_id] = array();
+
+    //$widgets = array_fill(0, 3, '');
+    $result = db_query('SELECT widget_id, type, subtype, conf, col FROM {dashboard_widget} WHERE page_id = %d ORDER BY weight', $page->page_id);
+    while ($widget = db_fetch_object($result)) {
+      $widgets[$widget->widget_id] = $widget;
+    }
+  }
+
+  return $widgets;
+}

@@ -1,0 +1,67 @@
+ /\  __|_.  ._|_
+/~~\(_ | |\/| |\/
+               /
+Installation and basic configuration
+====================================
+ *for more details please see the handbook at http://drupal.org/node/328429
+
+_Installing:
+If you're reading this, you most likely have the module downloaded. Make sure it
+is in you {drupal_root}/modules/activity or more *highly recommended*
+{drupal_root}/sites/all/modules/contrib/activity.
+
+_Enabling:
+Go to {your_site}/admin/build/modules and enable Activity, and the Core Trigger
+modules.
+
+_Configuring your activity action:
+NOTE: Since core's trigger/actions UIs are too limiting, we've created our own
+interface to create Activity actions. Activity actions are no longer compatible
+with the core action UI.
+Go to {your_site}/admin/build/activity. If you currently have no activity
+actions defined, you will be presented with a choice of modules. Choose the one
+in which you want to configure an activity message for. i.e. if you want to
+record an activity message when someone creates a new comment, choose 'Comment'
+and click 'Continue'.
+
+Next you will be given a choice of operations to choose from. Going along with
+our first example choice in which we chose 'Comment', you should now see
+insert, update, delete and view. Choose which operation you would like to record
+an activity message for.
+
+Think about what kind of activity you would like to record and edit the
+"Description" field to reflect what the action is meant to do. A standard
+description based upon your already chosen options will be filled out for you.
+Feel free to make it more descriptive if you like, just so you know what it is
+doing in one line.
+
+Next you want to choose a format for your messages using the tokens that are
+available in the collapsible fieldset.
+
+The *Author message* is how the message is going to be formatted for the author
+of this particular activity. So corresponding to our previous example, you might
+enter something like "You updated [node-title]."
+
+The *Public message* is how the message is going to be formatter for everyone
+*other* than the author of this particular activity. So you would want to enter
+something like "[user-name] updated [node-title]."
+
+NOTE: Module who want to implement more than one message can do so. For instance,
+in the case of the flag_friend module, there is a message for the user who
+made the request, a message for the user recieving the request, and also a
+public message. So in this instance, when User1 requests the friendship of User2,
+User1 would see a message like: "You have requested to be friends with User2." -
+while User2 would see a message like: "User1 has requestd to be your friend." -
+and yet someone who is not involved in this relationship at all - say User3 -
+could see a message like: "User1 requested to be friends with User2."
+
+_Displaying your activity:
+Display is done completely through Views 2, so make sure you have this module
+installed and enabled following the same proceedure you used to install and
+enable the Activity module.
+
+Activity ships with a default view, so as soon as you go to
+{your_site}/admin/build/views you will see a
+"Default Activity view: all_activity  (activity)". This serves as a basic
+example of how you can display your activity and can be customized to suit your
+needs.

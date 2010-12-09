@@ -1,0 +1,109 @@
+<?php
+// $Id: simpleviews.install,v 1.3 2008/09/25 22:08:09 eaton Exp $
+
+/**
+ * @file
+ * SimpleViews module's install and uninstall code.
+ */
+
+
+/**
+ * Implementation of hook_install().
+ */
+function simpleviews_install() {
+  drupal_install_schema('simpleviews');
+}
+
+/**
+ * Implementation of hook_schema().
+ */
+function simpleviews_schema() {
+  $schema['simpleviews'] = array(
+    'description' => t('Stores custom links to be added to nodes.'),
+    'fields' => array(
+      'svid' => array(
+        'type' => 'serial',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'description' => t('Unique identifier for the {simpleviews} item.'),
+      ),
+      'module' => array(
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+        'default' => 'simpleviews',
+        'description' => t("The name of the module that generated the {simpleviews} item.")
+      ),
+      'path' => array(
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+        'default' => '',
+        'description' => t("The URL of the {simpleviews} item.")
+      ),
+      'title' => array(
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+        'default' => '',
+        'description' => t("The human-readable description of the {simpleviews} item.")
+      ),
+      'header' => array(
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+        'default' => '',
+        'description' => t("The text to display at the top of the {simpleviews} item.")
+      ),
+      'filter' => array(
+        'type' => 'varchar',
+        'length' => 128,
+        'not null' => TRUE,
+        'default' => 'all-posts',
+        'description' => t('The type of dynamic listing to be displayed on the {simpleviews} item.'),
+      ),
+      'style' => array(
+        'type' => 'varchar',
+        'length' => 128,
+        'not null' => TRUE,
+        'default' => '',
+        'description' => t("The output style of the listing {simpleviews} item."),
+      ),
+      'sort' => array(
+        'type' => 'varchar',
+        'length' => 128,
+        'not null' => TRUE,
+        'default' => 'newest',
+        'description' => t("The sort style of the listing {simpleviews} item."),
+      ),
+      'argument' => array(
+        'type' => 'varchar',
+        'length' => 128,
+        'not null' => FALSE,
+        'default' => '',
+        'description' => t("The optional type of argument to generate beneath this {simpleviews} item."),
+      ),
+      'rss' => array(
+        'type' => 'int',
+        'not null' => TRUE,
+        'default' => 0,
+        'description' => t('A boolean indicating whether this {simpleviews} item should expose an RSS feed.'),
+      ),
+      'block' => array(
+        'type' => 'int',
+        'not null' => TRUE,
+        'default' => 0,
+        'description' => t('A boolean indicating whether this {simpleviews} item should expose a sidebar block.'),
+      ),
+    ),
+    'primary key' => array('svid'),
+  );
+  return $schema;
+}
+
+/**
+ * Implementation of hook_uninstall().
+ */
+function simpleviews_uninstall() {
+  drupal_uninstall_schema('simpleviews');
+}

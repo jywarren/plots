@@ -1,0 +1,1056 @@
+# $Id$
+#
+# LANGUAGE translation of Drupal (general)
+# Copyright YEAR NAME <EMAIL@ADDRESS>
+# Generated from files:
+#  activity.module,v 1.1.2.2.2.30.2.42 2009/04/27 01:45:25 jaydub
+#  activity.info,v 1.1.2.1.2.2.2.1 2008/09/28 08:44:12 jaydub
+#  activityhistory.info,v 1.1.2.1.2.1 2008/09/28 08:44:13 jaydub
+#  commentactivity.info,v 1.1.2.1.2.1 2008/09/28 08:44:13 jaydub
+#  favorite_nodesactivity.info,v 1.1.4.3 2008/11/30 13:54:10 jaydub
+#  flagactivity.info,v 1.1.2.1 2008/09/28 08:44:14 jaydub
+#  nodeactivity.info,v 1.1.2.1.2.1 2008/09/28 08:44:14 jaydub
+#  ogactivity.info,v 1.1.4.2 2008/10/31 09:27:04 jaydub
+#  user_relationshipsactivity.info,v 1.1.2.1.2.1 2008/09/28 08:44:14 jaydub
+#  useractivity.info,v 1.1.4.3 2008/11/30 13:54:10 jaydub
+#  votingapiactivity.info,v 1.1.2.3.2.1 2008/09/28 08:44:14 jaydub
+#  user_relationshipsactivity.module,v 1.1.2.8.2.10 2009/04/27 01:30:40 jaydub
+#  commentactivity.module,v 1.1.2.6.2.8 2009/04/27 02:04:08 sirkitree
+#  useractivity.module,v 1.1.4.9 2009/04/27 01:42:12 jaydub
+#  activity.install,v 1.1.2.1.2.6.2.4 2009/03/05 04:38:11 sirkitree
+#  nodeactivity.module,v 1.1.2.11.2.6 2009/04/27 02:04:08 sirkitree
+#  favorite_nodesactivity.module,v 1.1.4.8 2009/04/21 08:51:21 jaydub
+#  flagactivity.module,v 1.1.2.7 2009/04/21 08:51:21 jaydub
+#  ogactivity.module,v 1.1.4.7 2009/04/21 08:51:21 jaydub
+#  votingapiactivity.module,v 1.1.2.5.2.5 2009/04/21 08:51:21 jaydub
+#  commentactivity.install,v 1.1.2.2.2.7 2009/03/16 01:04:22 jaydub
+#  contrib/favorite_nodesactivity/favorite_nodesactivity.install: n/a
+#  contrib/flagactivity/flagactivity.install: n/a
+#  nodeactivity.install,v 1.1.2.3.2.7 2009/03/16 01:04:23 jaydub
+#  ogactivity.install,v 1.1.4.5 2009/03/16 01:04:23 jaydub
+#  user_relationshipsactivity.install,v 1.1.2.3.2.8 2009/04/21 07:54:23 jaydub
+#  contrib/useractivity/useractivity.install: n/a
+#  votingapiactivity.install,v 1.1.2.5.2.7 2009/03/16 01:04:23 jaydub
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Activity DRUPAL-6--2\n"
+"POT-Creation-Date: 2009-10-06 20:03+0200\n"
+"PO-Revision-Date: 2009-10-12 15:22+0100\n"
+"Last-Translator: Thomas Zahreddin <thomas@voicehero.net>\n"
+"Language-Team: German <tz@it-arts.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n!=1);\n"
+"X-Poedit-Language: German\n"
+"X-Poedit-Country: Germany\n"
+"X-Poedit-SourceCharset: utf-8\n"
+
+#: activity.module:212
+msgid "General settings"
+msgstr "Allgemeine Einstellungen"
+
+#: activity.module:217
+msgid "Activity Page Results per Page"
+msgstr "Aktivitäten pro Seite anzeigen"
+
+#: activity.module:218
+msgid "Select the number of activity records to show on activity pages such as <a href=\"@activity\">this one</a>."
+msgstr "Anzahl der Einträge die auf einer <a href=\"@activity\">Seite mit Aktivitäten</a> angezeit werden."
+
+#: activity.module:224
+msgid "Activity Results per User Profile"
+msgstr "Aktivitäten pro Benutzer"
+
+#: activity.module:225
+msgid "Select the number of activity records to show on a user's profile page. Selecting 0 will disable activity from showing on user profile pages."
+msgstr "Anzahl der Aktivitäten, die im Profil eines Benutzers angezeigt werden. Mit 0 werden keine Aktivitäten im Profil des Benutzers angezeigt."
+
+#: activity.module:231
+msgid "Activity time limiter"
+msgstr "Zeitraum für Aktivitäten"
+
+#: activity.module:232
+msgid "Allows you to set a time limit for recording activity so repeated actions don't flood your activity feed. If the same action is submitted within X seconds of the last activity record of the same type from the same user then the activity is not logged."
+msgstr "Zeitlicher Mindestabstand für gleichartige Aktivitäten in Sekunden: dicht aufeinanderfolgende Aktivitäten werden nicht einzeln geloggt."
+
+#: activity.module:238
+msgid "Activity log purge"
+msgstr "Leeren des Logs für Aktivitäten"
+
+#: activity.module:239
+msgid "Allows you to set a time limit for storing activity records. Select 0 to keep all activity records."
+msgstr "Ein Zeitlimit setzen für das Speichern von Aktivitäten. 0 speichert alle Aktiviäten"
+
+#: activity.module:246
+msgid "Allow user privacy opt-out"
+msgstr ""
+
+#: activity.module:247
+msgid "If you wish to allows users to opt-out of Activity then check the box above. If a user opts-out then activity that the user originates will not be recorded."
+msgstr ""
+
+#: activity.module:254
+msgid "Activity contrib modules"
+msgstr "Erweiterungen für das Modul Activity"
+
+#: activity.module:255
+msgid "Click on the links below to configure the activity settings for the activity contrib modules you have installed."
+msgstr ""
+
+#: activity.module:270
+msgid "No supported modules enabled. Check the <a href=\"@activity_section\">Activity section</a> for supported modules."
+msgstr ""
+
+#: activity.module:282
+msgid "<p>The configuration settings below determine how activity generated by the <strong><em>@module</em></strong> module is recorded. Select which types of activity and which operations to record by checking/unchecking the options for <strong>Token Types</strong> and <strong>Operation Types</strong>. You can customize the text that is displayed on an activity record by changing the text in the fields below for each combination of token type and operation type and role.</p>"
+msgstr ""
+
+#: activity.module:306
+msgid "Token and operation types"
+msgstr "Token und Operationen"
+
+#: activity.module:312
+msgid "Token types"
+msgstr "Tokens"
+
+#: activity.module:313
+msgid "Select the token types that you wish to record activity from."
+msgstr ""
+
+#: activity.module:320
+msgid "Operation types"
+msgstr "Operationen"
+
+#: activity.module:321
+msgid "Select the operation types that you wish to record activity from."
+msgstr ""
+
+#: activity.module:329
+msgid "Tokens available to @name activity"
+msgstr ""
+
+#: activity.module:332
+msgid "Available tokens"
+msgstr "Verfügbare Token"
+
+#: activity.module:340
+msgid "Messages visible to the \"@role_name\" role."
+msgstr ""
+
+#: activity.module:404;28
+#: activity.info:0;0
+#: contrib/activityhistory/activityhistory.info:0
+#: contrib/commentactivity/commentactivity.info:0
+#: contrib/favorite_nodesactivity/favorite_nodesactivity.info:0
+#: contrib/flagactivity/flagactivity.info:0
+#: contrib/nodeactivity/nodeactivity.info:0
+#: contrib/ogactivity/ogactivity.info:0
+#: contrib/user_relationshipsactivity/user_relationshipsactivity.info:0
+#: contrib/useractivity/useractivity.info:0
+#: contrib/votingapiactivity/votingapiactivity.info:0
+msgid "Activity"
+msgstr "Aktivität"
+
+#: activity.module:419
+msgid "Activity privacy settings"
+msgstr "Vertraulichkeit für Activity konfigurieren"
+
+#: activity.module:426
+msgid "Do not record my site activity"
+msgstr ""
+
+#: activity.module:427
+msgid "If you wish keep your site activity from appearing in the <a href=\"@activity\">activity</a> pages, check the box."
+msgstr ""
+
+#: activity.module:756
+msgid "Id"
+msgstr "Id"
+
+#: activity.module:757
+msgid "Module"
+msgstr "Modul"
+
+#: activity.module:758
+msgid "Type"
+msgstr "Typ"
+
+#: activity.module:759
+msgid "Operation"
+msgstr "Operation"
+
+#: activity.module:760
+msgid "Created"
+msgstr "Erstellt"
+
+#: activity.module:772
+msgid "Activity (Mine): show the current user's activity."
+msgstr ""
+
+#: activity.module:773
+msgid "Activity (All): show all recent activity"
+msgstr "Alle aktuelle Aktivitäten anzeigen"
+
+#: activity.module:774
+msgid "Activity (User): show activity of the user being viewed"
+msgstr "Alle Aktivitäten eines Benutzers anzeigen"
+
+#: activity.module:781
+#: contrib/user_relationshipsactivity/user_relationshipsactivity.module:294
+msgid "Number of activity items to display"
+msgstr "Die Anzahl der anzuzeigenden Einträge"
+
+#: activity.module:812;881;59;101
+msgid "My activity"
+msgstr "Meine Aktionen"
+
+#: activity.module:834
+msgid "Recent activity"
+msgstr "Letzte Aktivitäten"
+
+#: activity.module:858
+msgid "@username's activity"
+msgstr "Aktionen von @username"
+
+#: activity.module:889;903;961;51
+msgid "All activity"
+msgstr "Alle Aktivitäten"
+
+#: activity.module:908;967
+msgid "Activity for @username"
+msgstr "Aktionen von @username"
+
+#: activity.module:989
+msgid "User Id of the person who initiated the activity"
+msgstr ""
+
+#: activity.module:990
+msgid "Themed username of the person who initiated the activity (used for \"author\" role)"
+msgstr ""
+
+#: activity.module:991
+msgid "Themed username of the person who initiated the activity (used for \"all\" role)"
+msgstr ""
+
+#: activity.module:992
+msgid "Plain text username of the person who initiated the activity"
+msgstr ""
+
+#: activity.module:993
+msgid "The user picture of the person who initiated the activity"
+msgstr ""
+
+#: activity.module:994
+msgid "The verb of the operation that took place, eg. \"create\", \"update\", \"delete\""
+msgstr ""
+
+#: activity.module:995
+msgid "Date and time in small format: @example"
+msgstr ""
+
+#: activity.module:996
+msgid "Date and time in medium format: @example"
+msgstr ""
+
+#: activity.module:997
+msgid "Date and time in large format: @example"
+msgstr ""
+
+#: activity.module:998
+msgid "How long ago did this happen? Example: %time-ago"
+msgstr ""
+
+#: activity.module:1101
+msgid "a week ago"
+msgstr "Vor einer Woche"
+
+#: activity.module:1101
+msgid "@count weeks ago"
+msgstr "Vor @count Wochen"
+
+#: activity.module:1101;1107
+msgid "Today"
+msgstr "Heute"
+
+#: activity.module:1104
+msgid "Yesterday"
+msgstr "Gestern"
+
+#: activity.module:1104
+msgid "@count days ago"
+msgstr "Vor @count Tagen"
+
+#: activity.module:1127;1338
+#: contrib/commentactivity/commentactivity.module:18
+msgid "Comment"
+msgstr "Kommentar"
+
+#: activity.module:1266
+msgid "Date"
+msgstr "Datum"
+
+#: activity.module:1267
+msgid "Message"
+msgstr "Nachricht"
+
+#: activity.module:1317
+#: contrib/useractivity/useractivity.module:89
+msgid "you"
+msgstr "Sie"
+
+#: activity.module:1324
+msgid "more"
+msgstr "Weiter"
+
+#: activity.module:1324
+msgid "See all of your activity."
+msgstr "Alle Ihre Aktivitäten."
+
+#: activity.module:1379
+msgid "Delete this activity record"
+msgstr "Diesee Aktivität löschen"
+
+#: activity.module:1386
+msgid "Delete this activity record comment"
+msgstr ""
+
+#: activity.module:17
+msgid "administer activity"
+msgstr "Benutzeraktivität verwalten"
+
+#: activity.module:17
+msgid "hide activity"
+msgstr "Aktivitäten verbergen"
+
+#: activity.module:17
+msgid "delete activity"
+msgstr "Aktivitäten löschen"
+
+#: activity.module:17
+msgid "view own activity"
+msgstr "Eigene Aktionen anzeigen"
+
+#: activity.module:17
+msgid "view public activity"
+msgstr "öffentliche Aktivitäten anzeigen"
+
+#: activity.module:17
+msgid "view activity comments"
+msgstr "Kommentare zu Aktivitäten"
+
+#: activity.module:17
+msgid "create activity comments"
+msgstr "Kommentare zu Aktivitäten erstellen"
+
+#: activity.module:35
+msgid "Delete activity"
+msgstr "Aktivität entfernen"
+
+#: activity.module:43
+msgid "Delete activity comment"
+msgstr "Kommentare zu Aktivitäten löschen"
+
+#: activity.module:67
+msgid "All activity RSS"
+msgstr "Newsfeed mit allen Aktivitäten"
+
+#: activity.module:75
+msgid "All activity JSON"
+msgstr "JSON mit allen Aktivitäten"
+
+#: activity.module:83
+msgid "Activity Settings"
+msgstr "Einstellungen für Aktivitäten"
+
+#: activity.module:84
+msgid "Customize what will display on your users activity page."
+msgstr ""
+
+#: activity.module:93
+msgid "Customize what will display on your users activity page for this module."
+msgstr ""
+
+#: activity.install:14
+msgid "The {activity} table stores activity data"
+msgstr "Die Tabelle {activity} speichert Daten zu Aktivitäten"
+
+#: activity.install:58
+msgid "The {activity_targets} table stores activity target data"
+msgstr ""
+
+#: activity.install:82
+msgid "Store comments left on an activity ID."
+msgstr ""
+
+#: activity.install:85
+msgid "The unique ID that represents this comment."
+msgstr ""
+
+#: activity.install:91
+msgid "The {activity}.aid that represents this activity."
+msgstr ""
+
+#: activity.install:97
+msgid "The {users}.uid of the user leaving a comment on this activity."
+msgstr ""
+
+#: activity.install:103
+msgid "The time the comment was created, as a Unix timestamp."
+msgstr ""
+
+#: activity.install:108
+msgid "The comment body."
+msgstr "Der Textkörper des Kommentars."
+
+#: activity.info:0
+msgid "Allow users to see their friends' activity on the site."
+msgstr ""
+
+#: contrib/activityhistory/activityhistory.info:0
+msgid "Activity history"
+msgstr "Journal der Aktivitäten"
+
+#: contrib/activityhistory/activityhistory.info:0
+msgid "Tracks whether a user has been shown a particular activity message."
+msgstr ""
+
+#: contrib/commentactivity/commentactivity.module:12
+msgid "Insert"
+msgstr "Einfügen"
+
+#: contrib/commentactivity/commentactivity.module:13
+#: contrib/nodeactivity/nodeactivity.module:15
+#: contrib/useractivity/useractivity.module:13
+msgid "Update"
+msgstr "Aktualisieren"
+
+#: contrib/commentactivity/commentactivity.module:14
+#: contrib/favorite_nodesactivity/favorite_nodesactivity.module:11
+#: contrib/nodeactivity/nodeactivity.module:15
+msgid "Delete"
+msgstr "Löschen"
+
+#: contrib/commentactivity/commentactivity.module:15
+msgid "Publish"
+msgstr "Veröffentlichen"
+
+#: contrib/commentactivity/commentactivity.module:16
+msgid "Unpublish"
+msgstr "Veröffentlichung zurücknehmen"
+
+#: contrib/commentactivity/commentactivity.module:21
+#: contrib/favorite_nodesactivity/favorite_nodesactivity.module:15
+#: contrib/flagactivity/flagactivity.module:19
+#: contrib/nodeactivity/nodeactivity.module:19
+#: contrib/ogactivity/ogactivity.module:17
+#: contrib/useractivity/useractivity.module:21
+#: contrib/votingapiactivity/votingapiactivity.module:20
+msgid "Author"
+msgstr "Autor"
+
+#: contrib/commentactivity/commentactivity.module:22
+msgid "The person who created the comment."
+msgstr "Der Benutzer, der den Kommentar geschrieben hat."
+
+#: contrib/commentactivity/commentactivity.module:23
+msgid "[author] left the comment [comment-link] on the [parent-node-type] [parent-node-link]"
+msgstr ""
+
+#: contrib/commentactivity/commentactivity.module:26
+msgid "Parent node author"
+msgstr "Autor des zugehörigen Beitrags"
+
+#: contrib/commentactivity/commentactivity.module:27
+#: contrib/nodeactivity/nodeactivity.module:20
+msgid "The person who created the node."
+msgstr "Der Autor des Beitrags"
+
+#: contrib/commentactivity/commentactivity.module:28
+msgid "[author] commented on the [parent-node-type] [parent-node-link] saying [comment-link]"
+msgstr ""
+
+#: contrib/commentactivity/commentactivity.module:31
+msgid "Parent comment author"
+msgstr "Autor des vorangehenden Kommentars"
+
+#: contrib/commentactivity/commentactivity.module:32
+msgid "The person who wrote the comment."
+msgstr "Autor des Kommentars"
+
+#: contrib/commentactivity/commentactivity.module:33
+msgid "[author] replied to your comment [parent-comment-subject] saying [comment-link]"
+msgstr ""
+
+#: contrib/commentactivity/commentactivity.module:37
+#: contrib/favorite_nodesactivity/favorite_nodesactivity.module:23
+#: contrib/flagactivity/flagactivity.module:24
+#: contrib/nodeactivity/nodeactivity.module:25
+#: contrib/ogactivity/ogactivity.module:26
+#: contrib/useractivity/useractivity.module:32
+#: contrib/votingapiactivity/votingapiactivity.module:25
+msgid "All"
+msgstr "Alle"
+
+#: contrib/commentactivity/commentactivity.module:38
+#: contrib/favorite_nodesactivity/favorite_nodesactivity.module:24
+#: contrib/flagactivity/flagactivity.module:25
+#: contrib/nodeactivity/nodeactivity.module:26
+#: contrib/ogactivity/ogactivity.module:27
+#: contrib/user_relationshipsactivity/user_relationshipsactivity.module:33
+#: contrib/useractivity/useractivity.module:33
+#: contrib/votingapiactivity/votingapiactivity.module:26
+msgid "The general public."
+msgstr "Die Öffentlichkeit."
+
+#: contrib/commentactivity/commentactivity.module:39
+msgid "[author-all] commented on the [parent-node-type] [parent-node-link] saying [comment-link]"
+msgstr ""
+
+#: contrib/commentactivity/commentactivity.module:62
+msgid "The Id of the comment"
+msgstr "Kommentar ID"
+
+#: contrib/commentactivity/commentactivity.module:63
+msgid "The subject of the comment"
+msgstr "Der  Betreff des Kommentars"
+
+#: contrib/commentactivity/commentactivity.module:64
+msgid "Link to the comment"
+msgstr "Der Link zum Kommentar "
+
+#: contrib/commentactivity/commentactivity.module:65
+msgid "User Id of the person who authored the parent node"
+msgstr ""
+
+#: contrib/commentactivity/commentactivity.module:66
+msgid "Person who authored the parent node"
+msgstr ""
+
+#: contrib/commentactivity/commentactivity.module:67
+msgid "The username of the person who authored the parent node"
+msgstr ""
+
+#: contrib/commentactivity/commentactivity.module:68
+msgid "The Id of the parent node"
+msgstr "Die ID des übergeordneten Beitrags."
+
+#: contrib/commentactivity/commentactivity.module:69
+msgid "Link to the parent node"
+msgstr "Link auf den übergeordneten Beitrag"
+
+#: contrib/commentactivity/commentactivity.module:70
+msgid "Title of the parent node"
+msgstr "Der Titel des übergeordneten Beitrags."
+
+#: contrib/commentactivity/commentactivity.module:71
+msgid "The type of the parent node"
+msgstr "Inhaltstyp des übergeordneten Beitrags"
+
+#: contrib/commentactivity/commentactivity.module:72
+msgid "User Id of the person who authored the parent comment"
+msgstr ""
+
+#: contrib/commentactivity/commentactivity.module:73
+msgid "Person who authored the parent comment"
+msgstr ""
+
+#: contrib/commentactivity/commentactivity.module:74
+msgid "The username of the person who authored the parent comment"
+msgstr ""
+
+#: contrib/commentactivity/commentactivity.module:75
+msgid "The Id of the parent comment"
+msgstr "Die ID des übergeordneten Kommentars."
+
+#: contrib/commentactivity/commentactivity.module:76
+msgid "The subject of the parent comment"
+msgstr "Der Betreff des übergeordneten Kommentars"
+
+#: contrib/commentactivity/commentactivity.module:77
+msgid "Link to the parent comment"
+msgstr "Link zum übergeordneten Kommentar"
+
+#: contrib/commentactivity/commentactivity.install:12
+msgid "Activity integration with Comment module installed. Go to <a href=\"@settings\">Comment Activity settings</a> to customize "
+msgstr ""
+
+#: contrib/commentactivity/commentactivity.info:0
+msgid "Comment activity"
+msgstr "Aktivitäten in bezug auf Kommentare"
+
+#: contrib/commentactivity/commentactivity.info:0
+msgid "Enable activity notifications for comments."
+msgstr ""
+
+#: contrib/favorite_nodesactivity/favorite_nodesactivity.module:11
+msgid "Add"
+msgstr "Hinzufügen"
+
+#: contrib/favorite_nodesactivity/favorite_nodesactivity.module:12
+msgid "Favorites"
+msgstr "Favoriten"
+
+#: contrib/favorite_nodesactivity/favorite_nodesactivity.module:16
+msgid "The person who added the node to favorites."
+msgstr ""
+
+#: contrib/favorite_nodesactivity/favorite_nodesactivity.module:18
+msgid "[author] [operation]ed the [node-type] [node-link] to [possessive] [favorites-link]"
+msgstr ""
+
+#: contrib/favorite_nodesactivity/favorite_nodesactivity.module:19
+msgid "[author] [operation]d the [node-type] [node-link] from [possessive] [favorites-link]"
+msgstr ""
+
+#: contrib/favorite_nodesactivity/favorite_nodesactivity.module:26
+msgid "[author-all] [operation]ed the [node-type] [node-link] to their [favorites-link]"
+msgstr ""
+
+#: contrib/favorite_nodesactivity/favorite_nodesactivity.module:27
+msgid "[author-all] [operation]d the [node-type] [node-link] from their [favorites-link]"
+msgstr ""
+
+#: contrib/favorite_nodesactivity/favorite_nodesactivity.module:51
+msgid "Possessive pronoun indicating whose favorites list (\"yours\" or \"theirs\")"
+msgstr ""
+
+#: contrib/favorite_nodesactivity/favorite_nodesactivity.module:52
+msgid "Link to the user's favorites list"
+msgstr "Link zu  den Favoriten des Benutzers"
+
+#: contrib/favorite_nodesactivity/favorite_nodesactivity.module:53
+msgid "The type of the node that was favorited"
+msgstr "Der Inhaltstyp eines favorisierten Beitrags"
+
+#: contrib/favorite_nodesactivity/favorite_nodesactivity.module:54
+msgid "Id of the node that was favorited"
+msgstr "ID des favorisierten Beitrags"
+
+#: contrib/favorite_nodesactivity/favorite_nodesactivity.module:55
+msgid "Title of the node that was favorited"
+msgstr "Titel des favorisierten Beitrags"
+
+#: contrib/favorite_nodesactivity/favorite_nodesactivity.module:56
+msgid "Link to the node that was favorited"
+msgstr ""
+
+#: contrib/favorite_nodesactivity/favorite_nodesactivity.module:68
+#: contrib/useractivity/useractivity.module:87;89
+msgid "your"
+msgstr "Ihre"
+
+#: contrib/favorite_nodesactivity/favorite_nodesactivity.module:68
+#: contrib/useractivity/useractivity.module:87
+msgid "their"
+msgstr ""
+
+#: contrib/favorite_nodesactivity/favorite_nodesactivity.module:69
+msgid "favorites"
+msgstr "Favoriten"
+
+#: contrib/favorite_nodesactivity/favorite_nodesactivity.install:12
+msgid "Activity integration with Favorite Nodes module installed. Go to <a href=\"@settings\">Favorite Nodes Activity settings</a> to customize "
+msgstr ""
+
+#: contrib/favorite_nodesactivity/favorite_nodesactivity.info:0
+msgid "Favorite Nodes activity"
+msgstr "Favorisierte Beiträge"
+
+#: contrib/favorite_nodesactivity/favorite_nodesactivity.info:0
+msgid "Enable activity notifications for Favorite Nodes."
+msgstr ""
+
+#: contrib/flagactivity/flagactivity.module:15
+msgid "Flag"
+msgstr "Kennzeichnung"
+
+#: contrib/flagactivity/flagactivity.module:15
+msgid "Unflag"
+msgstr "Rücknahme der Kennzeichnung"
+
+#: contrib/flagactivity/flagactivity.module:20
+msgid "The person who flagged the node."
+msgstr "Benutzer, der einen bestimmten Beitrag gekennzeichnet hat"
+
+#: contrib/flagactivity/flagactivity.module:21
+msgid "[author] [operation]ged the [content-type] [content-link]"
+msgstr ""
+
+#: contrib/flagactivity/flagactivity.module:26
+msgid "[author-all] [operation]ged the [content-type] [content-link]"
+msgstr ""
+
+#: contrib/flagactivity/flagactivity.module:51
+msgid "The content type that was flagged (node, comment or user)"
+msgstr ""
+
+#: contrib/flagactivity/flagactivity.module:52
+msgid "Id of the content that was flagged"
+msgstr "ID des gekennzeichneten Beitrags"
+
+#: contrib/flagactivity/flagactivity.module:53
+msgid "Title of the content that was flagged (node or comment)"
+msgstr ""
+
+#: contrib/flagactivity/flagactivity.module:54
+msgid "Link to the content that was flagged"
+msgstr ""
+
+#: contrib/flagactivity/flagactivity.module:55
+msgid "The type of the node that was flagged"
+msgstr "Der Inhaltstyp des gekennzeichneten Beitrags"
+
+#: contrib/flagactivity/flagactivity.install:12
+msgid "Activity integration with Flag module installed. Go to <a href=\"@settings\">Flag Activity settings</a> to customize "
+msgstr ""
+
+#: contrib/flagactivity/flagactivity.info:0
+msgid "Flag activity"
+msgstr "Aktivität inbezug auf Kennzeichnungen"
+
+#: contrib/flagactivity/flagactivity.info:0
+msgid "Enable activity notifications for flag."
+msgstr ""
+
+#: contrib/nodeactivity/nodeactivity.module:15
+msgid "Create"
+msgstr "Erzeugen"
+
+#: contrib/nodeactivity/nodeactivity.module:21
+msgid "[author] [operation]d the [node-type] [node-link]"
+msgstr ""
+
+#: contrib/nodeactivity/nodeactivity.module:27
+msgid "[author-all] [operation]d the [node-type] [node-link]"
+msgstr ""
+
+#: contrib/nodeactivity/nodeactivity.module:50
+msgid "Id of the post"
+msgstr "ID eines Beitrags"
+
+#: contrib/nodeactivity/nodeactivity.module:51
+msgid "Title of the post"
+msgstr "Titel eines Beitrags"
+
+#: contrib/nodeactivity/nodeactivity.module:52
+msgid "Link to the post"
+msgstr "Link auf einen Beitrag"
+
+#: contrib/nodeactivity/nodeactivity.module:53
+msgid "The node type of the post"
+msgstr "Der Inhaltstyp des Beitrags"
+
+#: contrib/nodeactivity/nodeactivity.module:79
+msgid "create"
+msgstr "Erstellen"
+
+#: contrib/nodeactivity/nodeactivity.install:12
+msgid "Activity integration with Node module installed. Go to <a href=\"@settings\">Node Activity settings</a> to customize "
+msgstr ""
+
+#: contrib/nodeactivity/nodeactivity.info:0
+msgid "Node activity"
+msgstr "Aktivität inbezug auf einen Beitrag"
+
+#: contrib/nodeactivity/nodeactivity.info:0
+msgid "Enable activity notifications for content creation."
+msgstr ""
+
+#: contrib/ogactivity/ogactivity.module:11
+msgid "Join"
+msgstr "Beitreten"
+
+#: contrib/ogactivity/ogactivity.module:11
+msgid "Leave"
+msgstr "Verlassen"
+
+#: contrib/ogactivity/ogactivity.module:13
+msgid "Group Action"
+msgstr "Aktivität inbezug auf Gruppen"
+
+#: contrib/ogactivity/ogactivity.module:18
+msgid "The person who joined or left a group."
+msgstr ""
+
+#: contrib/ogactivity/ogactivity.module:54
+msgid "Id of the node of the group that was joined or left"
+msgstr ""
+
+#: contrib/ogactivity/ogactivity.module:55
+msgid "Title of the group that was joined or left"
+msgstr ""
+
+#: contrib/ogactivity/ogactivity.module:56
+msgid "Link to the group that was joined or left"
+msgstr ""
+
+#: contrib/ogactivity/ogactivity.module:57
+msgid "The node type of the group that was joined or left"
+msgstr ""
+
+#: contrib/ogactivity/ogactivity.module:190
+msgid "Activity - Groups: show activity in user's groups."
+msgstr "Aktivitäten in der Gruppe"
+
+#: contrib/ogactivity/ogactivity.module:197
+msgid "Number of items"
+msgstr "Anzahl der Einträge"
+
+#: contrib/ogactivity/ogactivity.module:246;134
+msgid "My groups activity"
+msgstr "Aktivität in meinen Gruppen"
+
+#: contrib/ogactivity/ogactivity.install:12
+msgid "Activity integration with Organic Groups installed. Go to <a href=\"@settings\">Organic Groups Activity settings</a> to customize "
+msgstr ""
+
+#: contrib/ogactivity/ogactivity.info:0
+msgid "OG activity"
+msgstr "Aktivität in Gruppen"
+
+#: contrib/ogactivity/ogactivity.info:0
+msgid "Enable activity notifications for organic groups."
+msgstr ""
+
+#: contrib/user_relationshipsactivity/user_relationshipsactivity.module:17
+msgid "There are no relationships currently defined. Please define some <a href=\"@user_relationships\">user relationship</a> types before configuring User Relationship activity messages."
+msgstr ""
+
+#: contrib/user_relationshipsactivity/user_relationshipsactivity.module:22
+msgid "Requested"
+msgstr "Angefordert"
+
+#: contrib/user_relationshipsactivity/user_relationshipsactivity.module:23
+msgid "Approved"
+msgstr "Bestätigt"
+
+#: contrib/user_relationshipsactivity/user_relationshipsactivity.module:24
+msgid "Denied"
+msgstr "Verweigert"
+
+#: contrib/user_relationshipsactivity/user_relationshipsactivity.module:25
+msgid "Canceled"
+msgstr "Abgebrochen"
+
+#: contrib/user_relationshipsactivity/user_relationshipsactivity.module:26
+msgid "Deleted"
+msgstr "Gelöscht"
+
+#: contrib/user_relationshipsactivity/user_relationshipsactivity.module:32
+msgid "All (approved relationships only)"
+msgstr ""
+
+#: contrib/user_relationshipsactivity/user_relationshipsactivity.module:35
+msgid "[author-all] is now [relationship-plural] with [requestee-all]"
+msgstr ""
+
+#: contrib/user_relationshipsactivity/user_relationshipsactivity.module:36
+msgid "[author-all] is no longer [relationship-plural] with [requestee-all]"
+msgstr ""
+
+#: contrib/user_relationshipsactivity/user_relationshipsactivity.module:41
+msgid "Requester"
+msgstr ""
+
+#: contrib/user_relationshipsactivity/user_relationshipsactivity.module:42
+msgid "The person who initiated the relationship."
+msgstr ""
+
+#: contrib/user_relationshipsactivity/user_relationshipsactivity.module:44;56
+msgid "[author] requested to be [relationship-plural] with [requestee]"
+msgstr ""
+
+#: contrib/user_relationshipsactivity/user_relationshipsactivity.module:45;57
+msgid "[requestee] approved the request to be [relationship-plural] with [author]"
+msgstr ""
+
+#: contrib/user_relationshipsactivity/user_relationshipsactivity.module:46;58
+msgid "[requestee] denied the request to be [relationship-plural] with [author]"
+msgstr ""
+
+#: contrib/user_relationshipsactivity/user_relationshipsactivity.module:47;59
+msgid "[author] cancelled the request to be [relationship-plural] with [requestee]"
+msgstr ""
+
+#: contrib/user_relationshipsactivity/user_relationshipsactivity.module:48;60
+msgid "[author] [is-are] no longer [relationship-plural] with [requestee]"
+msgstr ""
+
+#: contrib/user_relationshipsactivity/user_relationshipsactivity.module:53
+msgid "Requestee"
+msgstr ""
+
+#: contrib/user_relationshipsactivity/user_relationshipsactivity.module:54
+msgid "The person with whom a relationship has been requested or created."
+msgstr ""
+
+#: contrib/user_relationshipsactivity/user_relationshipsactivity.module:73
+msgid "User id of the person to whom the request was issued"
+msgstr ""
+
+#: contrib/user_relationshipsactivity/user_relationshipsactivity.module:74;75
+msgid "Themed username of the person who received the request"
+msgstr ""
+
+#: contrib/user_relationshipsactivity/user_relationshipsactivity.module:76
+msgid "The username of the person to whom the request was issued"
+msgstr ""
+
+#: contrib/user_relationshipsactivity/user_relationshipsactivity.module:77
+msgid "The user picture of the person to whom the request was issued"
+msgstr ""
+
+#: contrib/user_relationshipsactivity/user_relationshipsactivity.module:78
+msgid "The name of the relationship"
+msgstr "Name der Beziehung"
+
+#: contrib/user_relationshipsactivity/user_relationshipsactivity.module:79
+msgid "The plural name of the relationship"
+msgstr "Plural für den Name der Beziehung"
+
+#: contrib/user_relationshipsactivity/user_relationshipsactivity.module:235
+msgid "My !relationship' activity"
+msgstr "Aktivität von !relationship"
+
+#: contrib/user_relationshipsactivity/user_relationshipsactivity.module:286
+msgid "Activity - User Relationships: show activity by current user's !type."
+msgstr ""
+
+#: contrib/user_relationshipsactivity/user_relationshipsactivity.module:340
+msgid "My !name' activity"
+msgstr "Aktivität von !name"
+
+#: contrib/user_relationshipsactivity/user_relationshipsactivity.install:12
+msgid "Activity integration with User Relationships module installed. Go to <a href=\"@settings\">User Relationships Activity settings</a> to customize "
+msgstr ""
+
+#: contrib/user_relationshipsactivity/user_relationshipsactivity.info:0
+msgid "User relationships activity"
+msgstr "User relationships activity"
+
+#: contrib/user_relationshipsactivity/user_relationshipsactivity.info:0
+msgid "Enable activity notifications for user relationships."
+msgstr ""
+
+#: contrib/useractivity/useractivity.module:12
+msgid "Register"
+msgstr "Registrieren"
+
+#: contrib/useractivity/useractivity.module:14
+msgid "Login"
+msgstr "Login"
+
+#: contrib/useractivity/useractivity.module:15
+msgid "Logout"
+msgstr "Abmelden"
+
+#: contrib/useractivity/useractivity.module:16
+msgid "View"
+msgstr "Anzeigen"
+
+#: contrib/useractivity/useractivity.module:18
+msgid "User"
+msgstr "Benutzer"
+
+#: contrib/useractivity/useractivity.module:22
+msgid "The person creating user activity."
+msgstr ""
+
+#: contrib/useractivity/useractivity.module:66
+msgid "Possessive pronoun indicating whose user profile page (\"your\" or \"their\")"
+msgstr ""
+
+#: contrib/useractivity/useractivity.module:67
+msgid "User Id of the user profile viewed if viewing a profile"
+msgstr ""
+
+#: contrib/useractivity/useractivity.module:68
+msgid "Person whose user profile was viewed"
+msgstr ""
+
+#: contrib/useractivity/useractivity.module:69
+msgid "The username of the person whose profile was viewed"
+msgstr ""
+
+#: contrib/useractivity/useractivity.install:12
+msgid "Activity integration with User module installed. Go to <a href=\"@settings\">User Activity settings</a> to customize "
+msgstr ""
+
+#: contrib/useractivity/useractivity.info:0
+msgid "User activity"
+msgstr "Benutzeraktivität"
+
+#: contrib/useractivity/useractivity.info:0
+msgid "Enable activity notifications for user actions."
+msgstr ""
+
+#: contrib/votingapiactivity/votingapiactivity.module:16
+msgid "Vote"
+msgstr "Abstimmen"
+
+#: contrib/votingapiactivity/votingapiactivity.module:21
+msgid "The person who voted"
+msgstr "Die Person, die abgestimmt hat"
+
+#: contrib/votingapiactivity/votingapiactivity.module:22
+msgid "[author] voted on the [content-type] [content-link]"
+msgstr ""
+
+#: contrib/votingapiactivity/votingapiactivity.module:27
+msgid "[author-all] voted on the [content-type] [content-link]"
+msgstr ""
+
+#: contrib/votingapiactivity/votingapiactivity.module:50
+msgid "Value of the author's vote"
+msgstr "Wert des"
+
+#: contrib/votingapiactivity/votingapiactivity.module:51
+msgid "Content type that was voted on such as \"story\" or \"image\" or \"comment\""
+msgstr ""
+
+#: contrib/votingapiactivity/votingapiactivity.module:52
+msgid "Id of the content that was voted upon (could be node Id or comment Id)"
+msgstr ""
+
+#: contrib/votingapiactivity/votingapiactivity.module:53
+msgid "Id of the node that was voted upon"
+msgstr ""
+
+#: contrib/votingapiactivity/votingapiactivity.module:54
+msgid "Id of the comment that was voted upon"
+msgstr ""
+
+#: contrib/votingapiactivity/votingapiactivity.module:55
+msgid "Title of the content that was voted upon"
+msgstr ""
+
+#: contrib/votingapiactivity/votingapiactivity.module:56
+msgid "Link to the content that was voted upon"
+msgstr ""
+
+#: contrib/votingapiactivity/votingapiactivity.module:57
+msgid "Average of all votes for this content"
+msgstr ""
+
+#: contrib/votingapiactivity/votingapiactivity.module:58
+msgid "Count of all votes for this content"
+msgstr ""
+
+#: contrib/votingapiactivity/votingapiactivity.module:77;80;123
+msgid "comment"
+msgstr "Kommentar"
+
+#: contrib/votingapiactivity/votingapiactivity.install:12
+msgid "Activity integration with Voting API module installed. Go to <a href=\"@settings\">Voting API Activity settings</a> to customize "
+msgstr ""
+
+#: contrib/votingapiactivity/votingapiactivity.info:0
+msgid "Voting activity"
+msgstr "Aktivitäten inbezug auf Abstimmungen"
+
+#: contrib/votingapiactivity/votingapiactivity.info:0
+msgid "Enable activity notifications for voting."
+msgstr ""
+

@@ -1,0 +1,92 @@
+<?php
+// $Id: activity.test,v 1.1.2.1 2009/04/20 19:06:53 sirkitree Exp $
+
+/**
+ * @file: Provide tests for Activity module.
+ */
+
+/**
+ * Class that provides assertations and helper functions for creating content
+ */
+class ActivityWebTestCase extends DrupalWebTestCase {
+
+  function getInfo() {
+    return array(
+      'name' => t('Ensure activity for a user is properly logged for creating nodes.'),
+      'description' => t('Test the basic functionality of Activity module'),
+      'group' => t('Activity'),
+    );
+  }
+
+  function setUp() {
+    parent::setUp('activity', 'token', 'trigger');
+  }
+
+  /**
+   * Test the creation of a new configurable activity action.
+   */
+  function testActivityActionCreate() {
+    $callback = 'activity_record';
+    $hash = md5($callback);
+
+    // create and login our test user
+    $test_user = $this->drupalCreateUser(array('administer actions'));
+    $this->drupalLogin($test_user);
+
+    // post data to create our configurable action
+    $edit = array();
+    $edit['action'] = $hash;
+    $this->drupalPost('admin/settings/actions', $edit, t('Create'));
+    
+    // fill out our configurable action form and post
+    $edit = array();
+    $edit['actions_description'] = t('Record a node update activity');
+    $edit['author-pattern'] = t('You updated [node-link].');
+    $edit['everyone-pattern'] = t('[user-link] updated [node-link].');
+    $this->drupalPost('admin/settings/actions/configure/'. $hash, $edit, t('Save'));
+    
+    // make sure that the action is in our list of assignable actions
+    $this->assertRaw(t('The action has been successfully saved.'), t('Make sure the new action was saved.'));
+
+    // Assign the action to a trigger
+    // Since we created our own action, we need to get the $aid for the hash
+    $aid = db_result(db_query("SELECT a.aid FROM {actions} a WHERE a.callback = '%s'", $callback));
+    $hash = md5($aid);
+    $edit = array();
+    $edit['aid'] = $hash;
+    // Since there are multiple forms on the page we need to post to, we need to
+    //  be able to target a specific form. Activities needs to record a nid which
+    //  isn't present through the 'presave' trigger, so we can't just use
+    //  $this->drupalPost('admin/build/trigger/node', $edit, t('Assign'));
+    //  in order to assign the action or it will go into the 'presave' trigger
+    //  since that is the first 'Assign' button on the page.
+    // drupal_execute() doesn't seem to work either.
+    //  $form_id = 'trigger_assign_form';
+    //  $form_state['values'] = $edit;
+    //  drupal_execute($form_id, $form_state, 'nodeapi', 'insert', 'inserts a node');
+    // So we have to do a direct INSERT.
+    db_query("INSERT INTO {trigger_assignments} VALUES ('%s', '%s', '%s', %d)", 'nodeapi', 'insert', $aid, 1);
+
+    // Create a node to see if our action is triggered
+    $web_user = $this->drupalCreateUser(array('create page content', 'access content', 'administer nodes'));
+    $this->drupalLogin($web_user);
+    $edit = array();
+    $edit['title']  = '!SimpleTest test node! '. $this->randomName(10);
+    $edit['body']   = '!SimpleTest test body! '. $this->randomName(32) .' '. $this->randomName(32);
+    $this->drupalPost('node/add/page', $edit, t('Save'));
+    
+    // Make sure the text we want appears.
+    $this->assertRaw(t('!post %title has been created.', array ('!post' => 'Page', '%title' => $edit['title'])), t('Make sure the page has actually been created'));
+
+    // check to make sure that there is an activity recorded for this node
+    $loaded_node = $this->drupalGetNodeByTitle($edit['title']);
+    $query = db_query("SELECT * FROM {activity_messages}");
+    $activity = db_fetch_object($query);
+    $this->assertTrue(!empty($activity), t('Make sure that an activity was recorded.'));
+  }
+
+  function tearDown() {
+    parent::tearDown();
+  }
+}
+

@@ -1,0 +1,103 @@
+<?php
+// $Id: formblock.module,v 1.4.2.2 2008/12/10 02:42:39 mikeyp Exp $
+
+/**
+ * Implementation of hook_form_alter().
+ */
+function formblock_form_alter(&$form, $form_state, $form_id) {
+  if ($form_id == 'node_type_form' && isset($form['identity']['type'])) {
+    $options = array(t('Disabled'), t('Enabled'));
+    $form['formblock'] = array(
+      '#type' => 'fieldset',
+      '#title' => t('Form block'),
+      '#weight' => 0,
+    );
+    $form['formblock']['formblock_expose'] = array(
+      '#type' => 'radios',
+      '#title' => t('Enable data entry from a block'),
+      '#default_value' => variable_get('formblock_expose_'. $form['#node_type']->type, 0),
+      '#options' => $options,
+      '#description' => t('Enable this option to make the entry form for this content type available as a block.'),
+    );
+  }
+}
+
+/**
+ * Implementation of hook_block().
+ */
+function formblock_block($op = 'list', $delta = 0, $edit = array()) {
+  switch ($op) {
+    case 'list':
+      $blocks = array();
+      foreach (node_get_types('names') as $type => $name) {
+        if (variable_get('formblock_expose_'. $type, 0)) {
+          $blocks[$type] = array(
+            'info' => t('@name form block', array('@name' => $name)),
+          );
+        }
+      }
+      $blocks['user_register'] = array(
+        'info' => t('User registration form'));
+      if (module_exists('contact')) {
+        $blocks['contact_site'] = array(
+          'info' => t('Site-wide contact form'));
+      }
+      return $blocks;
+
+    case 'view':
+      switch ($delta) {
+        case 'user_register':
+          global $user;
+          // Don't display the form to logged in users or if registration is disabled
+          if (!$user->uid && variable_get('user_register', 1)) {
+            drupal_add_css(drupal_get_path('module', 'formblock'). '/formblock.css', 'module', 'all');
+            return array(
+              'subject' => t('Create new account'),
+              'content' => drupal_get_form('user_register')
+            );
+          }
+          break;
+
+        case 'contact_site':
+          if (user_access('access site-wide contact form') && module_exists('contact')) {
+            if (!flood_is_allowed('contact', variable_get('contact_hourly_threshold', 3))) {
+              $content = t("You cannot send more than %number messages per hour. Please try again later.", array('%number' => variable_get('contact_hourly_threshold', 3)));
+            }
+            else {
+              drupal_add_css(drupal_get_path('module', 'formblock'). '/formblock.css', 'module', 'all');
+              module_load_include('inc', 'contact', 'contact.pages');
+              $content = drupal_get_form('contact_mail_page');
+            }
+            return array(
+              'subject' => t('Contact'),
+              'content' => $content,
+            );
+          }
+          break;
+
+        default:
+          return formblock_get_block($delta);
+
+    }
+  }
+}
+
+/**
+ * Generate a block containing a node entry form.
+ */
+function formblock_get_block($type) {
+  if (node_access('create', $type)) {
+    // Include page handler for node_add()
+    module_load_include('inc', 'node', 'node.pages');
+    // Note title before rendering of form.
+    $title = drupal_get_title();
+    $form = node_add($type);
+    $types = node_get_types('names');
+    // Restore title, which will have been overridden.
+    drupal_set_title($title);
+    return array(
+      'subject' => t('@type form', array('@type' => $types[$type])),
+      'content' => $form,
+    );
+  }
+}

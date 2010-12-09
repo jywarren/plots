@@ -1,0 +1,22 @@
+<?php
+// $Id: viewsphpfilter.module,v 1.3 2009/05/27 17:53:23 gnassar Exp $
+
+/**
+ * Implementation of hook_help().
+ */
+function viewsphpfilter_help($path, $arg) {
+  $output = '';
+  switch ($path) {
+    case "admin/help#viewsphpfilter":
+      $output = '<p>'.  t("A filter for the Views module."). '</p>';
+      $output = '<p>'.  t("This filter will appear in the Views Filter dialog as a \"Node: Node ID\".  This filter takes PHP code as its value (with no open/close brackets), which should return an array of integers representing Node IDs to include or exclude.  The filter will evaluate the PHP and filter on the resulting array.  It can also (experimental) take a list of node IDs, separated by commas."). '</p>';
+      break;
+  }
+  return $output;
+}
+
+function viewsphpfilter_views_api() {
+  return ( array(
+    'api' => '2.0',
+  ));
+}

@@ -1,0 +1,14 @@
+; $Id: calendarsignup.info,v 1.1 2008/11/09 01:36:11 killes Exp $
+name = Calendar Signup
+description = Add signup forms in an event.module calendar
+package = Event
+dependencies[]  = event
+dependencies[]  = signup
+core = 6.x
+
+; Information added by drupal.org packaging script on 2010-07-11
+version = "6.x-2.x-dev"
+core = "6.x"
+project = "event"
+datestamp = "1278834158"
+

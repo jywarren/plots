@@ -1,0 +1,228 @@
+<?php
+// $Id: simpleviews.module,v 1.3.2.3 2008/10/18 15:03:17 eaton Exp $
+
+/**
+ * @file
+ * SimpleViews administration module.
+ *
+ * SimpleViews provides a lightweight API and streamlined UI for building views
+ * of node content. Rather than exposing the full power of Views, it lets admins
+ * make a small number of choices that cover the commonly-used 80% of Views'
+ * functionality.
+ *
+ * All views created with SimpleViews can be re-editing using the full Views UI
+ * module, making it an excellent starting point for those just learning Views.
+ */
+
+function simpleviews_menu() {
+  $items = array();
+
+  $items['admin/build/simpleviews'] = array(
+    'title' => 'Simple views',
+    'description' => 'Manage views.',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('simpleviews_overview_form'),
+    'access arguments' => array('administer simpleviews'),
+    'file' => 'simpleviews.pages.inc',
+  );
+
+  $items['admin/build/simpleviews/list'] = array(
+    'title' => 'List',
+    'type' => MENU_DEFAULT_LOCAL_TASK,
+    'weight' => -10,
+  );
+
+  $items['admin/build/simpleviews/add'] = array(
+    'title' => 'Add view',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('simpleviews_form'),
+    'access arguments' => array('administer simpleviews'),
+    'type' => MENU_LOCAL_TASK,
+    'file' => 'simpleviews.pages.inc',
+  );
+
+  $items['admin/build/simpleviews/%simpleviews_item/edit'] = array(
+    'title' => 'Edit view',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('simpleviews_form', 3),
+    'access arguments' => array('administer simpleviews'),
+    'type' => MENU_CALLBACK,
+    'file' => 'simpleviews.pages.inc',
+  );
+
+  $items['admin/build/simpleviews/%simpleviews_item/delete'] = array(
+    'title' => 'Delete view',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('simpleviews_delete_confirm', 3),
+    'access arguments' => array('administer simpleviews'),
+    'type' => MENU_CALLBACK,
+    'file' => 'simpleviews.pages.inc',
+  );
+
+  return $items;
+}
+
+/**
+ * Implementation of hook_perm().
+ *
+ * Defines access permissions that may be assigned to roles and used to restrict
+ * access.
+ */
+function simpleviews_perm() {
+  return array('administer simpleviews');
+}
+
+
+/**
+ * Implementation of hook_theme().
+ *
+ * Returns information about every themable function defined by the module.
+ */
+function simpleviews_theme() {
+  $items = array();
+
+  $items['simpleviews_overview_form'] = array(
+    'arguments' => array('form' => array()),
+    'file' => 'simpleviews.pages.inc',
+  );
+  $items['simpleviews_edit_form'] = array(
+    'arguments' => array('form' => array()),
+    'file' => 'simpleviews.pages.inc',
+  );
+
+  return $items;
+}
+
+/**
+ * Implementation of hook_form_alter().
+ *
+ * Adds the 'make a listing page' checkbox on each content type's settings form.
+ */
+function simpleviews_form_node_type_form_alter(&$form, &$form_state) {
+  $form['identity']['simpleviews_type'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Make a listing page for this content type'),
+    '#default_value' => variable_get('simpleviews_type_'. $form['#node_type']->type, FALSE),
+  );
+  $form['identity']['simpleviews_type_previous'] = array(
+    '#type' => 'value',
+    '#value' => variable_get('simpleviews_type_'. $form['#node_type']->type, FALSE),
+  );
+  $form['#identity'][] = 'simpleviews_content_type_submit';
+}
+
+/**
+ * Submit handler for the content type settings form.
+ *
+ * Resets the views cache to keep things up-to-date.
+ */
+function simpleviews_content_type_submit($form, $form_state) {
+  $type = $form['#node_type']->type;
+  $values = $form_state['values'];
+  if ($values["simpleviews_type_previous_$type"] != $values["simpleviews_type_$type"]) {
+    variable_set('menu_needs_rebuild', TRUE);
+    views_invalidate_cache();
+  }
+}
+
+
+/**
+ * Loader function for individual records.
+ *
+ * Because we use '%simpleviews_item' as a wildcard in our hook_menu()
+ * handler, this function will also be called automatically when we go to edit
+ * or delete a record. Thanks, Menu API!.
+ *
+ * @param $svid
+ *   An int containing the ID of an item.
+ * @return
+ *   A single record in array format, or FALSE if none matched the incoming ID.
+ */
+function simpleviews_item_load($svid) {
+  $sql = "SELECT * FROM {simpleviews} WHERE svid = %d";
+  $result = db_query($sql, $svid);
+  if ($record = db_fetch_array($result)) {
+    return $record;
+  }
+  else {
+    return FALSE;
+  }
+}
+
+/**
+ * Inserts a new item, or updates an existing one.
+ *
+ * Automatically inserts or updates, based on whether the item's unique ID has
+ * been set yet. Because drupal_write_record() updates the item itself (adding
+ * the unique ID after the database has been updated), we return the item
+ * after saving it.
+ *
+ * This allows any calling function to check the id of the returned item and
+ * act on the ID as needed (redirecting to a 'view' page after inserting, etc).
+ *
+ * @param $item
+ *   A item to be saved. If $item['svid'] is set, the item will be updated.
+ *   Otherwise, a new item will be inserted into the database.
+ * @return
+ *   The saved item, with its ID set.
+ */
+function simpleviews_item_save($item) {
+  if (isset($item['svid'])) {
+    drupal_write_record('simpleviews', $item, 'svid');
+  }
+  else {
+    drupal_write_record('simpleviews', $item);
+  }
+
+  views_invalidate_cache();
+  menu_rebuild();
+  return $item;
+}
+
+/**
+ * Deletes an item, given its unique ID.
+ *
+ * @param $svid
+ *   An int containing the ID of an item.
+ */
+function simpleviews_item_delete($svid) {
+  $sql = 'DELETE FROM {simpleviews} WHERE svid = %d';
+  db_query($sql, $svid);
+  
+  variable_set('menu_needs_rebuild', TRUE);
+  views_invalidate_cache();
+}
+
+/**
+ * Implementation of hook_views_api.
+ */
+function simpleviews_views_api() {
+  return array(
+    'api' => 2,
+  );
+}
+
+function simpleviews_build_view($simpleview = array()) {
+  module_load_include('inc', 'simpleviews');
+  return _simpleviews_build_view($simpleview);
+}
+
+function simpleviews_get_edit_form($simpleview = array()) {
+  module_load_include('inc', 'simpleviews', 'simpleviews.pages');
+  return _simpleviews_form($simpleview);
+}
+
+function simpleviews_default_data() {
+  return array(
+    'module' => 'simpleviews',
+    'path' => '',
+    'title' => '',
+    'header' => '',
+    'filter' => 'all nodes',
+    'style' => 'teasers',
+    'sort' => 'newest',
+    'argument' => '',
+    'rss' => TRUE,
+    'block' => TRUE,
+  );
+}

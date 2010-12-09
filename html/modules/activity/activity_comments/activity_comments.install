@@ -1,0 +1,90 @@
+<?php
+/**
+ * Implementation of hook_schema().
+ */
+function activity_comments_schema() {
+  $schema['activity_comments'] = array(
+    'description' => 'The base table for activity comments.',
+    'fields' => array(
+      'cid' => array(
+        'description' => 'The primary identifier for a activity comment.',
+        'type' => 'serial',
+        'unsigned' => TRUE,
+        'not null' => TRUE
+      ),
+      'aid' => array(
+        'description' => 'The current activity identifier.',
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'default' => 0
+      ),
+      'uid' => array(
+        'description' => 'The authors identifier.',
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'default' => 0
+      ),
+      'comment' => array(
+        'description' => 'The comment message',
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+        'default' => ''
+      ),
+      'timestamp' => array(
+        'type' => 'int',
+        'not null' => TRUE,
+        'default' => 0,
+        'description' => 'The time that the comment was created as a Unix timestamp.'
+      ),
+    ),
+    'indexes' => array(
+      'timestamp' => array('timestamp'),
+    ),
+    'primary key' => array('cid'),
+  );
+  $schema['activity_comments_stats'] = array(
+    'description' => 'Stats about the activities for activity comments',
+    'fields' => array(
+      'aid' => array(
+        'description' => 'The current activity identifier.',
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'default' => 0),
+      'changed' => array(
+        'type' => 'int',
+        'not null' => TRUE,
+        'default' => 0,
+        'description' => 'The time that the comment was created as a Unix timestamp.'
+      ),
+      'comment_count' => array(
+        'type' => 'int',
+        'not null' => TRUE,
+        'default' => 0,
+        'description' => 'The time that the comment was created as a Unix timestamp.'
+      ),
+    ),
+    'indexes' => array(
+      'changed' => array('changed'),
+    ),
+    'primary key' => array('aid'),
+  );
+  return $schema;
+}
+
+/**
+ * Implementation of hook_install().
+ */ 
+function activity_comments_install() {
+  drupal_install_schema('activity_comments');
+}
+
+/**
+ * Implementation of hook_uninstall().
+ */
+function activity_comments_uninstall() {
+  drupal_uninstall_schema('activity_comments');
+}

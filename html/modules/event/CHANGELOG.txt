@@ -1,0 +1,169 @@
+17. December 2006
+-----------------
+Update for Drupal 5
+
+
+25. May 2005
+-----------------
+[Aaron Welch]
+- add ical export support, ical.inc is now in the event directory. thanks to rorris
+- cleanup rss and ical feed routines
+- add filter functions for individual and groups of nodes
+
+23. May 2005
+-----------------
+[Aaron Welch]
+- daylight savings time support added
+- database change, please run update-event.php
+- db field name changes
+- display using event timezone, user timezone, or site timezone
+- node access sql fix by thehunmonkgroup
+- empty upcoming event block patch by Cvbge
+- add setting for upcoming event block limit
+- event_type url construction bug fix by luksedj
+- add event/dst to view daylight savings time region status
+
+15. April 2005
+-----------------
+[Aaron Welch]
+- Update for drupal 4.6
+- Removed event node type and replace with nodeapi model
+- Add month, week, day and table views
+- Rework timezone handling
+- Support for start and end dates
+- Moved all output rendering to event.theme file
+- Add filtering of event views by content type and taxonomy
+- Update event.css file for new views
+- General navigation and calendar block updates
+- Update settings for default event page view type and timezone handling
+
+09. November 2003
+-----------------
+[Kjartan Mannes]
+- Fixed bugs due to Drupal menu callback changes.
+- Fixed default event page to show future events instead of calendar.
+- Added advanced event search form. Only extra fields in their own database
+  field are searchable.
+
+27. October 2003
+----------------
+[Kjartan Mannes]
+- Fixed events on the last day of the month not showing in the calendar.
+- Fixed event start date to compensate for bug in format_date().
+
+26. October 2003
+----------------
+[Gerhard Killesreiter]
+- re-added search function, extrafields with extra db fields will by searched
+- moved extra fields to fields.inc
+
+26. October 2003
+----------------
+[Kjartan Mannes]
+- Fixed week day names not being translated.
+- Changed #calendar to .event-calendar.
+- Changed to form_allowed_tags_text() instead of replicating code.
+- Added support for modules/event/fields.inc for extra fields.
+- Changed calendar breadcrumbs to use month name instead of number.
+- Fixed wrong number of parameters passed to event_calendar in block.
+
+26. October 2003
+----------------
+[Kjartan Mannes]
+- Refactored the extra fields to not require an extra database field by
+  storing extra fields in a data field (requires MySQL update).
+- Improved timezone handling.
+- Improved calendar.
+- Removed "date picker".
+- Renamed posting permission to 'maintain events' to be more consistent
+  with other modules.
+- Removed 'access events' and 'administer events' permissions.
+- Added support for user updating of events.
+- Removed dead code, cleaned up other code, no stone left unturned.
+- Added event.css to style calendar and other output.
+- Updated INSTALL and TODO.
+
+18. October 2003
+----------------
+event.module [Moshe Weitzman]
+- updated for new help and menu and content hooks
+- able to add custom fields by editing top of source file
+- refactored event_page() enabling easier code re-use
+- removed some cruft from event_access()
+- no error when taxonomy is disabled
+- refactored 'view' to use simple list of fields.
+
+12. October 2003
+----------------
+event.module [Moshe Weitzman]
+- now showing current month's nodes on main page when no other date
+  was specified.
+- added paging to this display.
+- refactored event_page() enabling easier code re-use
+
+13. June 2003
+-------------
+Major overhaul by Craig Courtney
+
+WARNING: This breaks compatibility with all prior versions of
+         event.module!
+
+- removed image stuff
+- removed parent stuff
+- made more css and theme friendly
+- ...
+
+23. September 2002
+------------------
+event.module [Gerhard Killesreiter]
+- changed "post content" to "post events"
+- changed "access content" to "access events"
+
+6. September 2002
+-----------------
+event.module [Gerhard Killesreiter]
+- applied patch by Robin Elfrink <robin@a1.nl>
+
+01. June 2002
+-------------
+event.module [Kjartan Mannes]
+- updated module to 4.0.0.
+
+08. Feburary 2002
+-----------------
+event.module [Kjartan Mannes]
+- fixed parent nodes showing up as sub events on node preview.
+
+30. October 2001
+----------------
+event.module [Gerhard Killesreiter]
+- fixed the time selector
+- fixed SQL-query
+
+29. October 2001
+----------------
+event.module [Gerhard Killesreiter]
+- added search
+- made block-calendar more configurable
+  - choose first dayof week to be monday or sunday
+  - display days with events with configurable colour
+  - display today's date with another configurable colour
+- small changes
+
+24. October 2001
+----------------
+event.module [Gerhard Killesreiter]
+- added missing user_access() check.
+- fixed calender.
+
+22. October 2001
+----------------
+event.module [Kjartan Mannes]
+- fixed a problem with meta collections when editing a node.
+
+event.mysql [Kjartan Mannes]
+- fixed a problem with the SQL definitions reported by Alexander.
+
+19. October 2001
+----------------
+- initial release.

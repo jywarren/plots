@@ -1,0 +1,9 @@
+<?php
+// $Id: viewsphpfilter.install,v 1.3 2009/05/27 17:53:23 gnassar Exp $
+
+/**
+ * Implementation of hook_enable().
+ */
+function viewsphpfilter_enable() {
+  cache_clear_all('views_tables','cache_views',TRUE);
+}

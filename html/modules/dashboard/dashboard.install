@@ -1,0 +1,158 @@
+<?php
+// $Id: dashboard.install,v 1.9 2010/05/22 15:02:20 techsoldaten Exp $
+
+/**
+ * @file
+ * Dashboard module install file.
+ */
+
+function dashboard_install() {
+  drupal_install_schema('dashboard');
+
+  //add default widget
+
+  update_sql("INSERT INTO {dashboard_default} (id, title,description,thumbnail,tags,default_enabled,widget_type,subtype) VALUES ('1','Recent Comments Block', 'Recent Comments.', '0','comments','1','block','comment-0')");
+}
+
+function dashboard_uninstall() {
+  drupal_uninstall_schema('dashboard');
+}
+
+function dashboard_schema() {
+  return array(
+    'dashboard_page' => array(
+      'fields' => array(
+        'page_id' => array(
+          'type' => 'serial',
+          'unsigned' => TRUE,
+          'not null' => TRUE,
+        ),
+        'uid' => array(
+          'type' => 'int',
+          'unsigned' => TRUE,
+          'not null' => TRUE,
+        ),
+        'path' => array(
+          'type' => 'varchar',
+          'length' => 22,
+          'not null' => TRUE,
+        ),
+        'weight' => array(
+          'type' => 'int',
+          'size' => 'tiny',
+          'unsigned' => TRUE,
+          'not null' => TRUE,
+        ),
+        'title' => array(
+          'type' => 'varchar',
+          'length' => 20,
+          'not null' => TRUE,
+        ),
+      ),
+      'primary key' => array('page_id'),
+      'unique keys' => array(
+        'uid_path' => array('uid', 'path'),
+      ),
+      'indexes' => array(
+        'uid_weight' => array('uid', 'weight'),
+      ),
+    ),
+    'dashboard_widget' => array(
+      'fields' => array(
+        'widget_id' => array(
+          //'type' => 'serial',
+          'type' => 'int',
+          'unsigned' => TRUE,
+          'not null' => TRUE,
+        ),
+        'page_id' => array(
+          'type' => 'int',
+          'unsigned' => TRUE,
+          'not null' => TRUE,
+        ),
+        'type' => array(
+          'type' => 'varchar',
+          'length' => '32',
+          'default' => '',
+        ),
+        'subtype' => array(
+          'type' => 'varchar',
+          'length' => '64',
+          'default' => '',
+        ),
+        'conf' => array(
+          'type' => 'blob',
+          'notnull' => FALSE,
+          'size' => 'big',
+        ),
+        'col' => array(
+          'type' => 'int',
+          'size' => 'tiny',
+          'unsigned' => TRUE,
+          'not null' => TRUE,
+        ),
+        'weight' => array(
+          'type' => 'int',
+          'size' => 'tiny',
+          'unsigned' => TRUE,
+          'not null' => TRUE,
+        ),
+      ),
+      //'unique keys' => array(
+      //  'widget_id' => array('widget_id', 'page_id'),
+      //),
+      'indexes' => array(
+        'page_id_weight' => array('page_id', 'weight'),
+      ),
+    ),
+    'dashboard_default' => array(
+      'fields' => array(
+        'id' => array(
+          'type' => 'serial',
+          'size' => 'small',
+          'not null' => TRUE,
+        ),
+        'title' => array(
+          'type' => 'varchar',
+          'length' => '255',
+          'not null' => TRUE,
+        ),
+        'description' => array(
+          'type' => 'varchar',
+          'length' => '255',
+          'not null' => TRUE,
+        ),
+        'thumbnail' => array(
+          'type' => 'int',
+          'not null' => FALSE,
+        ),
+        'tags' => array(
+          'type' => 'varchar',
+          'length' => '255',
+          'not null' => TRUE,
+        ),
+        'default_enabled' => array(
+          'type' => 'int',
+          'size' => 'tiny',
+          'not null' => TRUE,
+        ),
+        'widget_type' => array(
+          'type' => 'varchar',
+          'length' => '32',
+          'not null' => TRUE,
+        ),
+        'subtype' => array(
+          'type' => 'varchar',
+          'length' => '64',
+          'not null' => TRUE,
+        ),
+        'conf' => array(
+          'type' => 'blob',
+          'size' => 'big',
+          'not null' => TRUE,
+        ),
+      ),
+      'primary key' => array('id'),
+    ),
+  );
+}

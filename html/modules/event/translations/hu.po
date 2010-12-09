@@ -1,0 +1,921 @@
+# translation of event-module.po to Hungarian
+# Generated from file: profile.module,v 1.114
+#
+# FEHÉR János <feher.janos _at- mindworks.hu>, 2007.
+# Sponsored by http://fincsi.tv
+msgid ""
+msgstr ""
+"Project-Id-Version: event-module\n"
+"POT-Creation-Date: 2008-09-19 21:25+0200\n"
+"PO-Revision-Date: 2008-09-19 22:37+0100\n"
+"Last-Translator: FEHÉR János <feher.janos _at- mindworks.hu>\n"
+"Language-Team: Drupal.hu Fordítói Csapat <forditas [at] drupal.hu>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+
+#: event-node-day.tpl.php:32 event-node-month.tpl.php:34
+#: event-node-table.tpl.php:34 event-node-week.tpl.php:34 event.theme:222;284
+msgid "limit view to events of this type"
+msgstr "nézet szűkítése a tartalomtípus eseményeire"
+
+#: event-node-day.tpl.php:34 event-node-month.tpl.php:36
+#: event-node-table.tpl.php:36 event-node-week.tpl.php:36 event.theme:225;287
+msgid "view this event"
+msgstr "esemény megtekintése"
+
+#: event-node-day.tpl.php:36 event-node-month.tpl.php:38
+#: event-node-table.tpl.php:39 event-node-week.tpl.php:39
+#: event.theme:229;235;248;291;297;310;384
+msgid "Start: "
+msgstr "Kezdés: "
+
+#: event-node-day.tpl.php:39 event-node-month.tpl.php:41
+#: event-node-table.tpl.php:42 event-node-week.tpl.php:42
+#: event.theme:231;238;250;293;300;312;387
+msgid "End: "
+msgstr "Vége: "
+
+#: event-node-month.tpl.php:44 event-node-table.tpl.php:45
+#: event-node-week.tpl.php:45 event.theme:242;304
+msgid "all day"
+msgstr "egész nap"
+
+#: ical.inc:308
+msgid "iCalendar API for Events Modules"
+msgstr "iCalendar API támogatás az Esemény kiegészítő modulokhoz"
+
+#: event.module:106;109
+msgid "Calendar"
+msgstr "Naptár"
+
+#: event.module:119;350
+msgid "Month"
+msgstr "Hónap"
+
+#: event.module:121
+msgid "Month view"
+msgstr "Havi nézet"
+
+#: event.module:122;350
+msgid "Week"
+msgstr "Hét"
+
+#: event.module:124
+msgid "Week view"
+msgstr "Heti nézet"
+
+#: event.module:125;350
+msgid "Day"
+msgstr "Nap"
+
+#: event.module:127
+msgid "Day view"
+msgstr "Napi nézet"
+
+#: event.module:128;350
+msgid "Table"
+msgstr "Tábla"
+
+#: event.module:130
+msgid "Table view"
+msgstr "Tábla nézet"
+
+#: event.module:131;350
+msgid "List"
+msgstr "Lista"
+
+#: event.module:133
+msgid "List view"
+msgstr "Lista nézet"
+
+#: event.module:283;305
+msgid "Event time zone input"
+msgstr "Az esemény időzónájának bevitele"
+
+#: event.module:285;293;307;315
+msgid "Use the sitewide time zone"
+msgstr "A webhely időzónáját használja"
+
+#: event.module:285;307
+msgid "Use the time zone of the user editing or creating the event"
+msgstr ""
+"Az esemény létrehozásakor vagy szerkesztésekor a felhasználó időzóna legyen "
+"használva"
+
+#: event.module:285;307
+msgid "Allow users to set event time zones"
+msgstr "A felhasználók beállíthatják az esemény időzónáját"
+
+#: event.module:286
+msgid ""
+"Events are saved with a time zone value. This setting allows you to "
+"determine how the time zone is determined when creating or editing an event."
+msgstr ""
+"Az események az időzónával együtt vannak elmentve. Ezzel a beállítással "
+"megadható, hogy az események létrehozásakor vagy szerkesztésekor mi legyen "
+"az alapértelmezett időzóna."
+
+#: event.module:291;313
+msgid "Event time zone display"
+msgstr "Esemény időzónájának megjelenítése"
+
+#: event.module:293;315
+msgid "Use the event's time zone"
+msgstr "Az esemény időzónáját használja"
+
+#: event.module:293
+msgid "Use the user's time zone"
+msgstr "A felhasználó időzónáját használja"
+
+#: event.module:294
+msgid ""
+"Events are saved with a time zone value. This setting allows you to "
+"determine if the event's time zone, the sitewide time zone, or the user's "
+"personal time zone setting is used to display the time for an event."
+msgstr ""
+"Az események az időzónával együtt vannak elmentve. Ezzel a beállítással "
+"megadható, hogy az események létrehozásakor vagy szerkesztésekor az esemény, "
+"a webhely vagy a felhasználó személyes időzónája legyen az alapértelmezett."
+
+#: event.module:308
+msgid ""
+"Events are saved with a time zone value. This setting allows you to "
+"determine how the time zone is determined when creating or editing an event. "
+"You must have 'Configurable time zones' enabled in the !url before you can "
+"enable user's time zones for this feature."
+msgstr ""
+"Az események az időzónával együtt vannak elmentve. Ezzel a beállítással "
+"megadható, hogy az események létrehozásakor vagy szerkesztésekor mi legyen "
+"az alapértelmezett időzóna. A „Beállítható időzánákat” előbb engedélyezni "
+"kell a !url címen ahhoz, hogy a felhasználók időzónáját is alapul lehessen "
+"venni."
+
+#: event.module:308;316
+msgid "date/time settings"
+msgstr "dátum/idő beállítások"
+
+#: event.module:316
+msgid ""
+"Events are saved with a time zone value. This setting allows you to "
+"determine if the event's time zone, the sitewide time zone, or the user's "
+"personal time zone setting is used to display the time for an event. You "
+"must have 'Configurable time zones' enabled in the !url before you can "
+"enable user's time zones for this feature."
+msgstr ""
+
+#: event.module:321
+msgid "Time notation preference"
+msgstr "Időpontjelölési mód"
+
+#: event.module:323
+msgid "24h"
+msgstr "24h"
+
+#: event.module:323
+msgid "12h"
+msgstr "12h"
+
+#: event.module:324
+msgid "The time notation system used for entering event times."
+msgstr "Az események megadásakor használt jelölésrendszer."
+
+#: event.module:340
+msgid "Upcoming event block limit"
+msgstr "Közelgő események blokk korlátja"
+
+#: event.module:344
+msgid ""
+"Limit the amount of events displayed in the upcoming events block by this "
+"amount."
+msgstr ""
+"A Közelgő események blokkban megjelenő események számát lehet korlátozni az "
+"itt megadott értékre."
+
+#: event.module:348
+msgid "Default overview"
+msgstr "Alapértelmezett áttekintés"
+
+#: event.module:351
+msgid ""
+"The default event view to display when no format is specifically requested. "
+"This is also the view that will be displayed from the block calendar links."
+msgstr ""
+
+#: event.module:354
+msgid "Table view default period"
+msgstr "Tábla nézet alapértelmezett időtartama"
+
+#: event.module:358
+msgid ""
+"The default number of days to display in the table view. You can specify a "
+"different number of days in the url. More info on the event url format !link"
+msgstr ""
+
+#: event.module:358
+msgid "here"
+msgstr "itt"
+
+#: event.module:363
+msgid "Taxonomy filter controls"
+msgstr "Taxonómia szűrők"
+
+#: event.module:365
+msgid "Show taxonomy filter control on calendar views"
+msgstr ""
+
+#: event.module:365
+msgid ""
+"Only show taxonomy filter control when taxonomy filter view is requested"
+msgstr ""
+
+#: event.module:365
+msgid "Never show taxonomy filter control"
+msgstr ""
+
+#: event.module:369
+msgid "Content type filter controls"
+msgstr "Tartalomtípus szűrők"
+
+#: event.module:371
+msgid "Show content type filter control on calendar views"
+msgstr ""
+
+#: event.module:371
+msgid ""
+"Only show content type filter control when content type filter view is "
+"requested"
+msgstr ""
+
+#: event.module:371
+msgid "Never show content type filter control"
+msgstr "Ne mutassa a tartalomtípus-szűrőt"
+
+#: event.module:412
+msgid "Home"
+msgstr "Címlap"
+
+#: event.module:413;571;1952;168;212
+msgid "Events"
+msgstr "Események"
+
+#: event.module:429;441
+msgid "View all"
+msgstr "Összes megtekintése"
+
+#: event.module:430
+msgid "Filter"
+msgstr "Szűrő"
+
+#: event.module:465 event.theme:341
+msgid "l F d, Y"
+msgstr "Y.m.d."
+
+#: event.module:477
+msgid "Week of !month !day, !year"
+msgstr "!year. !month !day. hete"
+
+#: event.module:488;645
+msgid "F Y"
+msgstr "Y.m."
+
+#: event.module:504;504;518;518;846;846;906;906
+msgid "F d Y"
+msgstr "Y.m.d."
+
+#: event.module:569
+msgid "Events at %site"
+msgstr "%site eseményei"
+
+#: event.module:617
+msgid "iCal support not enabled"
+msgstr "Az iCal támgoatás nincs bekapcsolva"
+
+#: event.module:861
+msgid "Start"
+msgstr "Kezdés"
+
+#: event.module:862
+msgid "End"
+msgstr "Vége"
+
+#: event.module:880
+msgid " - Events Feed"
+msgstr "Események RSS-csatornája"
+
+#: event.module:1493;1496
+msgid "Mon"
+msgstr "Hét"
+
+#: event.module:1493;1496
+msgid "Tue"
+msgstr "Ked"
+
+#: event.module:1493;1496
+msgid "Wed"
+msgstr "Sze"
+
+#: event.module:1493;1496
+msgid "Thu"
+msgstr "Csü"
+
+#: event.module:1493;1496
+msgid "Fri"
+msgstr "Pén"
+
+#: event.module:1493;1496
+msgid "Sat"
+msgstr "Szo"
+
+#: event.module:1493;1496
+msgid "Sun"
+msgstr "Vas"
+
+#: event.module:1658
+msgid "am"
+msgstr "de"
+
+#: event.module:1658
+msgid "pm"
+msgstr "du"
+
+#: event.module:1712
+msgid "The specified date is invalid."
+msgstr "A megadott dátum érvénytelen."
+
+#: event.module:1716
+msgid "Only years from 1000 to 9999 are supported."
+msgstr "Csak 1000 és 9999 közötti évszámokat lehet megadni."
+
+#: event.module:1720
+msgid "There are only 12 hours in the day for the am/pm time format."
+msgstr "Legfeljebb 12 óra lehet megadva délelőtti/délutáni formátumnál."
+
+#: event.module:1725
+msgid "There are only 24 hours in the day."
+msgstr "Csak 24 óra van egy napban."
+
+#: event.module:1729
+msgid "There are only 60 minutes in an hour."
+msgstr "Csak 60 perc van egy órában."
+
+#: event.module:1840;1888
+msgid "(all)"
+msgstr "(összes)"
+
+#: event.module:1852
+msgid "Select event terms to filter by"
+msgstr "Szűrés esemény kategóriák szerint"
+
+#: event.module:1899
+msgid "Select event type to filter by"
+msgstr "Szűrés eseménytípus szerint"
+
+#: event.module:1926
+msgid "Calendar to browse events."
+msgstr "Naptár az események böngészéséhez."
+
+#: event.module:1927
+msgid "List of upcoming events."
+msgstr "Közelgő események listája"
+
+#: event.module:1930
+msgid "List of upcoming events for node type @name."
+msgstr "@name tartalomtípus közelgő eseményeinek listája"
+
+#: event.module:1956
+msgid "Upcoming events"
+msgstr "Közelgő események"
+
+#: event.module:1990
+msgid "No upcoming events available"
+msgstr "Nincs közelgő esemény"
+
+#: event.module:2051
+msgid "Now"
+msgstr "Most"
+
+#: event.module:2080
+msgid "Event calendar"
+msgstr "Eseménynaptár"
+
+#: event.module:2086
+msgid "Show in event calendar"
+msgstr "Programok megjelenítése"
+
+#: event.module:2088
+msgid "All views"
+msgstr "Összes nézet"
+
+#: event.module:2088
+msgid "Only in views for this type"
+msgstr "Csak a tartalomtípusnak a nézeteiben"
+
+#: event.module:2088
+msgid "Never"
+msgstr "Soha"
+
+#: event.module:2089
+msgid ""
+"All views: This content type will be available for display on all calendar "
+"views, including with other events.<br />Only in views for this type: This "
+"content type will only appear in calendar views specific to this type and "
+"never with other events.<br />Never: This content type will not be "
+"associated with the events calendar."
+msgstr ""
+
+#: event.module:2101
+msgid "Event has time"
+msgstr "Eseményhez rendelhető időpont"
+
+#: event.module:2104
+msgid "Is time important for this event? Uncheck if event takes all day."
+msgstr ""
+
+#: event.module:2109
+msgid "Event has end date"
+msgstr "Az esemény végének van dátuma"
+
+#: event.module:2112
+msgid ""
+"Check if you want to specify an end date for this event, then choose end "
+"date below."
+msgstr ""
+
+#: event.module:2117
+msgid ""
+"Please <a href=\"!url\">select the default timezone</a> for your website "
+"before creating events."
+msgstr ""
+
+#: event.module:2121
+msgid "Start date"
+msgstr "Kezdő dátum"
+
+#: event.module:2128
+msgid "End date"
+msgstr "Befejezés dátuma"
+
+#: event.module:2136;2176
+msgid "Time zone"
+msgstr "Időzóna"
+
+#: event.module:2139
+msgid "Select the time zone this event occurs in."
+msgstr "Az esemény időzónájának kiválasztása."
+
+#: event.module:2163
+msgid "Default time zone"
+msgstr "Alapértelmezett időzóna"
+
+#: event.module:2166
+msgid "Select the default site time zone."
+msgstr "A webhely időzónáját használja."
+
+#: event.module:2179
+msgid ""
+"Select your current local time. Dates and times throughout this site will be "
+"displayed using this time zone."
+msgstr ""
+
+#: event.module:2468
+msgid "Daylight Savings Regions | Current GMT: !date"
+msgstr ""
+
+#: event.module:2879
+msgid "st"
+msgstr "."
+
+#: event.module:2879
+msgid "nd"
+msgstr "."
+
+#: event.module:2879
+msgid "rd"
+msgstr "."
+
+#: event.module:2884
+msgid "th"
+msgstr "."
+
+#: event.module:2949
+msgid "None"
+msgstr "Nincs"
+
+#: event.module:2950
+msgid "Egypt"
+msgstr "Egyiptom"
+
+#: event.module:2951
+msgid "Namibia"
+msgstr "Namibia"
+
+#: event.module:2952
+msgid "Asia - Former USSR"
+msgstr "Ázsia - korábban SZU"
+
+#: event.module:2953
+msgid "Iraq, Syria"
+msgstr "Irak, Szíria"
+
+#: event.module:2954
+msgid "Israel"
+msgstr "Izrael"
+
+#: event.module:2955
+msgid "Lebanon, Kirgizstan"
+msgstr "Libanon, Kirgizisztán"
+
+#: event.module:2956
+msgid "Palestine"
+msgstr "Palesztína"
+
+#: event.module:2957
+msgid "Iran"
+msgstr "Irán"
+
+#: event.module:2958
+msgid "South Australia"
+msgstr "Dél-Ausztrália"
+
+#: event.module:2959
+msgid "Australia, Tasmania"
+msgstr "Ausztrália, Tasmánia"
+
+#: event.module:2960
+msgid "New Zealand"
+msgstr "Új-Zéland"
+
+#: event.module:2961
+msgid "Tonga"
+msgstr "Tonga"
+
+#: event.module:2962
+msgid "EU and other European countries"
+msgstr "EU és más európai ország"
+
+#: event.module:2963
+msgid "Russian Federation"
+msgstr "Oroszország"
+
+#: event.module:2964
+msgid "North America"
+msgstr "Észak-Amerika"
+
+#: event.module:2965
+msgid "Cuba"
+msgstr "Kuba"
+
+#: event.module:2966
+msgid "Brazil"
+msgstr "Brazília"
+
+#: event.module:2967
+msgid "Chile"
+msgstr "Chile"
+
+#: event.module:2968
+msgid "Falklands"
+msgstr "Falkland-szigetek"
+
+#: event.module:2969
+msgid "Paraguay"
+msgstr "Paraguay"
+
+#: event.module:3118
+msgid "!long-month-name January"
+msgstr "!long-month-name Január"
+
+#: event.module:3118
+msgid "!long-month-name February"
+msgstr "!long-month-name Február"
+
+#: event.module:3118
+msgid "!long-month-name March"
+msgstr "!long-month-name Március"
+
+#: event.module:3118
+msgid "!long-month-name April"
+msgstr "!long-month-name Április"
+
+#: event.module:3118
+msgid "!long-month-name May"
+msgstr "!long-month-name Május"
+
+#: event.module:3118
+msgid "!long-month-name June"
+msgstr "!long-month-name Június"
+
+#: event.module:3118
+msgid "!long-month-name July"
+msgstr "!long-month-name Július"
+
+#: event.module:3118
+msgid "!long-month-name August"
+msgstr "!long-month-name Augusztus"
+
+#: event.module:3118
+msgid "!long-month-name September"
+msgstr "!long-month-name Szeptember"
+
+#: event.module:3118
+msgid "!long-month-name October"
+msgstr "!long-month-name Október"
+
+#: event.module:3118
+msgid "!long-month-name November"
+msgstr "!long-month-name November"
+
+#: event.module:3118
+msgid "!long-month-name December"
+msgstr "!long-month-name December"
+
+#: event.module:3125
+msgid "Jan"
+msgstr "Jan"
+
+#: event.module:3125
+msgid "Feb"
+msgstr "Feb"
+
+#: event.module:3125
+msgid "Mar"
+msgstr "Már"
+
+#: event.module:3125
+msgid "Apr"
+msgstr "Ápr"
+
+#: event.module:3125
+msgid "May"
+msgstr "Máj"
+
+#: event.module:3125
+msgid "Jun"
+msgstr "Jún"
+
+#: event.module:3125
+msgid "Jul"
+msgstr "Júl"
+
+#: event.module:3125
+msgid "Aug"
+msgstr "Aug"
+
+#: event.module:3125
+msgid "Sep"
+msgstr "Sze"
+
+#: event.module:3125
+msgid "Oct"
+msgstr "Okt"
+
+#: event.module:3125
+msgid "Nov"
+msgstr "Nov"
+
+#: event.module:3125
+msgid "Dec"
+msgstr "Dec"
+
+#: event.module:3190
+msgid ""
+"The event module allows for any type of content to be event enabled,  "
+"meaning content can have a start and end time, and appear in calendars.  The "
+"ability to event enable any content type combined with the ability to create "
+"new types of content make it possible to create unlimited types of "
+"calendars.  The ability to broadly event enable content will allow for "
+"creative applications combining information and real world events."
+msgstr ""
+
+#: event.module:3191
+msgid ""
+"The administrator can decide which content types should be events for their "
+"site.  In content type configuration, administrators can select the calendar "
+"view options: never, all views, or only views for this type. For example, "
+"this makes it possible to have a general calendar which shows all meetups "
+"and house parties in the same calendar, and have a separate calendar for "
+"rallies which only contains the rallies content type. Calendars can be "
+"customized to view a specific content type or a category of content, using "
+"taxonomies."
+msgstr ""
+
+#: event.module:3192
+msgid ""
+"Administrators can also set two types of options for events; general event "
+"options, and event overview options.  General event options are for timezone "
+"configuration, time notation formats, and event block configuration.  Event "
+"overview options allow calendar and table event default views.  "
+"Administrators can also set general filter controls for content types and "
+"categories, via the event taxonomy controls."
+msgstr ""
+
+#: event.module:3193
+msgid ""
+"<p>You can</p>\n"
+"<ul>\n"
+"<li>enable content types to be event enabled at <a href=\"!admin-node-"
+"configure-types\" title=\"content type configuration\">administer &gt;&gt; "
+"content &gt;&gt; content types </a> then click configure for a content type."
+"</li>\n"
+"<li>administer general event options <a href=\"!admin-settings-event\" title="
+"\"administer events\">administer &gt;&gt; settings &gt;&gt; events</a>.</"
+"li>\n"
+"<li><a href=\"!node-add\" title=\"list of content types that can be created"
+"\">create content</a> and set a start and end time, if the administrator has "
+"set that content type to be event enabled.</li>\n"
+"<li>use <a href=\"!external-http-drupal-org-handbook-modules-rsvp\">RSVP</a> "
+"or <a href=\"!external-http-drupal-org-handbook-modules-signup\">signup</a> "
+"module to invite users to events.</li>\n"
+msgstr ""
+
+#: event.module:3200
+msgid ""
+"For more information please read the configuration and customization "
+"handbook <a href=\"!event\">Event page</a>."
+msgstr ""
+
+#: event.module:3203
+msgid ""
+"This is a listing of all the event system's time zones, sorted by daylight "
+"savings time regions, and their respective offsets from GMT in seconds. Time "
+"zones in the 'None' region do not observe daylight savings time. If you "
+"believe there is an error, please first search for the locale on !"
+"timeanddate and confirm it. If there is indeed an error please submit a !"
+"bugreport on drupal.org so we can fix it."
+msgstr ""
+
+#: event.module:3212
+msgid "The year the event starts."
+msgstr "Az év, amelyben az esemény kezdődik."
+
+#: event.module:3213
+msgid "The two-digit month (01-12) the event starts."
+msgstr "A kétszámjegyű hónap (01-12), amikor az az esemény kezdődik."
+
+#: event.module:3214
+msgid "The three-letter month (jan-dec) the event starts."
+msgstr "Az év hárombetűs hónapja (jan-dec), amikor az esemény kezdődik."
+
+#: event.module:3215
+msgid "The two-digit day of the month (01-31) the event starts."
+msgstr "A hónap kétszámjegyű (01-31) napja, amikor az esemény kezdődik."
+
+#: event.module:3216
+msgid "The three-letter day of the week (sun-sat) the event starts."
+msgstr "A hét hárombetűs napja (vas-szo), amikor az esemény kezdődik."
+
+#: event.module:3217
+msgid "The week number (1-52) of the year the event starts."
+msgstr "A hét száma (1-52), amikor az esemény kezdődik."
+
+#: event.module:1962
+msgid "Upcoming @name"
+msgid_plural "Upcoming @count @names"
+msgstr[0] "Közelgő @name"
+msgstr[1] "@count közelgő @names"
+
+#: event.module:2035;2040
+msgid "1 day"
+msgid_plural "@count days"
+msgstr[0] "1 nap"
+msgstr[1] "@count nap"
+
+#: event.module:2043
+msgid "1 hour"
+msgid_plural "@count hours"
+msgstr[0] "1 óra"
+msgstr[1] "@count óra"
+
+#: event.module:2046
+msgid "1 minute"
+msgid_plural "@count minutes"
+msgstr[0] "1 perc"
+msgstr[1] "@count perc"
+
+#: event.module:176
+msgid "Filter by content type"
+msgstr "Szűrés tartalomtípusra"
+
+#: event.module:183
+msgid "Filter by taxonomy"
+msgstr "Szűrés taxonómiára"
+
+#: event.module:190
+msgid "Event rss feed"
+msgstr "Események RSS csatorna"
+
+#: event.module:197
+msgid "Event dst view"
+msgstr "Események dst nézete"
+
+#: event.module:204
+msgid "Event ical feed"
+msgstr "Események iCal csatornája"
+
+#: event.module:214
+msgid "Set up how your site handles events."
+msgstr "Az események beállítása"
+
+#: event.module:221
+msgid "Timezone handling"
+msgstr "Időzónák kezelése"
+
+#: event.module:224
+msgid "Change how timezone information is saved and displayed."
+msgstr "Az időzóna megjelenésének és mentési módjának megváltoztatása."
+
+#: event.module:229
+msgid "Event overview"
+msgstr "Események áttekintése"
+
+#: event.module:232
+msgid "Change how event summary information is displayed."
+msgstr "Az összegző információ megjelenésének megváltoztatása."
+
+#: event.module:239
+msgid "Event ical"
+msgstr "Események iCal"
+
+#: event.module:0 event.theme:0
+msgid "event"
+msgstr "esemény"
+
+#: event.theme:257;319
+msgid "more info"
+msgstr "bővebb info"
+
+#: event.theme:259;321
+msgid "Show detailed information for this event."
+msgstr "Az esemény részleteinek megjelenítése."
+
+#: event.theme:338;362
+msgid "%month / %day"
+msgstr "%month / %day"
+
+#: event.theme:392
+msgid "Timezone: "
+msgstr "Időzóna: "
+
+#: event.theme:446
+msgid "Add to iCalendar"
+msgstr "Hozzáadás iCalendar-hoz"
+
+#: event.theme:446
+msgid "Add this calendar to your iCalendar"
+msgstr "Eseménynaptár hozzáadása iCalendar-hoz"
+
+#: event.theme:456
+msgid "more"
+msgstr "bővebben"
+
+#: event.theme:456
+msgid "More events."
+msgstr "További események."
+
+#: event.install:129;281 event.info:0;0
+msgid "Event"
+msgstr "Esemény"
+
+#: event.install:131;283
+msgid ""
+"Events have a start date and an optional end date as well as a teaser and a "
+"body. They can be extended by other modules, too."
+msgstr ""
+
+#: event.install:141
+msgid ""
+"Event module was successfully installed with default options. To customize "
+"event and/or location settings for events, please view the <a href=\"!"
+"settings\">event content type settings page</a>. Make sure to <a href=\"!url"
+"\">select the default timezone</a> for your website before creating events."
+msgstr ""
+
+#: event.install:167
+msgid "Event module successfully uninstalled"
+msgstr "Az Események modul sikeresen el lett távolítva"
+
+#: event.install:296
+msgid ""
+"The basicevent module is no longer supported, it was disabled during the "
+"upgrade process."
+msgstr ""
+"A basicevent modul továbbiakban nem támogatott, ezért a frissítési folyamat "
+"során lesz tiltva."
+
+#: (duplicate) event.install:15
+msgid "MySQL database for event module"
+msgstr "Az Esemény modul MySQL adatbázisa"
+
+#: (duplicate) event.install:21
+msgid ""
+"Your MySQL Server is too old. Event module 5.2 requires at least MySQL %"
+"version. The 5.1 version is compatible with MySQL 3."
+msgstr ""
+"A jelenlegi MySQL-verzió túl régi. Az Esemény modul 5.2-es változata "
+"legalább MySQL % verziót igényel. Az 5.1-es még támogatja a MySQL 3-at."
+
+#: event.info:0
+msgid "Calendaring API, calendar display and export"
+msgstr "Eseménynaptár API, események megjelenítéséhez és exportálásához"

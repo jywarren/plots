@@ -1,0 +1,38 @@
+<?php
+// $Id: datepicker.module,v 1.2 2009/07/03 22:00:29 killes Exp $
+
+/**
+ * Implementation of hook_form_alter(). Adds a datepicker for start date
+ * and end date fields.
+ */
+function datepicker_form_alter(&$form, $form_state, $form_id) {
+  if (isset($form['type']['#value']) && $form_id == $form['type']['#value'] .'_node_form') {
+    // Node edit form
+    if (variable_get('event_nodeapi_'. $form['type']['#value'], 'never') != 'never') {
+      $path = drupal_get_path('module', 'datepicker');
+      drupal_add_css($path . '/datePicker.css');
+      drupal_add_js($path . '/date.js');
+      drupal_add_js($path . '/jquery.datePicker.js');
+
+      // Define the fields which should have a datepicker
+      datepicker_add_picker('start');
+      datepicker_add_picker('end');
+
+      // datepicker.js will link each of the added fields to a datepicker
+      drupal_add_js($path . '/datepicker.js','module','footer');
+    }
+  }
+}
+
+/**
+ * Adds a variable with the field name to a Drupal.settings.datepicker.fields
+ * to be able to generate the datepickers on-the-fly.
+ *
+ * @param $field
+ *   The field name that will be dicriminating when looking for <select>
+ *   elements, it is also used to define the ID of the trigger link
+ */
+function datepicker_add_picker($field) {
+  // Add the field name to Drupal.settings.datepicker.fields
+  drupal_add_js(array('datepicker' => array('fields' => $field)), 'setting');
+}

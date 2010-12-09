@@ -109,7 +109,7 @@
  * @see zen_process()
  */
 ?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="<?php print $language->language; ?>" lang="<?php print $language->language; ?>" dir="<?php print $language->dir; ?>">
 
 <head>
@@ -125,10 +125,11 @@
     <div id='links'> 
 	<a href="/">Home</a> 
 	<a href="/about">About</a> 
-	<a href="/sites">Sites</a> 
+	<a href="/places">Places</a> 
 	<a href="/notes">Updates</a> 
+	<a href="/notes">Reports</a> 
 	<div class="right"> 
-		<a href="javascript:void(0);" onClick="Modalbox.show('note.html');">Note [+]</a> 
+		<a href="/note/add">Note [+]</a> 
 	</div> 
     </div> 
 
@@ -136,10 +137,6 @@
 
       <?php if ($logo): ?>
         <a href="<?php print $front_page; ?>" title="<?php print t('Home'); ?>" rel="home" id="logo"><img src="<?php print $logo; ?>" alt="<?php print t('Home'); ?>" /></a>
-      <?php endif; ?>
-
-      <?php if ($search_box): ?>
-        <div id="search-box"><?php print $search_box; ?></div>
       <?php endif; ?>
 
       <?php print $header; ?>
@@ -179,7 +176,7 @@
       <?php if ($primary_links || $navigation): ?>
         <div id="navigation"><div class="section clearfix">
 
-          <?php print theme(array('links__system_main_menu', 'links'), $primary_links,
+<!--          <?php print theme(array('links__system_main_menu', 'links'), $primary_links,
             array(
               'id' => 'main-menu',
               'class' => 'links clearfix',
@@ -193,9 +190,9 @@
 
           <?php print $navigation; ?>
 
+-->
         </div></div> <!-- /.section, /#navigation -->
       <?php endif; ?>
-
       <?php print $sidebar_first; ?>
 
       <?php print $sidebar_second; ?>

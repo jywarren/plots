@@ -1,0 +1,226 @@
+/* $Id: dashboard.css,v 1.14 2010/05/22 15:02:20 techsoldaten Exp $ */
+
+html.js #dashboard div.noscript {
+  display: none;
+}
+
+.dashboard-link-add a,
+.dashboard-link-add a:link,
+.dashboard-link-add a:visited,
+.dashboard-link-add a:active {
+  color: #090;
+}
+
+div.nav-content-dashboard li {
+  cursor: move;
+}
+
+div.nav-content-dashboard li.active {
+  cursor: auto;
+}
+
+#dashboard .column {
+  padding: 1em 0 1em 0;
+  width: 31%;
+  margin: 0 1% 0 1%;
+  float: left;
+  /* Make Empty Columns Easier to Fill */
+  min-height: 100px;
+}
+
+#dashboard .widget {
+  margin: 0 0 20px 0;
+  background: #f6f6f2;
+}
+
+#dashboard .alpha {
+  clear: both;
+}
+
+#dashboard .tools {
+  float: right;
+  padding: 11px 16px 0 0;
+}
+
+#content #dashboard h2 {
+  cursor: move;
+  margin: 0 30px 0 0; /* space for tools */
+  padding: 3px 0 3px 10px;
+}
+
+#dashboard h2 a {
+  color: #000;
+  display: block;  
+  line-height: 1.3em;
+}
+
+#dashboard .widget .content {
+  border-top: 1px solid #ddd;
+  padding: 10px;
+}
+
+#dashboard .widget .content ul,
+#dashboard .widget .content ol {
+  padding-left: 10px;
+}
+
+#dashboard .widget .content .item-list ul {
+  padding-left: 0;
+}
+
+#dashboard .widget .content .node {
+  margin: 0;
+}
+
+.dashboard-placeholder {
+  border: 2px dashed #96bc44;
+}
+
+/* Tabs */
+.nav-content-dashboard {
+  height: 28px;
+  border-bottom: 1px solid #ddd;
+}
+
+.nav-content-dashboard ul li {
+  float: left;
+}
+
+.nav-content-dashboard ul li .nav-tab {
+  display: block;
+  float: left;
+  padding: 4px 11px 0 11px;
+}
+
+.nav-content-dashboard ul li form,
+.nav-content-dashboard ul li form .form-item,
+.nav-content-dashboard ul li form .form-submit {
+  padding: 0;
+  margin: 0;
+}
+
+.nav-content-dashboard ul li.active {
+  padding: 0 0 0 11px;
+  border: 1px solid #ddd;
+  border-bottom: none;
+  background: #fff;
+}
+
+.nav-content-dashboard ul li.active .nav-tab {
+  height: 22px;
+  padding: 4px 11px 0 0;
+}
+
+.nav-content-dashboard ul li.active a:hover {
+  text-decoration: none;
+}
+
+/* Sprites */
+.nav-content-dashboard ul li.active span.hover a.edit span,
+.nav-content-dashboard ul li.active span.hover a.delete,
+#dashboard a.remove-widget {
+  background: url(icons.png) no-repeat;
+}
+
+.nav-content-dashboard ul li.active span.hover a.edit span {
+  padding-left: 20px;
+  background-position: 8px -0px;
+}
+
+.nav-content-dashboard ul li.active span.hover a.delete {
+  height: 12px;
+  padding-left: 20px;
+  background-position: 8px -30px;
+}
+
+#dashboard a.remove-widget {
+  display: block;
+  height: 12px;
+  padding-left: 12px;
+  width: 0px;
+  background-position: 0 -30px;
+}
+
+/* Admin list of widgets */
+#dashboard-list-widget-form {
+  padding: 1.5em 0;
+}
+
+#dashboard-list-widget-form div.form-item,
+#dashboard-list-widget-form div.form-item label {
+  display: inline;
+}
+
+#dashboard-list-widget-form div.form-item {
+  margin: 0 2em 0 0;
+}
+
+.widget-entry {
+  margin-bottom: 1em;
+}
+
+.widget-entry .widget-name {
+  width: 40%;
+}
+
+.widget-entry .widget-description {
+  width: 40%;
+}
+
+.widget-entry .widget-ops {
+  width: 20%;
+}
+
+/** 
+ * Public admin page 
+ */
+.dashboard-widget {
+  margin-bottom: 1.2em;
+}
+
+.dashboard-widget .widget-thumbnail {
+  float: left;
+  width: 72px;
+  margin-right: 1em;
+}
+
+.dashboard-widget .widget-desc {
+  line-height:1.5em;
+  margin-bottom: 10px;
+}
+
+.dashboard-widget .widget-edit {
+  font-size: 0.9em;
+}
+
+.dashboard-widget .widget-edit .widget-button {
+  color: #888;
+  float: left;
+  margin-right: 10px;
+}
+
+.dashboard-widget .widget-edit .widget-tags {
+  float: left;
+}
+
+#modalContent {
+  z-index: 2001 !important;
+}
+
+/* Filter by categories */
+#dashboard-select-widget-form {
+  padding-bottom: 1.5em;
+}
+
+#dashboard-select-widget-form .form-checkboxes {
+  display: inline;
+}
+
+#dashboard-select-widget-form .form-checkboxes .form-item {
+  display: inline;
+  margin-right: 1.6em;
+}
+
+#dashboard-select-widget-form .form-title {
+  margin-top: 0;
+}

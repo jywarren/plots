@@ -16,12 +16,28 @@ body {
 	margin:10px auto;
 }
 
+hr {
+	height:5px;
+	border:none;
+	margin:10px 0;
+	background: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAADCAYAAAC09K7GAAAABHNCSVQICAgIfAhkiAAAABJJREFUCJljYECA/wxYOP8xZABf0wP96WTlbgAAAABJRU5ErkJggg==") repeat-x bottom;
+}
+
 p {
 	font-size:0.9em;
 }
 
 a {
 	color:#34a;
+}
+
+.block-search h2 {
+	margin-bottom:8px;
+}
+
+.sidebar li {
+	font-size:10px;
+	margin-bottom:6px;
 }
 
 h1,h2,h3,h4 {
@@ -43,6 +59,9 @@ h2 {
 
 h2 a {
 	font-family:Junction, lucida grande,lucida sans console,sans-serif;
+}
+
+.sidebar h2 a {
 	background: #333;
 	color:white;
 	padding:6px;
@@ -98,11 +117,48 @@ ul.large {
 	font-size:1.5em;
 }
 
-.column {
+.dashboard-widget {
+	padding-top:10px;
+	clear:left;
+}
 
+div.widget {
+	border-top:3px solid #333;
+	background: #ccc;
+}
+
+.widget-flickr img {
+	width:140px !important;
+	height:auto !important;
+}
+.widget-flickr p {
+	font-size:10px;
+}
+
+.widget .item-list li {
+	font-size:10px;
+	padding-left:0px;
+	margin:12px;
+}
+
+.widget form input, .widget form legend, .widget form select {
+	font-size:10px;
+}
+
+.widget form .filefield-upload input {
+	margin-top:4px;
+}
+
+.widget form .description, .widget form .tips {
+	display:none;
+}
+
+.widget .form-item, .widget .item-list ul {
+	margin-top:0;
 }
 
 .sidebar {
+	padding-left:0;
 	background: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAMAAAAECAYAAABLLYUHAAAABHNCSVQICAgIfAhkiAAAABFJREFUCJljYICA/wzoDNwCAGHSA/39bYdFAAAAAElFTkSuQmCC") repeat-y right;
 }
 
@@ -118,20 +174,156 @@ ul.large {
 	font-size:1.5em;
 	margin-bottom:4px;
 }
-.sidebar p {
-	font-size:10pt;
+.sidebar p, .sidebar .view-content {
+	font-size:10px;
 }
+.sidebar .views-row {
+	background: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAADCAYAAAC09K7GAAAABHNCSVQICAgIfAhkiAAAABJJREFUCJljYECA/wxYOP8xZABf0wP96WTlbgAAAABJRU5ErkJggg==") repeat-x bottom;
+	padding-bottom:10px;
+}
+.sidebar .view-content .views-row-last {
+	background:none;
+}
+
+.sidebar .view-content .views-field-title {
+	font-size:16px;
+	margin:6px 0;
+}
+
 .sidebar a {
 	font-style:italic;
 }
 
-#main.column{
-	width:600px;
+.sidebar .section {
+	padding-left:0;
+	padding-bottom:20px;
+}
+
+.region-sidebar-second {
+	background: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAMAAAAECAYAAABLLYUHAAAABHNCSVQICAgIfAhkiAAAABFJREFUCJljYICA/wzoDNwCAGHSA/39bYdFAAAAAElFTkSuQmCC") repeat-y left;
+}
+.block .content {
+	padding:0;
 }
 
 .section {
 	padding:0 10px 10px 0;
 	background: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAADCAYAAAC09K7GAAAABHNCSVQICAgIfAhkiAAAABJJREFUCJljYECA/wxYOP8xZABf0wP96WTlbgAAAABJRU5ErkJggg==") repeat-x bottom;
+}
+
+#content .section {
+	padding:0;
+	margin:0 20px;
+}
+
+#content .views-row {
+	padding-bottom:8px;
+	background: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAADCAYAAAC09K7GAAAABHNCSVQICAgIfAhkiAAAABJJREFUCJljYECA/wxYOP8xZABf0wP96WTlbgAAAABJRU5ErkJggg==") repeat-x bottom;
+	margin-bottom:8px;
+}
+
+#content form {
+	padding-bottom:10px;
+}
+
+#content .figure {
+	padding:10px 20px;
+	padding-left:0;
+	font-size:10px;
+	float:left;
+}
+
+#content .figure.right {
+	float:right;
+	padding-left:20px;
+	text-align:right;
+}
+
+/* Taxonomy styling */
+
+#content .terms {
+	display:none
+}
+
+.sidebar #tool-info {
+	padding:6px;
+	background:#eee;
+	border-left:2px solid #aac;
+	border-right:2px solid #aac;
+	border-bottom:2px solid #aac;
+	margin-bottom:10px;
+	padding-bottom:12px;
+}
+.sidebar #tool-info .places h4 {
+	margin-top:5px;
+	font-size:15px;
+}
+.sidebar #tool-info a {
+	font-size:12px;
+}
+
+/* Sidebar styling */
+
+.sidebar .views-row {
+	padding-top:10px;
+}
+
+.sidebar .views-row h3 {
+	margin:6px 0 0 0;
+}
+
+
+/* Admin links */
+
+#content .views-admin-links li {
+	color:#333;
+	background: white;
+}
+
+/* Tab styling overrides */
+
+div.tabs {
+	margin: 0;
+}
+
+ul.primary {
+	padding: 0;
+	background: none;
+}
+
+ul.primary li a {
+	background: none;
+	padding: 0 5px 0 0; /* width of tab-left.png */
+}
+
+ul.primary li a .tab {
+	font-family: lucida grande,lucida sans console,sans-serif;
+	font-weight:normal;
+	font-style:italic;
+	padding: 0 4px;
+	color: white;
+	background: #aaa;
+}
+
+ul.primary li a:hover {
+	background: none;
+}
+ul.primary li a:hover .tab {
+	background: #999;
+}
+
+ul.primary li.active a,
+ul.primary li.active a:hover {
+	background: none;
+}
+
+ul.primary li.active a .tab,
+ul.primary li.active a:hover .tab {
+	background: white;
+	border:1px solid #ccc;
+	border-bottom:none;
+	height:18px;
+	color:#333;
 }
 
 

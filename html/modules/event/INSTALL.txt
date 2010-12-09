@@ -1,0 +1,48 @@
+Requirements
+------------
+
+This module requires Drupal 5 or higher.
+
+Installation
+------------
+
+1. Place the event module with all its files under modules/event.
+
+2. Enable the module in admin >> site configuration >> modules 
+   and set the module settings to your liking in 
+   admin >> site configuration >> modules >> event.
+
+3. You must then enable one or more node types to be used with the
+   event system. You can do this by going to admin/node/configure/types
+   and selecting a node type from the list. If the event calendar is 
+   installed properly you should see a section called 'Show in event calendar:'
+   with three options below it:
+
+    * None: This content type will not be associated with the events calendar.
+    * All views: This content type will be available for display on all calendar
+      views, including with other events.
+    * Only in views for this type: This content type will only appear in calendar
+      views specific to this type and never with other events.
+
+   'All views' enables the node type will appear on the calendar with all other
+   node types set to 'All views'.
+   'Only in views for this type' will display the type only on its own calendar.
+   Use if you dont want a type appearing with other types.
+   'None' disables a type from appearing on the calendar.
+
+   Once a node type is enabled in this way, event will inject date input fields
+   on that node type's edit form and display them on the calendar views.
+
+   It is recommended that you install the cck module and create event
+   types for this purpose, so you do not have to use core node types
+   for the calendar system.
+
+Author
+------
+
+Kjartan Mannes <kjartan@drupal.org>
+
+Maintainer
+----------
+
+Gerhard Killesreiter <gerhard@killesreiter.de>

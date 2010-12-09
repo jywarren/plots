@@ -1,0 +1,14 @@
+; $Id: dashboard.info,v 1.8 2010/05/22 15:02:20 techsoldaten Exp $
+name = Dashboard
+description = Creates customizable pages of widgets.
+core = 6.x
+package = Drupal.org
+dependencies[] = jquery_ui
+dependencies[] = ctools
+
+; Information added by drupal.org packaging script on 2010-07-27
+version = "6.x-2.1"
+core = "6.x"
+project = "dashboard"
+datestamp = "1280268011"
+

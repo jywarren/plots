@@ -1,0 +1,10 @@
+; $Id: formblock.info,v 1.3 2007/12/18 02:37:50 mikeyp Exp $
+name = Form block
+description = Enables the presentation of node creation forms in blocks. This is particularly useful for including forms on panels.
+core = 6.x
+; Information added by drupal.org packaging script on 2009-05-13
+version = "6.x-1.0"
+core = "6.x"
+project = "formblock"
+datestamp = "1242203473"
+
