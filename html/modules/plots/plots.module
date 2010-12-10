@@ -1,0 +1,18 @@
+<?php
+// $Id: plots.module,v 0.1 2010/12/10 11:10:00 sun Exp $
+
+/**
+ * @file
+ * Customizations and functions for the PLOTS website: publiclaboratory.org
+ */
+
+/**
+ * Removal of Show summary in full view checkbox
+ */
+
+function plots_form_alter(&$form, $form_state, $form_id) {
+  if(isset($form['body_field']['teaser_include']) && preg_match('/.+_node_form$/i',$form_id)) {
+    unset($form['body_field']['teaser_include']);
+  }
+}
+

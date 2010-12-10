@@ -1,0 +1,5 @@
+; $Id$
+name = PLOTS module
+description = Customizations and functions for the PLOTS website: publiclaboratory.org
+core = 6.x
+

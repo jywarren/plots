@@ -1,0 +1,46 @@
+<?php
+// $Id: taxonomy_super_select.install,v 1.2.2.3 2010/10/07 17:31:50 jcisio Exp $
+
+/**
+ * @file
+ * Changes the default taxonomy select box into checkboxes or radio buttons.
+ */
+
+/**
+ * Implementation of hook_install().
+ */
+function taxonomy_super_select_install() {
+}
+
+/**
+ * Implementation of hook_uninstall().
+ */
+function taxonomy_super_select_uninstall() {
+  // Delete our variables.
+  $result = db_query("SELECT vid FROM {vocabulary}");
+  while ($vid = db_result($result)) {
+    variable_del('taxonomy_super_select_vid_'. $vid);
+  }
+}
+
+/**
+ * Implementation of hook_enable().
+ */
+function taxonomy_super_select_enable() {
+  // This module must run after the main taxonomy module,
+  // as it alters that form in turn.
+  $max_weight = db_result(db_query("SELECT MAX(weight) FROM {system} WHERE name='taxonomy' OR name='i18ntaxonomy'"));
+  $current_weight = db_result(db_query("SELECT weight FROM {system} WHERE name='taxonomy_super_select'"));
+  if ($current_weight <= $max_weight) {
+    db_query("UPDATE {system} SET weight=%d WHERE name='taxonomy_super_select'", $max_weight + 1);
+    drupal_set_message(t('Taxonomy_super_select module weight has been adjusted.'));
+  }
+}
+
+/**
+ * Increase the module weight, for current users
+ */
+function taxonomy_super_select_update_6100() {
+  taxonomy_super_select_enable();
+  return array();
+}

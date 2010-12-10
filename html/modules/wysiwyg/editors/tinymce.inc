@@ -84,7 +84,7 @@ function wysiwyg_tinymce_version($editor) {
   $script = $editor['library path'] . '/tiny_mce.js';
   $script = fopen($script, 'r');
   // Version is contained in the first 100 chars.
-  $line = fgets($script, 100);
+  $line = fgets($script, 200);
   // 2.x: this.majorVersion="2";this.minorVersion="1.3"
   // 3.x: majorVersion:'3',minorVersion:'2.0.1'
   if (preg_match('@majorVersion[=:]["\'](\d).+?minorVersion[=:]["\']([\d\.]+)@', $line, $version)) {

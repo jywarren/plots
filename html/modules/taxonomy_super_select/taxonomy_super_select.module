@@ -1,0 +1,406 @@
+<?php
+// $Id: taxonomy_super_select.module,v 1.10.2.22 2010/10/09 08:48:50 jcisio Exp $
+
+/**
+ * @file
+ *   Changes the default taxonomy select box into checkbox or radio buttons.
+ */
+
+function taxonomy_super_select_form_alter(&$form, $form_state, $form_id) {
+  drupal_add_css(drupal_get_path('module', 'taxonomy_super_select') .'/taxonomy_super_select.css');
+  // Taxonomy Edit Form
+  if ($form_id == 'taxonomy_form_vocabulary') {
+    $vid = $form['vid']['#value'];
+    $vocab = taxonomy_vocabulary_load($vid);
+    if ($vocab) {
+      $tss = variable_get('taxonomy_super_select_vid_'. $vid, 0);
+      // Position the name field higher
+      // Add our own submit handler
+      $form['#submit'][] = 'taxonomy_super_select_submit';
+      // Create fieldset and form elements
+      $form['settings']['tss'] = array(
+        '#type'         => 'fieldset',
+        '#title'        => t('Taxonomy Super Select'),
+        '#collapsed'    => !$tss,
+        '#collapsible'  => TRUE,
+        '#tree'         => TRUE,
+        '#weight'       => 3,
+      );
+      // Get list of all content types
+      $types = node_get_types('names');
+      // Loop through all types that are enabled for this vocab
+      foreach ($vocab->nodes as $index => $type) {
+        $options[$type] = $types[$type];
+      }
+      $options['-all-'] = t('All content types');
+      $form['settings']['tss']['taxonomy_super_select_vid_'. $vid]['types'] = array(
+        '#type'          => 'checkboxes',
+        '#title'         => t('Enable Taxonomy Select for the Vocabulary Content Types Below'),
+        '#options'       => $options,
+        '#default_value' => $tss ? $tss['types'] : array(),
+        '#weight'        => -1,
+      );
+      $form['settings']['tss']['taxonomy_super_select_vid_'. $vid]['parents'] = array(
+        '#type'           => 'checkbox',
+        '#title'          => t('Display parent terms as form items'),
+        '#default_value'  => $tss ? $tss['parents'] : array(),
+        '#return_value'   => 1,
+        '#weight'         => 0,
+        '#description'    => t('Leaving this disabled forces users to select dangling child terms. Useful for grouping terms with descriptive parent terms that are not themselves needed for display.'),
+      );
+      $form['settings']['tss']['taxonomy_super_select_vid_'. $vid]['collapsible'] = array(
+        '#type'           => 'checkbox',
+        '#title'          => t('Make this vocabulary collapsible'),
+        '#default_value'  => $tss ? $tss['collapsible'] : TRUE,
+        '#return_value'   => 1,
+        '#weight'         => 0,
+        '#description'    => t('Display this vocabulary in a fieldset (collapsible).'),
+      );
+      $form['settings']['tss']['taxonomy_super_select_vid_'. $vid]['terms_expanded'] = array(
+        '#type'          => 'checkbox',
+        '#title'         => t('Make all terms expanded by default'),
+        '#default_value' => $tss ? $tss['terms_expanded'] : FALSE,
+        '#description'   => t('Make all terms expanded by default. If unchecked, only parens who have at least a term selected are expanded.'),
+        '#weight'         => 0,
+      );
+      $form['settings']['tss']['taxonomy_super_select_vid_'. $vid]['compact'] = array(
+        '#type'          => 'checkbox',
+        '#title'         => t('Compact presentation'),
+        '#default_value' => $tss ? $tss['compact'] : FALSE,
+        '#description'   => t('Make the presentation compact (no padding space, no description...)'),
+        '#weight'         => 0,
+      );
+
+      if (module_exists('taxonomy_image')) {
+        $form['settings']['tss']['taxonomy_super_select_vid_'. $vid]['image'] = array(
+          '#type' => 'checkbox',
+          '#title' => t('Allow Taxonomy Image to provide images with the terms'),
+          '#default_value'  => ($tss ? $tss['image'] : array()),
+          '#weight' => 2,
+          );
+      }
+    }
+  }
+
+  // Node Edit Form
+  if (strstr($form_id, '_node_form') && strstr($form['form_id']['#value'], '_node_form')) {
+    $content_type = $form['type']['#value'];
+    // Get all vocabs for this content type
+    $vocabularies = taxonomy_get_vocabularies($content_type);
+    $valid_vocabs = array();
+    foreach ($vocabularies as $vid => $vocabulary) {
+      $tss[$vid] = variable_get('taxonomy_super_select_vid_'. $vid, 0);
+      // Only operate on types for a vocabulary that are enabled
+      if (isset($tss[$vid]['types'][$content_type]) || isset($tss[$vid]['types']['-all-'])) {
+        // Show radio or checkbox based on the selection type
+        $valid_vocabs[$vid] = $vocabulary->multiple ? 'checkbox' : 'radio';
+        if ($vocabulary->tags) {
+          // Remove any tags from the autocomplete form item (prevent duplicates)
+          $tags[$vid] = $form['taxonomy']['tags'][$vid];
+          $tags[$vid]['#required'] = FALSE;
+          $tags[$vid]['#parents'] = array('taxonomy', 'tags', $vid);
+          $tags[$vid]['#weight'] = -12;
+          $tags[$vid]['#title'] = t('Enter New Tags');
+          $tags[$vid]['#default_value'] = @$form_state['values']['taxonomy']['tags'][$vid];
+          unset($form['taxonomy']['tags'][$vid]);
+        }
+        else{
+          // Remove the default form rendering except for freetagging vocabs
+          unset($form['taxonomy'][$vid]);
+        }
+      }
+    }
+    $form['#validate'][] = 'taxonomy_super_select_node_form_validate';
+
+    // Go through each enabled vocab and create taxonomy super select
+    foreach ($valid_vocabs as $vid => $input) {
+      // Get root terms for vocabulary only
+      if (!$terms = taxonomy_get_tree($vid, 0, -1, 1)) {
+        continue;
+      }
+      if (module_exists('i18ntaxonomy')) {
+        $terms = i18ntaxonomy_localize_terms($terms);
+      }
+      $form['taxonomy'][$vid] = _tss_branch($vid, $vocabularies[$vid]);
+      if (isset($tags[$vid])) {
+        $form['taxonomy'][$vid]['tags'] = $tags[$vid];
+      }
+      _tss_next_nested($terms, $vid, $input, $tss, $form['#node'], $form['taxonomy'][$vid]);
+    }
+  }
+}
+
+function taxonomy_super_select_nodeapi(&$node, $op, $a3 = NULL, $a4 = NULL) {
+  if ($op == 'validate') {
+    // Content type agnostic so far, look for any node that has a vocabulary we handle
+    if (!empty($node->taxonomy)) {
+      foreach ($node->taxonomy as $vid => $terms) {
+        // Only check vocabularies present
+        if (is_numeric($vid)) {
+          $tss = variable_get('taxonomy_super_select_vid_'. $vid, FALSE);
+          // Validation required
+          if (isset($tss['types'][$node->type]) || isset($tss['types']['-all-'])) {
+            $vocabulary = taxonomy_vocabulary_load($vid);
+            $single = TRUE;
+            $has_term = FALSE;
+            $duplicates = array();
+            // Check for freetagging items in the form
+            if ($vocabulary->tags) {
+              if ($node->taxonomy['tags'][$vid] != '') {
+                $free = explode(', ', $node->taxonomy['tags'][$vid]);
+                $has_term = TRUE;
+              }
+            }
+            else{
+              $free = FALSE;
+            }
+            if ($vocabulary->required) {
+              // Checkboxes
+              if ($vocabulary->multiple) {
+                // Loop through all the terms as unchecked checkboxes return zero which fools the FAPI required code
+                foreach ($terms as $tid => $value) {
+                  // Check the freetagging form item for duplicate selected terms
+                  if ($vocabulary->tags AND $free) {
+                    if ($value) {
+                      $this_term = taxonomy_get_term($value);
+                      $found = array_search($this_term->name, $free);
+                      if ($found !== FALSE) {
+                        $duplicates[$vid] .= '"'. check_plain($this_term->name) .'" ';
+                      }
+                    }
+                  }
+                  // Regular flat list of terms
+                  if ($value > 0) {
+                    $has_term = TRUE;
+                  }
+                }
+              }
+              else{
+                // Radio box that is single select and required
+                if ($free AND $terms) {
+                  $single = FALSE;
+                }
+                elseif ($terms) {
+                  $has_term = TRUE;
+                }
+              }
+            }
+            // Not required phase
+            else{
+              // Radio Select
+              if ($vocabulary->multiple == 0) {
+                if ($free AND $terms) {
+                  $single = FALSE;
+                }
+                elseif ($free XOR $terms) {
+                  $has_term = TRUE;
+                }
+              }
+              // Checkboxes
+              else{
+                if (is_array($terms)) {
+                  // Freetagging terms are present
+                  if (!empty($free)) {
+                    foreach ($terms as $tid => $value) {
+                      // Terms set in vocab
+                      if ($value > 0) {
+                        $single = FALSE;
+                      }
+                    }
+                  }
+                }
+              }
+            }
+            // Catch freetagging vocabs that are single select with a radio checked as well as a new tag
+            if (!$single AND !$vocabulary->multiple) {
+              form_set_error('taxonomy][tags]['. $vid, t('Only one selection allowed for %vocab', array('%vocab' => $vocabulary->name)));
+            }
+            // Catch required vocabs with no terms or freetagging entries
+            if (!$has_term AND $vocabulary->required) {
+              form_set_error('taxonomy]['. $vid, t('%vocab is required.', array('%vocab' => $vocabulary->name)));
+            }
+            // Catch freetagging terms that are duplicated in the vocab already
+            if (!empty($duplicates)) {
+              // Display duplicate terms for each vocabulary that is freetagging
+              foreach ($duplicates as $vid => $terms) {
+                // Warn user that they have entered terms that already exist into the free tag field
+                form_set_error('taxonomy][tags]['. $vid, t('Tag(s) %dupes already exists in the vocabulary.', array('%dupes' => $terms)));
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+/**
+ * Validate node_form submissions.
+ * Remove taxonomy terms with a value of zero
+ */
+function taxonomy_super_select_node_form_validate($form, &$form_state) {
+  if (isset($form_state['values']['taxonomy'])) {
+    $form_state['values']['taxonomy'] = _tss_filter_recursive($form_state['values']['taxonomy']);
+  }
+}
+
+function taxonomy_super_select_submit(&$form, $form_state) {
+  $vid = $form['vid']['#value'];
+  if (count($form['settings']['tss']['taxonomy_super_select_vid_'. $vid])) {
+    $tostore = array(
+      'types' => $form['settings']['tss']['taxonomy_super_select_vid_'. $vid]['types']['#value'],
+      'parents' => $form['settings']['tss']['taxonomy_super_select_vid_'. $vid]['parents']['#value'],
+      'image' => @$form['settings']['tss']['taxonomy_super_select_vid_'. $vid]['image']['#value'],
+      'collapsible' => $form['settings']['tss']['taxonomy_super_select_vid_'. $vid]['collapsible']['#value'],
+      'terms_expanded' => $form['settings']['tss']['taxonomy_super_select_vid_'. $vid]['terms_expanded']['#value'],
+      'compact' => $form['settings']['tss']['taxonomy_super_select_vid_'. $vid]['compact']['#value'],
+    );
+    variable_set('taxonomy_super_select_vid_'. $vid, $tostore);
+  }
+  else {
+    variable_del('taxonomy_super_select_vid_'. $vid);
+  }
+}
+
+/**
+ * Recursive function to allow infinite depth vocabularies.
+ *
+ * @param array &$terms The result of taxonomy_get_tree for the vocabulary's $vid.
+ * @param array &$vid The vocabulary to work on. Passed by reference just to keep overhead
+ * of copies down.
+ * @param array &$input The portion of the vocabulary to look at (parent_type?). Passed by
+ * reference just to keep overhead of copies down.
+ * @param array $tss These are the settings for this module.
+ * @param array &$form_node This is a subsection of $form, namely $form['#node'] should be
+ * passed in.
+ * @param array &$form_branch This is a subsection of $form. Each iteration adds to the one
+ * before, then passes itself as the new branch. _tss_branch() is called for each iteration
+ * and appended to it.
+ *
+ * @return since values are passed in via reference, no return value is required.
+ */
+function _tss_next_nested(&$terms, &$vid, &$input, $tss, &$form_node, &$form_branch) {
+  $fieldweight = 0;
+  foreach ($terms as $index => $term) {
+    $children = taxonomy_get_children($term->tid, $vid);
+    if (count($children)) {
+      if (!empty($tss[$vid]['parents'])) {
+        $term->is_parent = TRUE;
+        $term->parent_type = $input;
+        $term->parent_value = isset($form_node->taxonomy[$term->tid]->tid) ? $form_node->taxonomy[$term->tid]->tid : NULL;
+      }
+      $form_branch[$term->tid] = _tss_branch($vid, $term, NULL, 'fieldset', ++$fieldweight);
+      _tss_next_nested($children, $vid, $input, $tss, $form_node, $form_branch[$term->tid]);
+      // if any of the children is selected, then the parent is not selected
+      foreach ($children as $child) {
+        if (!empty($form_node->taxonomy[$child->tid]->tid)) {
+          $form_branch[$term->tid]['#collapsed'] = FALSE;
+        }
+      }
+    }
+    else {
+      //I don't know why the code is put *before*, it's useless
+      //if ($value =  $form_node->taxonomy[$term->tid]->tid) {
+      //  $form_branch[$term->tid]['#collapsed'] = FALSE;
+      //}
+      $form_branch[$term->tid] = _tss_branch($vid, $term, @$form_node->taxonomy[$term->tid]->tid, $input, $fieldweight++);
+    }
+  }
+}
+
+function _tss_branch($vid, $term, $value = NULL, $type = 'fieldset', $fieldweight = -1) {
+  static $tss = array();
+  if (! isset($tss[$vid])) {
+    $tss[$vid] = variable_get('taxonomy_super_select_vid_'. $vid, 0);
+  }
+  $required = empty($term->required) ? '' : '<span class="form-required" title="'. t('This field is required.') .'">*</span>';
+
+  // i18ntaxonomy module integration
+  $localize = FALSE;
+  if (module_exists('i18ntaxonomy')) {
+    $localize = (is_numeric($vid) && i18ntaxonomy_vocabulary($vid) == I18N_TAXONOMY_LOCALIZE);
+  }
+
+  switch ($type) {
+    case 'fieldset':
+      // In this section, $term is sometimes actually the vocabulary.
+      $is_vocabulary = !isset($term->tid);
+      // Automatically expand required vocabs or if the parent term is selected
+      $collapsed = ($required || !empty($term->parent_value) || $tss[$vid]['terms_expanded']) ? FALSE : TRUE;
+      if ($is_vocabulary && !empty($term->help)) {
+        $help = $localize ? tt("taxonomy:vocabulary:$vid:help", $term->help) : $term->help;
+        $help = '<div class="taxonomy-super-select-help">'. $help .'</div>';
+      }
+      else {
+        $help = NULL;
+      }
+      $classes = 'taxonomy-super-select-'. (empty($term->multiple) ? 'radios' : 'checkboxes');
+      if ($tss[$vid]['compact'] && !empty($term->is_parent)) {
+        $classes .= ' taxonomy-super-select-compact';
+      }
+      $name = $localize ? tt("taxonomy:vocabulary:$vid:name", $term->name) : $term->name;
+      $form = array(
+        '#type' => 'fieldset',
+        '#title' => check_plain($name) . $required,
+        '#collapsible' => ($tss[$vid]['collapsible'] && empty($term->is_parent)) ? TRUE : FALSE,
+        '#collapsed' => $collapsed,
+        '#weight' => ($fieldweight >= 0) ? $fieldweight : $term->weight,
+        '#parents' => array('taxonomy', $vid),
+        '#description' => $tss[$vid]['compact'] || empty($help) ? '' : $help,
+        '#prefix' => '<div class="'. $classes .'">',
+        '#suffix' => '</div>',
+      );
+      // If we have vocabulary that is single select and not required or is freetagging we need a way to unselect the term
+      if ((!$required || !empty($term->tags)) && empty($term->multiple) && isset($term->module) && $term->module === 'taxonomy') {
+        $form['none'] = array(
+          '#type' => 'radio',
+          '#title' => '<em>'. t('Select None') .'</em>',
+          '#return_value' => 0,
+          '#default_value' => '',
+          '#weight' => -12,
+          '#parents' => array('taxonomy', $term->vid),
+        );
+      }
+      if (!empty($term->is_parent)) {
+        $term->weight = -11;
+        $form[$term->tid] = _tss_branch($term->vid, $term, $term->parent_value, $term->parent_type);
+      }
+      break;
+    case 'radio':
+    case 'checkbox':
+      $name = $localize ? tt("taxonomy:term:$term->tid:name", $term->name) : $term->name;
+      $description = $localize ? tt("taxonomy:term:$term->tid:description", $term->description) : $term->description;
+      $form = array(
+        '#type' => $type,
+        '#title' => check_plain($name),
+        '#return_value' => $term->tid,
+        '#default_value' => $value,
+        '#weight' => $fieldweight >= 0 ? $fieldweight : $term->weight,
+        '#attributes' => array('title' => $description),
+      );
+      if (!empty($term->is_parent)) {
+        $form['#prefix'] = '<div class="taxonomy-super-select-term-parent">';
+        $form['#suffix'] = '</div>';
+      }
+      if ($type == 'radio') {
+        $form['#parents'] = array('taxonomy', $vid);
+      }
+      break;
+  }
+  return $form;
+}
+
+/**
+ * Recursively apply array_filter() to an array.
+ */
+function _tss_filter_recursive($input) {
+  foreach ($input as &$value) {
+    if (is_array($value)) {
+      $value = _tss_filter_recursive($value);
+    }
+  }
+  return array_filter($input, '_tss_filter_callback');
+}
+function _tss_filter_callback($a) {
+  return ($a !== 0);
+}

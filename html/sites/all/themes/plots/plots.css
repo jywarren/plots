@@ -4,6 +4,14 @@ html {
 }
 
 @font-face {
+	font-family: Prociono;
+	src: url("/fonts/prociono.ttf") format("truetype-aat"),
+	     url("/fonts/prociono.otf") format("opentype");
+	font-weight: normal;
+	font-style: normal;	
+}
+
+@font-face {
 	font-family: Junction;
 	src: url("/fonts/junction.ttf") format("truetype-aat"),
 	     url("/fonts/junction.otf") format("opentype");
@@ -31,13 +39,16 @@ a {
 	color:#34a;
 }
 
-.block-search h2 {
-	margin-bottom:8px;
+fieldset table, fieldset{
+	font-size:10px;
 }
 
-.sidebar li {
+.body-field-wrapper {
 	font-size:10px;
-	margin-bottom:6px;
+}
+
+.form-item input#edit-title {
+	font-size:1.8em;
 }
 
 h1,h2,h3,h4 {
@@ -47,18 +58,33 @@ h1,h2,h3,h4 {
 
 h1 {
 	font-size:3.2em;
-	font-family: georgia;
+	font-family: Prociono,georgia;
 	margin:0;
 }
 
 h2 {
-	font-family: georgia;
-	font-style: italic;
+	font-family: Prociono,georgia;
+	/* font-style: italic; */
 	margin-top:0;
 }
 
 h2 a {
 	font-family:Junction, lucida grande,lucida sans console,sans-serif;
+}
+
+.block-search h2 {
+	margin-bottom:8px;
+}
+
+.sidebar li {
+	line-height:1.4em;
+	font-size:14px;
+	margin-bottom:6px;
+}
+
+.sidebar .item-list li {
+	font-size:12px;
+	margin-bottom:6px;
 }
 
 .sidebar h2 a {
@@ -214,6 +240,10 @@ div.widget {
 #content .section {
 	padding:0;
 	margin:0 20px;
+	padding-bottom:6px;
+}
+
+#content-area {
 }
 
 #content .views-row {

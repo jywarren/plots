@@ -127,7 +127,8 @@
 	<a href="/about">About</a> 
 	<a href="/places">Places</a> 
 	<a href="/notes">Updates</a> 
-	<a href="/notes">Reports</a> 
+	<a href="/reports">Reports</a> 
+	<a href="/events">Events</a> 
 	<div class="right"> 
 		<a href="/note/add">Note [+]</a> 
 	</div> 
