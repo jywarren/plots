@@ -5,16 +5,14 @@ html {
 
 @font-face {
 	font-family: Prociono;
-	src: url("/fonts/prociono.ttf") format("truetype-aat"),
-	     url("/fonts/prociono.otf") format("opentype");
+	src: url("/fonts/prociono.eot");
 	font-weight: normal;
 	font-style: normal;	
 }
 
 @font-face {
 	font-family: Junction;
-	src: url("/fonts/junction.ttf") format("truetype-aat"),
-	     url("/fonts/junction.otf") format("opentype");
+	src: url("/fonts/junction.eot");
 	font-weight: normal;
 	font-style: normal;	
 }
@@ -70,6 +68,45 @@ h2 {
 
 h2 a {
 	font-family:Junction, lucida grande,lucida sans console,sans-serif;
+}
+
+.balloons .view-header {
+	width:120px;
+	height:120px;
+	border-right:10px solid #555;
+	font-size:2.3em;
+	font-family: Prociono,georgia;
+	float:left;
+	line-height:1.2em;
+	padding:0 10px;
+	margin-right:10px;
+	background:#222;
+	color:white;
+}
+.balloons {
+	height:100px;
+	position:absolute;
+	font-size:9px;
+	width:990px;
+}
+.balloons div.views-row {
+	-moz-border-radius: 5px;
+	border-radius: 5px;
+	float:left;
+	width:150px;
+	color:white;
+	font-style:italic;
+	border:2px solid #333;
+	background:#666;
+	background-position:20px 100%;
+	margin:10px 10px;
+	padding:5px;
+}
+.balloons a {
+	color:white;
+}
+.balloons a:hover {
+	color:#88f;
 }
 
 .block-search h2 {
@@ -267,6 +304,11 @@ div.widget {
 	float:right;
 	padding-left:20px;
 	text-align:right;
+}
+
+#content table {
+	border-color:#bbb;
+	margin-right:10px;
 }
 
 /* Taxonomy styling */
