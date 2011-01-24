@@ -37,6 +37,10 @@ a {
 	color:#34a;
 }
 
+a:hover {
+	color:#128;
+}
+
 fieldset table, fieldset{
 	font-size:10px;
 }
@@ -83,6 +87,9 @@ h2 a {
 	background:#222;
 	color:white;
 }
+.balloons .view-header small {
+	font-size:11px;
+}
 .balloons {
 	height:100px;
 	position:absolute;
@@ -106,7 +113,11 @@ h2 a {
 	color:white;
 }
 .balloons a:hover {
-	color:#88f;
+	color:#48f;
+}
+.balloons .views-field-title {
+        font-style:normal;
+	font-weight:bold;
 }
 
 .block-search h2 {
@@ -220,6 +231,17 @@ div.widget {
 	margin-top:0;
 }
 
+#content .plots-flickr .views-row {
+	float:left;
+	width:240px;
+	padding:10px 10px 10px 0;
+	background:none;
+	font-size:11px;
+}
+#content .plots-flickr .views-row-odd {
+	clear:left;
+}
+
 .sidebar {
 	padding-left:0;
 	background: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAMAAAAECAYAAABLLYUHAAAABHNCSVQICAgIfAhkiAAAABFJREFUCJljYICA/wzoDNwCAGHSA/39bYdFAAAAAElFTkSuQmCC") repeat-y right;
@@ -269,7 +291,7 @@ div.widget {
 	padding:0;
 }
 
-.section {
+.section, .region-sidebar-first .section {
 	padding:0 10px 10px 0;
 	background: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAADCAYAAAC09K7GAAAABHNCSVQICAgIfAhkiAAAABJJREFUCJljYECA/wxYOP8xZABf0wP96WTlbgAAAABJRU5ErkJggg==") repeat-x bottom;
 }
@@ -398,4 +420,38 @@ ul.primary li.active a:hover .tab {
 	color:#333;
 }
 
+#content .view-Notes .views-row {
+	width:160px;
+	float:left;
+	margin-right:6px;
+	border-right:1px solid #ccc;
+	border-bottom:1px solid #ccc;
+	border-left:5px solid #445;
+	background:#eee;
+}
+.view-Notes .views-row .views-field-timestamp, 
+.view-Notes .views-row .views-field-body, 
+.view-Notes .views-row .views-field-view-node,
+.view-Notes .views-row .views-label-name {
+	font-size:11px;
+	padding-left:8px;
+}
+.view-Notes .views-row .views-field-body { 
+	padding-top:4px;
+}
+.view-Notes .views-row .views-field-title {
+	padding-left:8px;
+	font-weight:bold;
+	margin-top:4px;
+}
+.view-Notes .views-row-1,
+.view-Notes .views-row-4,
+.view-Notes .views-row-7,
+.view-Notes .views-row-10,
+.view-Notes .views-row-13,
+.view-Notes .views-row-16,
+.view-Notes .views-row-19,
+.view-Notes .views-row-22 {
+	clear:left;
+}
 

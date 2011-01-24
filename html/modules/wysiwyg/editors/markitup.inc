@@ -48,7 +48,7 @@ function wysiwyg_markitup_editor() {
  *   The installed editor version.
  */
 function wysiwyg_markitup_version($editor) {
-  $changelog = $editor['library path'] . '/readme.txt';
+  $changelog = $editor['library path'] . '/../CHANGELOG.md';
   $changelog = fopen($changelog, 'r');
   $line = fgets($changelog);
   if (preg_match('@([0-9\.]+)@', $line, $version)) {
