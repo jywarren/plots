@@ -128,6 +128,7 @@
 	<a href="/places">Places</a> 
 	<a href="/notes">Updates</a> 
 	<a href="/reports">Reports</a> 
+	<a href="/tools">Tools</a> 
 	<a href="/events">Events</a> 
 	<div class="right"> 
 		<a href="/note/add">Note [+]</a> 
@@ -165,6 +166,8 @@
         <div id="content-area">
           <?php print $content; ?>
         </div>
+
+	<br style="clear:both;" />
 
         <?php print $content_bottom; ?>
 

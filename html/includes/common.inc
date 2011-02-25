@@ -2880,7 +2880,13 @@ function drupal_alter($type, &$data) {
 
   foreach (module_implements($type .'_alter') as $module) {
     $function = $module .'_'. $type .'_alter';
-    call_user_func_array($function, $args);
+    //call_user_func_array($function, $args);
+	// hack:
+	$args_ref = array();
+	foreach($args as $k => &$arg){
+	$args_ref[$k] = &$arg;
+	}
+call_user_func_array($function, $args_ref);
   }
 }
 

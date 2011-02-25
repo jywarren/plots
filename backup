@@ -1,0 +1,6 @@
+cd /home/warren/sites/publiclaboratory.org/
+NOW=$(date +"%m-%d-%Y")
+rsync -r html/ --exclude='backup/*' publiclaboratory.org-$NOW/
+tar -cf html/backup/publiclaboratory.org-$NOW.tgz publiclaboratory.org-$NOW/
+rm -r publiclaboratory.org-$NOW/
+mysqldump --add-drop-table -u publiclaboratory --password=grassy publiclaboratory | bzip2 -c > html/backup/publiclaboratory.org-$NOW.sql.bz2
