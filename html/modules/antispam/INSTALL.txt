@@ -1,0 +1,35 @@
+$Id: INSTALL.txt,v 1.2 2009/06/05 14:11:25 pixture Exp $
+
+INSTALLATION:
+
+1. Create the folder 'modules/antispam'
+
+2. Copy all modules files, keeping directory structure, to the
+   folder 'modules/antispam'
+
+3. Enable the antispam module in 'admin/modules'
+
+4. Visit 'admin/settings/antispam' and enter your API key for the
+   selected antispam service provider.
+   You may wish to review and adapt the other options to suit
+   your needs.
+
+5. Check new permissions added by this module at 'admin/access'.
+
+6. You're done.
+
+
+UNINSTALLATION:
+
+Should you wish to uninstall this module, you may proceed as follows:
+
+1. Disable the antispam module in 'admin/modules'.
+
+2. Uninstall the antispam module in 'admin/modules'.
+
+3. You're done.
+
+NOTE: All the data stored in the database for the antispam module
+will be deleted when you perform the step 2. If you may want to enable
+and use it again in the future, do only the step 1.
+

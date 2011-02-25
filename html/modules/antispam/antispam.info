@@ -1,0 +1,12 @@
+name = AntiSpam
+description = Use the anti-spam service to protect your site from spam
+package = "Spam control"
+core = 6.x
+
+
+; Information added by drupal.org packaging script on 2010-11-21
+version = "6.x-1.3"
+core = "6.x"
+project = "antispam"
+datestamp = "1290321203"
+

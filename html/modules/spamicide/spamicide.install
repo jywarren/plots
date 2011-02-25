@@ -1,0 +1,142 @@
+<?php
+// $Id: spamicide.install,v 1.7 2010/11/19 18:52:17 lipcpro Exp $
+
+/**
+ * @file
+ * This module provides yet another tool to eliminate spam.
+ *
+ * @ingroup spamicide
+ * 
+ * Author:  Wes Roepken aka lipcpro (wes@lipcpro.com)
+ * Date:    10/16/2010
+ */
+
+/**
+ * Implementation of hook_requirements().
+ */
+function spamicide_requirements($phase) {
+  $requirements = array();
+  // Ensure translations don't break at install time.
+  $t = get_t();
+
+  if ($phase == 'runtime' || $phase == 'install') {
+   
+    $spamicide_directory = file_create_path() .'/spamicide';
+    if (!file_check_directory($spamicide_directory, FILE_CREATE_DIRECTORY | FILE_MODIFY_PERMISSIONS)) {
+      if (!is_dir($spamicide_directory)) {
+        $requirements['spamicide_directory'] = array(
+          'title' => $t('Spamicide Directory'),
+          'value' => $t('%p is not a directory or is not readable by the webserver.', array('%p' => $spamicide_directory)),
+          'severity' => REQUIREMENT_ERROR,
+        );
+      }
+      elseif (!is_writable($spamicide_directory)) {
+        $requirements['spamicide_directory'] = array(
+          'title' => $t('Spamicide Directory'),
+          'value' => $t('%p is not writeable by the webserver.', array('%p' => $spamicide_directory)),
+          'severity' => REQUIREMENT_ERROR,
+        );
+      }
+      else {
+        $requirements['spamicide_directory'] = array(
+          'title' => $t('Spamicide Directory'),
+          'value' => $t('An unknown error occured.'),
+          'description' => $t('An unknown error occured trying to verify %p is a directory and is writable.', array('%p' => $spamicide_directory)),
+          'severity' => REQUIREMENT_ERROR,
+        );
+      }
+    }
+
+
+    $requirements['spamicide_attempt_counter'] = array(
+      'title' => $t('Spamicide'),
+      'value' => $t('Already blocked @counter form submissions', array('@counter' => variable_get('spamicide_attempt_counter', 0))),
+      'severity' => REQUIREMENT_INFO,
+    );
+  }
+  return $requirements;
+}
+
+
+/**
+ * Implementation of hook_schema().
+ */
+function spamicide_schema() {
+  $schema['spamicide'] = array(
+    'fields' => array(
+      'form_id' => array(
+        'type' => 'varchar',
+        'length' => 128,
+        'not null' => TRUE,
+      ),
+      'form_field' => array(
+        'type' => 'varchar',
+        'length' => 64,
+        'not null' => TRUE,
+        'default' => 'feed_me',
+      ),
+      'enabled' => array(
+        'type' => 'int',
+        'size' => 'tiny',
+        'not null' => TRUE,
+        'default' => 0,
+      ),
+      'removable' => array(
+        'type' => 'int',
+        'size' => 'tiny',
+        'not null' => TRUE,
+        'default' => 1,
+      ),
+    ),
+    'primary key' => array('form_id'),
+  );
+    return $schema;
+}
+
+
+/**
+ * Implementation of hook_install().
+ * Create the tables
+ * required for the spamicide module
+ */
+function spamicide_install() {
+  drupal_install_schema('spamicide');
+  
+    // insert some defaults
+    $form_ids = array('comment_form', 'contact_mail_user', 'contact_mail_page', 'user_register', 'user_pass',
+      'user_login', 'user_login_block');
+    foreach ($form_ids as $form_id) {
+      db_query("INSERT INTO {spamicide} (form_id, enabled, removable) VALUES ('%s', 1, 0)", $form_id);
+    }
+    drupal_set_message(t('The installation of the spamicide table and some default entries was successful.'), 'status');
+    drupal_set_message(t('You can now <a href="!spamicide_admin">configure the Spamicide module</a> for your site.',
+      array('!spamicide_admin' => url('admin/settings/spamicide'))), 'status');
+}
+
+/**
+ * Implementation of hook_uninstall().
+ * Delete the tables
+ * required for the spamicide module
+ */
+function spamicide_uninstall() {
+  drupal_uninstall_schema('spamicide');
+  db_query("DELETE FROM {variable} WHERE name LIKE 'spamicide_%'");
+  cache_clear_all('variables', 'cache');
+}
+
+/**
+ * #6001: 6.x-1.3 upgrade. Fix spamicide directories and rebuild all themes.
+ */
+
+function spamicide_update_6001() {
+	$return[] = array(
+	 'success' => TRUE,
+	 'query' => 'Successfully updated spamicide module'
+	) ;
+  variable_set('spamicide_administration_mode', 1);
+  variable_set('spamicide_log_attempts', 1);
+  drupal_rebuild_theme_registry();
+  return $result;
+}//*/
+
+

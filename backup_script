@@ -1,1 +1,0 @@
-mysqldump --add-drop-table -u publiclaboratory -p publiclaboratory | bzip2 -c > publiclaboratory.bak.sql.bz2

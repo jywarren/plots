@@ -152,3 +152,9 @@ function plots_preprocess_block(&$vars, $hook) {
   $vars['sample_variable'] = t('Lorem ipsum.');
 }
 // */
+
+function views_views_pre_execute(&$view) {
+if($view->name=="Discussions") {
+        $view->build_info['query']="SELECT aggregator_item.iid AS iid, aggregator_item.title AS aggregator_item_title, aggregator_item.link AS aggregator_item_link, aggregator_item.description AS aggregator_item_description FROM aggregator_item aggregator_item LEFT JOIN aggregator_feed aggregator_feed ON aggregator_item.fid = aggregator_feed.fid WHERE (aggregator_feed.title) = ('PLOTS mailing list') ORDER BY iid DESC";
+    }
+}
