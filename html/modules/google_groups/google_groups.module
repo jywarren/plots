@@ -1,0 +1,177 @@
+<?php
+// $Id: google_groups.module,v 1.4 2009/10/17 06:30:53 dragonwize Exp $
+
+/**
+ * @file
+ * Interactions between Drupal and Google Groups.
+ */
+ini_set('display_errors', true);
+
+/**
+ * Implementation of hook_perm().
+ */
+function google_groups_perm() {
+  return array('administer google groups');
+}
+
+/**
+ * Implementation of hook_menu().
+ */
+function google_groups_menu() {
+  $items = array();
+  $items['admin/settings/googlegroups'] = array(
+    'title' => 'Google Groups',
+    'description' => t('Google Groups module settings.'),
+    'access arguments' => array('administer google groups'),
+    'page callback' => 'google_groups_list_page',
+    'file' => 'google_groups.admin.inc',
+    'type' => MENU_NORMAL_ITEM,
+  );
+  $items['admin/settings/googlegroups/list'] = array(
+    'title' => 'List',
+    'type' => MENU_DEFAULT_LOCAL_TASK,
+    'weight' => -25,
+  );
+  $items['admin/settings/googlegroups/add'] = array(
+    'title' => 'Add a group',
+    'description' => t('Add a new Google Group.'),
+    'access arguments' => array('administer google groups'),
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('google_groups_add_form'),
+    'file' => 'google_groups.admin.inc',
+    'type' => MENU_LOCAL_TASK,
+  );
+  $items['admin/settings/googlegroups/edit/%'] = array(
+    'title' => 'Edit a group',
+    'description' => t('Edit a Google Group.'),
+    'access arguments' => array('administer google groups'),
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('google_groups_add_form'),
+    'file' => 'google_groups.admin.inc',
+    'type' => MENU_CALLBACK,
+  );
+  $items['admin/settings/googlegroups/delete/%'] = array(
+    'title' => 'Delete a group',
+    'description' => t('Delete a Google Group.'),
+    'access arguments' => array('administer google groups'),
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('google_groups_delete_confirm'),
+    'file' => 'google_groups.admin.inc',
+    'type' => MENU_CALLBACK,
+  );
+  return $items;
+}
+
+/**
+ * Generate HTML for the google_groups block
+ * @param op the operation from the URL
+ * @param delta offset
+ * @returns block HTML
+ */
+function google_groups_block($op = 'list', $delta = 0) {
+  switch ($op) {
+    case 'list':
+      return google_groups_block_list();
+
+    case 'view':
+      $settings = variable_get('google_groups_settings', array());
+      $block['subject'] = t('Subscribe to @name', array('@name' => $settings['groups'][$delta]['name']));
+      $block['content'] = theme('google_groups_subscribe_form_block', $delta);
+      return $block;
+  }
+}
+
+/**
+ * Returns a list of blocks in a form suitable for hook_block() when $op == list:
+ */
+function google_groups_block_list() {
+  $settings = variable_get('google_groups_settings', array());
+  $blocks = array();
+  foreach ($settings['groups'] as $delta => $group) {
+    $blocks[$delta]['info'] = t('Google Groups: @name', array('@name' => $group['name']));
+  }
+  return $blocks;
+}
+
+/**
+ * Implementation of hook_theme()
+ */
+function google_groups_theme() {
+  return array(
+    'google_groups_subscribe_form_block' => array(
+      'template' => 'google-groups-subscribe-form-block',
+      'arguments' => array('delta' => NULL),
+    ),
+  );
+}
+
+/**
+ * template preprocesser
+ */
+function template_preprocess_google_groups_subscribe_form_block(&$vars, $hook) {
+  $settings = variable_get('google_groups_settings', array());
+  $group = $settings['groups'][$vars['delta']];
+  $vars['group_id'] = $group['id'];
+  $vars['group_name'] = $group['name'];
+}
+
+/**
+ * Implementation of hook_user().
+ */
+function google_groups_user($op, &$edit, &$account, $category = NULL) {
+  global $user;
+  switch ($op) {
+    case 'register':
+      module_load_include('admin.inc', 'google_groups', 'google_groups');
+      return google_groups_user_register_form();
+      break;
+
+    case 'insert':
+      module_load_include('admin.inc', 'google_groups', 'google_groups');
+      return google_groups_user_register_submit($edit);
+      break;
+
+    case 'view':
+      $settings =  variable_get('google_groups_settings', array());
+      $account->content['google_groups'] = array(
+        '#type' => 'user_profile_category',
+        '#title' => 'Email lists',
+      );
+      foreach ($settings['groups'] as $delta => $group) {
+        $account->content['google_groups'][$delta] = array(
+          '#title' => $group['name'],
+          '#type' => 'user_profile_item',
+          '#value' => l(t('Manage your subscription to @name', array('@name' => $group['name'])), 'http://groups.google.com/group/' . $group['id']),
+        );
+      }
+      break;
+  }
+}
+
+/**
+ * Send email to google group.
+ *
+ * @param $group_email
+ *  Group email address.
+ * @param $from_email
+ *  Users email address.
+ * @param $op
+ *  Operation. Either subscribe or unsubscribe.
+ */
+function google_groups_mail($group_email, $from_email, $op = 'subscribe') {
+  $headers = array(
+    'From'                      => $from_email,
+    'MIME-Version'              => '1.0',
+    'Content-Type'              => 'text/plain; charset=UTF-8; format=flowed; delsp=yes',
+    'Content-Transfer-Encoding' => '8Bit',
+    'X-Mailer'                  => 'Drupal',
+  );
+  $message = array(
+    'id'       => 'google_groups_' . $op,
+    'to'       => $group_email . '+' . $op . '@googlegroups.com',
+    'subject'  => $op,
+    'body'     => drupal_wrap_mail($op),
+    'headers'  => $headers,
+  );
+  return drupal_mail_send($message);
+}

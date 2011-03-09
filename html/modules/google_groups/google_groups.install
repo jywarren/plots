@@ -1,0 +1,35 @@
+<?php
+// $Id: google_groups.install,v 1.3 2009/03/26 14:19:25 dragonwize Exp $
+
+function google_groups_install() {
+  variable_set('google_groups_settings', array('next_delta' => 1, 'groups' => array()));
+}
+
+function google_groups_uninstall() {
+  variable_del('google_groups_settings');
+}
+
+/**
+ * Update from 1.x to 2.x.
+ */
+function google_groups_update_6200() {
+  // Change 1.x vars to 2.x vars.
+  $settings = array('next_delta' => 2, 'groups' => array());
+  $settings['groups']['gg1'] = array(
+    'id' => variable_get('google_groups_group', ''),
+    'name' => variable_get('google_groups_name', ''),
+    'register' => variable_get('google_groups_register', 0),
+    'register_default' => variable_get('google_groups_register_default', 0),
+    'register_default_forced' => variable_get('google_groups_register_default_forced', 0),
+  );
+  variable_set('google_groups_settings', $settings);
+
+  // Delete old 1.x vars.
+  variable_del('google_groups_group');
+  variable_del('google_groups_group_name');
+  variable_del('google_groups_setting_register');
+  variable_del('google_groups_setting_register_default');
+  variable_del('google_groups_setting_register_default_forced');
+
+  return array();
+}

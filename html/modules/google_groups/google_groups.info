@@ -1,0 +1,11 @@
+; $Id: google_groups.info,v 1.2 2009/03/26 04:00:38 dragonwize Exp $
+name = Google Groups
+description = Allow users to subscribe to Google Groups.
+core = 6.x
+
+; Information added by drupal.org packaging script on 2009-10-17
+version = "6.x-2.0"
+core = "6.x"
+project = "google_groups"
+datestamp = "1255761628"
+
