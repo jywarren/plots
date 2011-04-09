@@ -1,0 +1,444 @@
+# French translation of Drupal (general)
+# Copyright 2009 Jean-Philippe Fleury <contact@jpfleury.net>
+# Generated from files:
+#  headinganchors.module,v 1.2.4.2.2.2.2.4 2008/12/31 22:08:36 deviantintegral
+#  tableofcontents.module,v 1.2.4.2.2.2.2.13 2008/12/14 03:08:02 deviantintegral
+#  tableofcontents.info,v 1.1.2.1.2.1.2.2 2009/01/01 17:04:29 deviantintegral
+#  tableofcontents.js,v 1.1.2.1.2.2 2008/06/21 18:11:12 deviantintegral
+#  headinganchors.info,v 1.1.2.1.4.2 2009/01/01 17:04:29 deviantintegral
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: 1.2\n"
+"POT-Creation-Date: 2009-07-18 22:21-0400\n"
+"PO-Revision-Date: 2009-07-19 14:40-0400\n"
+"Last-Translator: Jean-Philippe Fleury <contact@jpfleury.net>\n"
+"Language-Team:  <>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n>1);\n"
+
+#: tableofcontents.admin.inc:20;81 tableofcontents.info:0
+msgid "Table of Contents"
+msgstr "Table des matières"
+
+#: tableofcontents.admin.inc:22
+msgid ""
+"This filter adds a table of contents referencing headers found in a node. If "
+"no headers are defined in the node content, then no table of content is "
+"added (whether or not a [toc ...] is defined.)"
+msgstr ""
+"Ce filtre ajoute une table des matières formée des titres trouvés dans un "
+"noeud. Si aucun titre n'est présent dans le corps du noeud, aucune table des "
+"matières n'est ajoutée (peu importe si une balise [toc ...] est présente ou "
+"non)."
+
+#: tableofcontents.admin.inc:26
+msgid "Hide the table of contents tags"
+msgstr "Cacher les balises de la table des matières"
+
+#: tableofcontents.admin.inc:32
+msgid "Whether an automatic table of content should be added"
+msgstr "Ajout ou non automatique de la table des matières"
+
+#: tableofcontents.admin.inc:35
+msgid "Do not automatically add a table of content"
+msgstr "Ne pas ajouter automatiquement de table des matières"
+
+#: tableofcontents.admin.inc:36
+msgid "If no [toc ...], automatically add one at the top of the page"
+msgstr ""
+"Si aucune balise [toc ...], ajouter automatiquement une table dans le haut "
+"de la page"
+
+#: tableofcontents.admin.inc:37
+msgid "If no [toc ...], automatically add one at the bottom of the page"
+msgstr ""
+"Si aucune balise [toc ...], ajouter automatiquement une table dans le bas de "
+"la page"
+
+#: tableofcontents.admin.inc:40
+msgid ""
+"Please, note that there is a minimum limit (see below) that needs to be "
+"reached for the table of content to be added."
+msgstr ""
+"Prendre note qu'un seuil minimal (voir ci-dessous) doit être atteint pour "
+"que la table des matières soit ajoutée."
+
+#: tableofcontents.admin.inc:44
+msgid "Number of headers before an automatic table of content is added"
+msgstr ""
+"Nombre de titres pour qu'une table des matières soit ajoutée automatiquement"
+
+#: tableofcontents.admin.inc:48
+msgid ""
+"When no [toc ...] is defined and the automatic feature is turned on, a table "
+"of contents will automatically be added only if at least that many headers "
+"are present."
+msgstr ""
+"Lorsqu'aucune balise [toc ...] n'est présente et que la fonction d'ajout "
+"automatique est activée, une table des matières sera automatiquement ajoutée "
+"seulement si le nombre donné de titres est atteint."
+
+#: tableofcontents.admin.inc:64
+msgid ""
+"Allow users to override the settings within the table of contents tag itself"
+msgstr ""
+"Permet aux utilisateurs de supplanter la configuration dans la balise de la "
+"table des matières"
+
+#: tableofcontents.admin.inc:70
+msgid "Remove Table of Contents tags from teasers"
+msgstr "Supprime dans les résumés les balises de la table des matières"
+
+#: tableofcontents.admin.inc:73
+msgid ""
+"If this setting is changed, each node may need to be re-edited to reflect "
+"the new setting. This will also cause every node with a Table of Contents to "
+"have a split teaser. If you have many nodes, the <a href=\"@retease"
+"\">Retease module</a> can help to do this automatically, except if you also "
+"want to use the automatic table of content feature which requires the "
+"addition of [toc hide:1] in your teaser."
+msgstr ""
+"Si cette configuration est modifiée, chaque noeud peut nécessiter une "
+"réédition pour que la nouvelle configuration soit prise en compte. Ceci fera "
+"également en sorte que chaque noeud comportant une table des matières aura "
+"un résumé à part. Si vous avez plusieurs noeuds, le <a href=\"@retease"
+"\">module Retease</a> peut le faire pour vous automatiquement, sauf si vous "
+"désirez aussi utiliser la fonction d'ajout automatique de la table des "
+"matières, qui requiert alors l'ajout de [toc hide:1] dans votre résumé."
+
+#: tableofcontents.admin.inc:77
+msgid "Table of Contents Title"
+msgstr "Titre de la table des matières"
+
+#: tableofcontents.admin.inc:82
+msgid ""
+"Enter a default title for each Table of Contents. This will be translated "
+"for each individual page."
+msgstr ""
+"Entrer un titre par défaut pour chaque table des matières. Ce sera traduit "
+"pour chaque page."
+
+#: tableofcontents.admin.inc:86
+msgid "List Type"
+msgstr "Type de liste"
+
+#: tableofcontents.admin.inc:89
+msgid "Ordered list"
+msgstr "Liste ordonnée"
+
+#: tableofcontents.admin.inc:90
+msgid "Unordered list"
+msgstr "Liste non ordonnée"
+
+#: tableofcontents.admin.inc:96
+msgid "Minimum heading level"
+msgstr "Niveau de titre minimum"
+
+#: tableofcontents.admin.inc:111
+msgid "Maximum heading level"
+msgstr "Niveau de titre maximum"
+
+#: tableofcontents.admin.inc:126
+msgid "Show attachments in the table of contents"
+msgstr "Affiche les fichiers attachés dans la table des matières"
+
+#: tableofcontents.admin.inc:132
+msgid "Include link to hide/show table of contents"
+msgstr "Ajouter un lien pour masquer/afficher la table des matières"
+
+#: tableofcontents.admin.inc:138
+msgid "Start with the table of content collapsed"
+msgstr "Table des matières masquée par défaut"
+
+#: tableofcontents.admin.inc:144
+msgid "Back to top label"
+msgstr "Retour à l'ancre de début"
+
+#: tableofcontents.admin.inc:148
+msgid ""
+"The message to display at the bottom of each paragraph with a link back to "
+"the table of contents. Leave empty to avoid this link."
+msgstr ""
+"Le message à afficher à la suite de chaque paragraphe, avec un lien vers la "
+"table des matières. Laisser vide pour désactiver cette option."
+
+#: tableofcontents.admin.inc:152
+msgid "Scroll back to the table of contents"
+msgstr "Défilement jusqu'à la table des matières"
+
+#: tableofcontents.admin.inc:155
+msgid ""
+"Use the local scroll with jquery to scroll back to the table of contents."
+msgstr ""
+"Utilise Local-Scroll avec jquery pour defiler jusqu'à la table des matières."
+
+#: tableofcontents.admin.inc:152
+msgid "Numbering method"
+msgstr "Type de numérotation"
+
+#: tableofcontents.admin.inc:155
+msgid "No number"
+msgstr "Aucun nombre"
+
+#: tableofcontents.admin.inc:156
+msgid "Numbers 1., 2., 3. (like <ol>)"
+msgstr "Nombres: 1., 2., 3. (comme <ol>)"
+
+#: tableofcontents.admin.inc:157
+msgid "Sub-numbers 1., 1.1, 1.2, 2., 2.1, 2.2, etc."
+msgstr "Sous-nombres: 1., 1.1, 1.2, 2., 2.1, 2.2, etc."
+
+#: tableofcontents.admin.inc:158
+msgid "Sub-numbers with zero 1.0, 1.1, 1.2, 2.0, 2.1, 2.2, etc."
+msgstr "Sous-nombres avec un zéro: 1.0, 1.1, 1.2, 2.0, 2.1, 2.2, etc."
+
+#: tableofcontents.admin.inc:161
+msgid "Select the type of numbering."
+msgstr "Sélectionner le type de numérotation."
+
+#: tableofcontents.admin.inc:165
+msgid "Add the number to the headers"
+msgstr "Ajouter le nombre aux titres"
+
+#: tableofcontents.admin.inc:168
+msgid "Also add the numbers shown in the table of contents to the headers."
+msgstr ""
+"Ajouter également aux titres les nombres affichés dans la table des matières."
+
+#: tableofcontents.admin.inc:172
+msgid "Numbering mode"
+msgstr "Style de numérotation"
+
+#: tableofcontents.admin.inc:175
+msgid "Decimal (1, 2, 3...)"
+msgstr "Chiffres arabes (1, 2, 3...)"
+
+#: tableofcontents.admin.inc:176
+msgid "Roman (I, II, III, ...)"
+msgstr "Chiffres romains majuscules (I, II, III...)"
+
+#: tableofcontents.admin.inc:177
+msgid "Roman (i, ii, iii, ...)"
+msgstr "Chiffres romains minuscules (i, ii, iii...)"
+
+#: tableofcontents.admin.inc:178
+msgid "Letters (A, B, C, ...)"
+msgstr "Lettres majuscules (A, B, C...)"
+
+#: tableofcontents.admin.inc:179
+msgid "Letters (a, b, c, ...)"
+msgstr "Lettres minuscules (a, b, c...)"
+
+#: tableofcontents.admin.inc:182
+msgid "Select decimal, roman, or letters."
+msgstr ""
+"Sélectionner le style de numérotation (chiffres arabes, chiffres romains ou "
+"lettres)."
+
+#: tableofcontents.admin.inc:186
+msgid "Numbering prefix"
+msgstr "Préfixe de la numérotation"
+
+#: tableofcontents.admin.inc:190
+msgid ""
+"The characters added at the start. Often used for an opening parenthesis."
+msgstr ""
+"Le ou les caractères ajoutés au début. Usage fréquent: une parenthèse "
+"ouvrante."
+
+#: tableofcontents.admin.inc:194
+msgid "Numbering separator"
+msgstr "Séparateur de la numérotation"
+
+#: tableofcontents.admin.inc:198
+msgid "The characters added between each number."
+msgstr "Le ou les caractères ajoutés entre chaque nombre."
+
+#: tableofcontents.admin.inc:202
+msgid "Numbering suffix"
+msgstr "Suffixe de la numérotation"
+
+#: tableofcontents.admin.inc:206
+msgid "The characters added at the end. Often used for a closing parenthesis."
+msgstr ""
+"Le ou les caractères ajoutés à la fin. Usage fréquent: une parenthèse "
+"fermante."
+
+#: tableofcontents.admin.inc:246
+msgid ""
+"The content you saved contains a table of contents. A separate summary "
+"(teaser) has been automatically created without the table of contents at the "
+"top. If you make any further changes, be sure to check the summary field to "
+"see if your changes apply there as well."
+msgstr ""
+"Le contenu sauvegardé contient une table des matières. Un résumé séparé a "
+"été automatiquement créé sans table des matières dans le haut. Si vous "
+"modifiez ultérieurement le contenu, n'oubliez pas, le cas échéant, de mettre "
+"également à jour le résumé."
+
+#: tableofcontents.admin.inc:253
+msgid ""
+"The summary (teaser) was automatically split from the body as site settings "
+"does not allow table of contents in summaries. If you make any further "
+"changes, be sure to check the summary field to see if your changes apply "
+"there as well."
+msgstr ""
+"Le résumé a été séparé automatiquement du corps du message étant donné que "
+"la configuration du site ne permet pas d'avoir une table des matières dans "
+"les résumés. Si vous modifiez ultérieurement le contenu, n'oubliez pas, le "
+"cas échéant, de mettre également à jour le résumé."
+
+#: tableofcontents.pages.inc:252
+msgid ""
+"Table of contents error: !opt is not a valid boolean value for hidden. "
+"Expected 0, false, 1, or true."
+msgstr ""
+"Erreur concernant la table des matières: !opt n'est pas une valeur booléenne "
+"valide pour l'argument hidden. Valeur attendue: 0, false, 1 ou true."
+
+#: tableofcontents.pages.inc:279
+msgid ""
+"Table of contents error: !opt is not a valid list type. Expected 'ul', "
+"'unordered', 'ol', or 'ordered'"
+msgstr ""
+"Erreur concernant la table des matières: !opt n'est pas un type de liste "
+"valide. Valeur attendue: ul, unordered, ol ou ordered"
+
+#: tableofcontents.pages.inc:289
+msgid ""
+"Table of contents error: !opt is not a valid level. Expected a number from 1 "
+"to 6"
+msgstr ""
+"Erreur concernant la table des matières: !opt n'est pas un niveau valide. "
+"Valeur attendue: un nombre entre 1 et 6"
+
+#: tableofcontents.pages.inc:308
+msgid ""
+"Table of contents error: !opt is not a valid boolean value for attachment. "
+"Expected 0, false, 1, or true."
+msgstr ""
+"Erreur concernant la table des matières: !opt n'est pas une valeur booléenne "
+"valide pour l'argument attachment. Valeur attendue: 0, false, 1 ou true."
+
+#: tableofcontents.pages.inc:328
+msgid ""
+"Table of contents error: !opt is not a valid boolean value for hideshow. "
+"Expected 0, false, 1, or true."
+msgstr ""
+"Erreur concernant la table des matières: !opt n'est pas une valeur booléenne "
+"valide pour l'argument hideshow. Valeur attendue: 0, false, 1 ou true."
+
+#: tableofcontents.pages.inc:348
+msgid ""
+"Table of contents error: !opt is not a valid boolean value for collapsed. "
+"Expected 0, false, 1, or true."
+msgstr ""
+"Erreur concernant la table des matières: !opt n'est pas une valeur booléenne "
+"valide pour l'argument collapsed. Valeur attendue: 0, false, 1 ou true."
+
+#: tableofcontents.pages.inc:356
+msgid "Table of contents error: !opt is not a valid option."
+msgstr ""
+"Erreur concernant la table des matières: !opt n'est pas une option valide."
+
+#: tableofcontents.pages.inc:389
+msgid ""
+"Table of contents error: minlevel (!minlevel) is larger than maxlevel (!"
+"maxlevel), reverting to defaults."
+msgstr ""
+"Erreur concernant la table des matières: le niveau minimum des titres (!"
+"minlevel) est plus grand que le niveau maximum (!maxlevel); la configuration "
+"par défaut sera utilisée."
+
+#: tableofcontents.pages.inc:603 tableofcontents.js:0
+msgid "show"
+msgstr "afficher"
+
+#: tableofcontents.pages.inc:607 tableofcontents.js:0;0
+msgid "hide"
+msgstr "masquer"
+
+#: tableofcontents.pages.inc:667
+msgid "Attachments"
+msgstr "Fichiers attachés"
+
+#: tableofcontents.module:43
+msgid ""
+"A module to create a table of contents based on HTML header tags. Changes "
+"headers to anchors for processing so it may be incompatible with other "
+"filters that process header tags. It does use existing IDs on the header "
+"tags if already present and only operates on header levels 1 - 6."
+msgstr ""
+"Un module qui génère une table des matières en se basant sur les balises de "
+"titre HTML. Change les titres en leur ajoutant des ancres pour effectuer un "
+"traitement, donc pourrait être incompatible avec d'autres filtres effectuant "
+"également un traitement sur les balises de titre. Réutilise les attributs id "
+"des balises de titre déjà existants et agit seulement sur les titres de "
+"niveau 1 à 6."
+
+#: tableofcontents.module:56
+msgid ""
+"Every instance of \"[toc ...]\" in the input text will be replaced with a "
+"collapsible mediawiki-style table of contents. Accepts options for title, "
+"list style, minimum heading level, and maximum heading level, and "
+"attachments as follows: [toc list: ol; title: Table of Contents; minlevel: "
+"2; maxlevel: 3; attachments: yes;]. All arguments are optional."
+msgstr ""
+"Chaque apparition de [toc ...] dans le texte sera remplacée par une table "
+"des matières déroulable de style MediaWiki. Accepte des options pour le "
+"titre, le type de liste, le niveau de titre minimum et maximum, et les "
+"fichiers attachés, et ce comme suit: [toc list: ol; title: Table of "
+"Contents; minlevel: 2; maxlevel: 3; attachments: yes;]. Tous les arguments "
+"sont optionnels."
+
+#: tableofcontents.module:59
+msgid ""
+"Every instance of \"[toc ...]\" in the input text will be replaced with a "
+"collapsible mediawiki-style table of contents."
+msgstr ""
+"Chaque apparition de [toc ...] dans le texte sera remplacée par une table "
+"des matières déroulable de style MediaWiki."
+
+#: tableofcontents.module:64
+msgid ""
+"Use [toc list: ol; title: Table of Contents; minlevel: 2; maxlevel: 3; "
+"attachments: yes;] to insert a mediawiki style collapsible table of "
+"contents. All the arguments are optional."
+msgstr ""
+"Insérer [toc list: ol; title: Table of Contents; minlevel: 2; maxlevel: 3; "
+"attachments: yes;] pour afficher une table des matières déroulable de style "
+"MediaWiki. Tous les arguments sont optionnels."
+
+#: tableofcontents.module:67
+msgid ""
+"Use [toc ...] to insert a mediawiki style collapsible table of contents."
+msgstr ""
+"Insérer [toc ...] pour afficher une table des matières déroulable de style "
+"MediaWiki."
+
+#: tableofcontents.module:78
+msgid "Table of contents"
+msgstr "Table des matières"
+
+#: tableofcontents.module:84
+msgid "Inserts a table of contents in place of [toc ...] tags."
+msgstr "Insère une table des matières à la place des balises [toc ...]."
+
+#: tableofcontents.module:0
+msgid "tableofcontents"
+msgstr "tabledesmatieres"
+
+#: tableofcontents.info:0
+msgid ""
+"Adds a filter that generates Tables of contents for pages with  '[toc ...]' "
+"tags or that have a predetermined number of headers."
+msgstr ""
+"Ajoute un filtre qui génère une table des matières pour les pages comportant "
+"une balise [toc ...] ou ayant un nombre prédéterminé de titres."
+
+#: tableofcontents.info:0
+msgid "Input filters"
+msgstr "Filtres d'entrée"

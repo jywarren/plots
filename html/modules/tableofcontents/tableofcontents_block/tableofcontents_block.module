@@ -1,0 +1,113 @@
+<?php
+// $Id: tableofcontents_block.module,v 1.1.2.2 2010/05/24 19:26:54 alexiswilke Exp $
+
+
+/**
+ * @file
+ * main file for module providing a block
+ */
+
+/**
+ * Create the block if user has permission and we are viewing
+ * a node and the node has enough data to generate a table of
+ * contents.
+ */
+function _tableofcontents_block_view() {
+  global $_tableofcontents_block_processing;
+  global $_tableofcontents_block_toc;
+
+  // verify access permission
+  // then whether we are viewing a node
+  if (!user_access('access content')
+      || arg(0) != 'node' || !is_numeric(arg(1))) {
+    // no block
+    return;
+  }
+  $node = node_load(arg(1));
+
+  $_tableofcontents_block_processing = TRUE;
+  $text = node_view($node, FALSE, TRUE, FALSE);
+  unset($_tableofcontents_block_processing);
+
+  module_load_include('pages.inc', 'tableofcontents');
+  $_tableofcontents_block_toc = '[toc]';
+  $text = _tableofcontents_process(0, 'block', $text);
+  unset($_tableofcontents_block_toc);
+
+  if ($text) {
+    $block['content'] = $text;
+    $block['subject'] = t('Table of contents');
+    $block['weight'] = 0;
+    return $block;
+  }
+  // no block
+}
+
+/**
+ * Create a form to setup the Table of contents block.
+ */
+function _tableofcontents_block_form() {
+  // we get the filter form
+  module_load_include('admin.inc', 'tableofcontents');
+  $filter_form = _tableofcontents_settings('block');
+
+  // then we change a few things
+  $form = $filter_form['tableofcontents'];
+
+  // adapt some messages
+  $form['tableofcontents_min_limit_block']['#title'] = t('Number of headers to show table of contents');
+  $form['tableofcontents_min_limit_block']['#description'] = t('The minimum number of headers before the table of contents is shown.');
+
+  // forced values are never shown to the user
+  unset($form['tableofcontents_automatic_block']); // there is no top or bottom! so we always use top
+  unset($form['tableofcontents_hide_table_block']);
+  unset($form['tableofcontents_allow_override_block']);
+  unset($form['tableofcontents_back_to_top_block']);
+  unset($form['tableofcontents_back_to_top_location_block']);
+  unset($form['tableofcontents_back_to_top_anchor_block']);
+  unset($form['tableofcontents_scroll_back_to_top_block']);
+  unset($form['tableofcontents_number_headers_block']);
+  unset($form['tableofcontents_remove_teaser_block']);
+
+  return $form;
+}
+
+function _tableofcontents_block_save($edit) {
+  variable_set('tableofcontents_comments_block',             $edit['tableofcontents_comments_block']);
+  variable_set('tableofcontents_comments_level_block',       $edit['tableofcontents_comments_level_block']);
+  variable_set('tableofcontents_min_limit_block',            $edit['tableofcontents_min_limit_block']);
+  variable_set('tableofcontents_title_block',                $edit['tableofcontents_title_block']);
+  variable_set('tableofcontents_list_type_block',            $edit['tableofcontents_list_type_block']);
+  variable_set('tableofcontents_minlevel_block',             $edit['tableofcontents_minlevel_block']);
+  variable_set('tableofcontents_maxlevel_block',             $edit['tableofcontents_maxlevel_block']);
+  variable_set('tableofcontents_attachments_block',          $edit['tableofcontents_attachments_block']);
+  variable_set('tableofcontents_hide_show_block',            $edit['tableofcontents_hide_show_block']);
+  variable_set('tableofcontents_collapsed_block',            $edit['tableofcontents_collapsed_block']);
+  variable_set('tableofcontents_numbering_block',            $edit['tableofcontents_numbering_block']);
+  variable_set('tableofcontents_number_mode_block',          $edit['tableofcontents_number_mode_block']);
+  variable_set('tableofcontents_number_start_letter_block',  $edit['tableofcontents_number_start_letter_block']);
+  variable_set('tableofcontents_number_separator_block',     $edit['tableofcontents_number_separator_block']);
+  variable_set('tableofcontents_number_end_letter_block',    $edit['tableofcontents_number_end_letter_block']);
+}
+
+/**
+ * Implementation of hook_block().
+ */
+function tableofcontents_block_block($op = 'list', $delta = 0, $edit = array()) {
+  switch ($op) {
+  case 'list':
+    $blocks[0]['info'] = t('Table of contents');
+    return $blocks;
+
+  case 'configure':
+    return _tableofcontents_block_form();
+
+  case 'save':
+    _tableofcontents_block_save($edit);
+    break;
+
+  case 'view':
+    return _tableofcontents_block_view();
+
+  }
+}

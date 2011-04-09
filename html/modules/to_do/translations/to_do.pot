@@ -1,0 +1,725 @@
+# $Id: to_do.pot,v 1.1.2.3 2010/06/23 02:58:13 alexiswilke Exp $
+#
+# LANGUAGE translation of Drupal (general)
+# Copyright YEAR NAME <EMAIL@ADDRESS>
+# Generated from files:
+#  to_do.admin.inc,v 1.1.2.2 2010/05/23 12:11:09 alexiswilke
+#  to_do.module,v 1.6.2.6 2010/05/30 09:14:22 alexiswilke
+#  to_do.module,v 1.6.2.3 2010/05/24 09:55:35 alexiswilke
+#  to_do.users.inc,v 1.1.2.1 2010/05/22 08:32:47 alexiswilke
+#  to_do_block.pages.inc,v 1.1.2.2 2010/05/24 05:23:35 alexiswilke
+#  to_do_views.views.inc: n/a
+#  to_do_info.tpl.php,v 1.3.2.3 2010/05/23 12:11:09 alexiswilke
+#  to_do_block.admin.inc,v 1.1.2.1 2010/05/22 08:32:47 alexiswilke
+#  to_do_block.users.inc: n/a
+#  to_do_block.module,v 1.1.2.1 2010/05/22 08:32:47 alexiswilke
+#  to_do.info,v 1.1 2009/07/14 02:55:39 hakulicious
+#  to_do_views_handler_field_item_status.inc: n/a
+#  to_do_views_handler_field_priority.inc: n/a
+#  to_do_action.module: n/a
+#  to_do.install,v 1.1.2.3 2010/05/22 09:22:43 alexiswilke
+#  to_do_action.info: n/a
+#  to_do_block.info: n/a
+#  to_do_views.info: n/a
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PROJECT VERSION\n"
+"POT-Creation-Date: 2010-06-22 19:38-0700\n"
+"PO-Revision-Date: YYYY-mm-DD HH:MM+ZZZZ\n"
+"Last-Translator: NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <EMAIL@ADDRESS>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
+
+#: to_do.admin.inc:87
+msgid "Description title"
+msgstr ""
+
+#: to_do.admin.inc:88
+msgid "Title shown right before the description of your To Do list items."
+msgstr ""
+
+#: to_do.admin.inc:89 to_do.module:310
+msgid "Details"
+msgstr ""
+
+#: to_do.admin.inc:94
+msgid "Field set title"
+msgstr ""
+
+#: to_do.admin.inc:95
+msgid "Title used for the task <em>fieldset</em>. If empty, do not use a fieldset."
+msgstr ""
+
+#: to_do.admin.inc:96 to_do.module:312
+msgid "To Do Listing"
+msgstr ""
+
+#: to_do.admin.inc:101
+msgid "Date Format"
+msgstr ""
+
+#: to_do.admin.inc:102
+msgid "Enter the format to be used for dates displayed by the To Do List module. Use a !php_date format string.<br />Note: No hours, minutes, or seconds are provided with dates in this module, so don't include these in your format string."
+msgstr ""
+
+#: to_do.admin.inc:102
+msgid "PHP date"
+msgstr ""
+
+#: to_do.admin.inc:108
+msgid "Number of items in lists shown in user accounts"
+msgstr ""
+
+#: to_do.admin.inc:109
+msgid "Enter the number of listings to be displayed on pages that display lists of to do listings. This number is independent from block settings, which are set on a per/user basis in their control panel"
+msgstr ""
+
+#: to_do.admin.inc:115
+msgid "Show action buttons"
+msgstr ""
+
+#: to_do.admin.inc:116
+msgid "When set, show action buttons on the page that the author or assigned users can click to change the status of the To Do item."
+msgstr ""
+
+#: to_do.admin.inc:122
+msgid "Show actions on the side"
+msgstr ""
+
+#: to_do.admin.inc:123
+msgid "Check this box to move the actions to the side instead of the bottom."
+msgstr ""
+
+#: to_do.admin.inc:129
+msgid "Show info after description"
+msgstr ""
+
+#: to_do.admin.inc:130
+msgid "Show the To Do item information after the description when checked. WARNING: You may need to clear your cache to see the effect of this flag."
+msgstr ""
+
+#: to_do.admin.inc:136
+msgid "Auto-change \"Started\" to \"In Progress\""
+msgstr ""
+
+#: to_do.admin.inc:137
+msgid "When saving a To Do item with its status set to Started, you generate a Started event. To avoid this side effect each time you edit your To Do item, check this box."
+msgstr ""
+
+#: to_do.admin.inc:148
+msgid "Reminder events"
+msgstr ""
+
+#: to_do.admin.inc:149
+msgid "Number of days before the event deadline is reached when an event reminder is posted. Leave empty to not send a reminder."
+msgstr ""
+
+#: to_do.admin.inc:153
+msgid "Number of days before unpublishing"
+msgstr ""
+
+#: to_do.admin.inc:154
+msgid "Once a To do item was marked finished, it will automatically be unpublished after this many days. Enter nothing to avoid this feature."
+msgstr ""
+
+#: to_do.admin.inc:160
+msgid "Number of days before deleting"
+msgstr ""
+
+#: to_do.admin.inc:161
+msgid "Once a To do item was marked finished, it will automatically be deleted after this many days. Enter nothing to avoid this feature."
+msgstr ""
+
+#: to_do.admin.inc:167
+msgid "Delete any To do item"
+msgstr ""
+
+#: to_do.admin.inc:168
+msgid "By default, only items that were unpublished get deleted. Select this option to delete all items even those that are still published."
+msgstr ""
+
+#: to_do.admin.inc:186
+msgid "The number of listings must be a number."
+msgstr ""
+
+#: to_do.admin.inc:191
+msgid "The number of days before the deadline reminder must be a positive number."
+msgstr ""
+
+#: to_do.admin.inc:197
+msgid "The number of days before unpublishing must be a number."
+msgstr ""
+
+#: to_do.admin.inc:201
+msgid "The number of days before deleting must be a number."
+msgstr ""
+
+#: to_do.admin.inc:210
+msgid "The number of days before deleting must be larger than the number of days before unpublishing."
+msgstr ""
+
+#: to_do.pages.inc:25 to_do.module:46
+msgid "To do"
+msgstr ""
+
+#: to_do.pages.inc:41 to_do.users.inc:94 to_do_block.pages.inc:166 to_do_views.views.inc:138 templates/to_do_info.tpl.php:10
+msgid "Status"
+msgstr ""
+
+#: to_do.pages.inc:47 to_do.users.inc:95 to_do_block.pages.inc:172 to_do_views.views.inc:120 templates/to_do_info.tpl.php:13
+msgid "Priority"
+msgstr ""
+
+#: to_do.pages.inc:57
+msgid "Dates"
+msgstr ""
+
+#: to_do.pages.inc:67
+msgid "Include a start date"
+msgstr ""
+
+#: to_do.pages.inc:75 to_do.users.inc:96 templates/to_do_info.tpl.php:17
+msgid "Start Date"
+msgstr ""
+
+#: to_do.pages.inc:89
+msgid "Include a deadline"
+msgstr ""
+
+#: to_do.pages.inc:103 to_do.users.inc:97 to_do_block.pages.inc:178 to_do_views.views.inc:89 templates/to_do_info.tpl.php:22
+msgid "Deadline"
+msgstr ""
+
+#: to_do.pages.inc:115
+msgid "Automatically mark this listing closed after the deadline"
+msgstr ""
+
+#: to_do.pages.inc:124
+msgid "Assignment"
+msgstr ""
+
+#: to_do.pages.inc:130
+msgid "Assign to self"
+msgstr ""
+
+#: to_do.pages.inc:149
+msgid "Assigned to"
+msgstr ""
+
+#: to_do.pages.inc:152
+msgid "Unselect the users that should be have this To do item assigned to them."
+msgstr ""
+
+#: to_do.pages.inc:166
+msgid "Add users"
+msgstr ""
+
+#: to_do.pages.inc:167
+msgid "Enter the user names of the users to assign this To do item. If you want to assign more than 3 users, save this many and click Edit to add another 3."
+msgstr ""
+
+#: to_do.pages.inc:171
+msgid "The following user(s) can mark this listing as finished"
+msgstr ""
+
+#: to_do.pages.inc:173
+msgid "Only me"
+msgstr ""
+
+#: to_do.pages.inc:174
+msgid "Any assigned user"
+msgstr ""
+
+#: to_do.pages.inc:191
+msgid "The deadline cannot be earlier than the start date"
+msgstr ""
+
+#: to_do.pages.inc:227
+msgid "User \"@user\" either does not exist or he does not have permission to access this To do items."
+msgstr ""
+
+#: to_do.pages.inc:250
+msgid "You must assign this To do item to at least one user, this can either be you or another user."
+msgstr ""
+
+#: to_do.users.inc:31
+msgid "My to do assignments"
+msgstr ""
+
+#: to_do.users.inc:49
+msgid "To do assignments I created"
+msgstr ""
+
+#: to_do.users.inc:90 to_do_block.pages.inc:161
+msgid "Title"
+msgstr ""
+
+#: to_do.users.inc:92 templates/to_do_info.tpl.php:27
+msgid "Assigned To"
+msgstr ""
+
+#: to_do.users.inc:98
+msgid "Date Finished"
+msgstr ""
+
+#: to_do.users.inc:153
+msgid "Excellent! There are no To do list items in this list."
+msgstr ""
+
+#: to_do_block.admin.inc:10
+msgid "Hide block when empty"
+msgstr ""
+
+#: to_do_block.admin.inc:11
+msgid "Check this box to hide the block completely when the currently selected list is empty."
+msgstr ""
+
+#: to_do_block.admin.inc:16
+msgid "Teaser in title"
+msgstr ""
+
+#: to_do_block.admin.inc:17
+msgid "Get the node teaser and insert as the title of the link to the To do item."
+msgstr ""
+
+#: to_do_block.admin.inc:22
+msgid "Display status column"
+msgstr ""
+
+#: to_do_block.admin.inc:23
+msgid "Check this box to display the To do list status column."
+msgstr ""
+
+#: to_do_block.admin.inc:28
+msgid "Display priority column"
+msgstr ""
+
+#: to_do_block.admin.inc:29
+msgid "Check this box to display the To do list priority column."
+msgstr ""
+
+#: to_do_block.admin.inc:34
+msgid "Display deadline column"
+msgstr ""
+
+#: to_do_block.admin.inc:35
+msgid "Check this box to display the To do list deadline column."
+msgstr ""
+
+#: to_do_block.admin.inc:40
+msgid "Display links"
+msgstr ""
+
+#: to_do_block.admin.inc:41
+msgid "Check this box to get a icons: link to to complete list, link to enter a new To do item..."
+msgstr ""
+
+#: to_do_block.admin.inc:51
+msgid "List to display"
+msgstr ""
+
+#: to_do_block.admin.inc:52
+msgid "Choose what is to be displayed in the block. Users can override this selection when editing their account."
+msgstr ""
+
+#: to_do_block.admin.inc:64
+msgid "Help link"
+msgstr ""
+
+#: to_do_block.admin.inc:65
+msgid "When displaying links, you can enter a help icon as well. Enter the URL here. The default is !help_link. Clear this field to avoid the help icon."
+msgstr ""
+
+#: to_do_block.pages.inc:76 to_do.module:674
+msgid "Urgent"
+msgstr ""
+
+#: to_do_block.pages.inc:77 to_do.module:675
+msgid "All"
+msgstr ""
+
+#: to_do_block.pages.inc:87
+msgid "New To do"
+msgstr ""
+
+#: to_do_block.pages.inc:92
+msgid "Add new To do item"
+msgstr ""
+
+#: to_do_block.pages.inc:97;102;264;299 to_do_block.users.inc:15 to_do_views.views.inc:53 to_do_block.module:118 to_do.info:0
+msgid "To do list"
+msgstr ""
+
+#: to_do_block.pages.inc:112
+msgid "Help"
+msgstr ""
+
+#: to_do_block.pages.inc:117
+msgid "To do help"
+msgstr ""
+
+#: to_do_block.pages.inc:240
+msgid "Your To do list is empty!"
+msgstr ""
+
+#: to_do_block.pages.inc:250
+msgid "Items in red and purple have been marked \"immediate\" or reached their deadline."
+msgstr ""
+
+#: to_do_block.pages.inc:267
+msgid "To do list (Mode:&nbsp;@selection)"
+msgstr ""
+
+#: to_do_block.pages.inc:300
+msgid "<table><tbody><tr><td><p>This list is empty.</p></td></tr></tbody></table>"
+msgstr ""
+
+#: to_do_block.users.inc:19
+msgid "Number of items to display"
+msgstr ""
+
+#: to_do_block.users.inc:22
+msgid "One to thirty items can be displayed in your To do block."
+msgstr ""
+
+#: to_do_block.users.inc:27
+msgid "Include low priority items"
+msgstr ""
+
+#: to_do_block.users.inc:28
+msgid "Check this box to see To do items with the Low priority in your To do block."
+msgstr ""
+
+#: to_do_block.users.inc:46
+msgid "Please choose a number of items to display between one and thirty."
+msgstr ""
+
+#: to_do_views.views.inc:25
+msgid "CCYYMMDD"
+msgstr ""
+
+#: to_do_views.views.inc:25
+msgid "full date"
+msgstr ""
+
+#: to_do_views.views.inc:26
+msgid "CCYYMM"
+msgstr ""
+
+#: to_do_views.views.inc:26
+msgid "year + month"
+msgstr ""
+
+#: to_do_views.views.inc:27
+msgid "CCYY"
+msgstr ""
+
+#: to_do_views.views.inc:27
+msgid "year"
+msgstr ""
+
+#: to_do_views.views.inc:28
+msgid "MM (01 - 12)"
+msgstr ""
+
+#: to_do_views.views.inc:28
+msgid "month"
+msgstr ""
+
+#: to_do_views.views.inc:29
+msgid "DD (01 - 31)"
+msgstr ""
+
+#: to_do_views.views.inc:29
+msgid "day"
+msgstr ""
+
+#: to_do_views.views.inc:30
+msgid "WW (01 - 53)"
+msgstr ""
+
+#: to_do_views.views.inc:30
+msgid "week"
+msgstr ""
+
+#: to_do_views.views.inc:36
+msgid "In the form of"
+msgstr ""
+
+#: to_do_views.views.inc:73
+msgid "Start date"
+msgstr ""
+
+#: to_do_views.views.inc:74
+msgid "Date when the To do task was started (before it was started, date when it was created.) May be NULL."
+msgstr ""
+
+#: to_do_views.views.inc:90
+msgid "Date when the To do task must be finished by. May be NULL."
+msgstr ""
+
+#: to_do_views.views.inc:105
+msgid "Date finished"
+msgstr ""
+
+#: to_do_views.views.inc:106
+msgid "Date when the To do task was finished on. May be NULL."
+msgstr ""
+
+#: to_do_views.views.inc:121
+msgid "The priority of the To do task"
+msgstr ""
+
+#: to_do_views.views.inc:139
+msgid "The status of the To do task"
+msgstr ""
+
+#: to_do_views.views.inc:156;164
+msgid "Auto-close"
+msgstr ""
+
+#: to_do_views.views.inc:157
+msgid "Whether the To do task will be auto-closed on Deadline."
+msgstr ""
+
+#: to_do_views.views.inc:175
+msgid "To do assigned users"
+msgstr ""
+
+#: to_do_views.views.inc:197
+msgid "Assigned users"
+msgstr ""
+
+#: to_do_views.views.inc:198
+msgid "Users assigned a To do item."
+msgstr ""
+
+#: to_do_views.views.inc:203
+msgid "Assigned user"
+msgstr ""
+
+#: to_do_views.views.inc:208
+msgid "All user assignments"
+msgstr ""
+
+#: to_do_views.views.inc:209
+msgid "To do item revisions assigned to a user (all revisions!)"
+msgstr ""
+
+#: to_do_views.views.inc:214
+msgid "To do revision"
+msgstr ""
+
+#: to_do_views.views.inc:219
+msgid "Current user assignments"
+msgstr ""
+
+#: to_do_views.views.inc:220
+msgid "To do item nodes assigned to a user (only the current revision.)"
+msgstr ""
+
+#: to_do_views.views.inc:225
+msgid "To do node"
+msgstr ""
+
+#: to_do_views.views.inc:231
+msgid "Assigned user ID"
+msgstr ""
+
+#: to_do_views.views.inc:232
+msgid "The identifier of users assigned a To do item."
+msgstr ""
+
+#: to_do_views.views.inc:242
+msgid "Name"
+msgstr ""
+
+#: to_do_views.views.inc:252
+msgid "Vid"
+msgstr ""
+
+#: to_do_views.views.inc:253
+msgid "The revision ID of the To do revision."
+msgstr ""
+
+#: to_do_views.views.inc:273
+msgid "Node ID"
+msgstr ""
+
+#: to_do_views.views.inc:274
+msgid "The node ID of the To do revision."
+msgstr ""
+
+#: to_do_views_handler_field_item_status.inc:19
+msgid "Output status number"
+msgstr ""
+
+#: to_do_views_handler_field_item_status.inc:20
+msgid "Display the status as a number instead of a word."
+msgstr ""
+
+#: to_do_views_handler_field_priority.inc:19
+msgid "Output priority number"
+msgstr ""
+
+#: to_do_views_handler_field_priority.inc:20
+msgid "Display the priority as a number instead of a word."
+msgstr ""
+
+#: to_do.module:48
+msgid "A to do item to be added to a user's list of things to do."
+msgstr ""
+
+#: to_do.module:50
+msgid "To do task"
+msgstr ""
+
+#: to_do.module:52
+msgid "Assignment details"
+msgstr ""
+
+#: to_do.module:577
+msgid "Not Started"
+msgstr ""
+
+#: to_do.module:578
+msgid "Started"
+msgstr ""
+
+#: to_do.module:579
+msgid "Finished"
+msgstr ""
+
+#: to_do.module:580
+msgid "Awaiting More Information"
+msgstr ""
+
+#: to_do.module:581
+msgid "Delayed"
+msgstr ""
+
+#: to_do.module:582
+msgid "Cancelled"
+msgstr ""
+
+#: to_do.module:583
+msgid "In Progress"
+msgstr ""
+
+#: to_do.module:601
+msgid "Low"
+msgstr ""
+
+#: to_do.module:602
+msgid "Medium"
+msgstr ""
+
+#: to_do.module:603
+msgid "High"
+msgstr ""
+
+#: to_do.module:604
+msgid "Immediate"
+msgstr ""
+
+#: to_do.module:742
+msgid "Mark Started"
+msgstr ""
+
+#: to_do.module:771
+msgid "Mark Finished"
+msgstr ""
+
+#: to_do.module:62
+msgid "to do list assignment"
+msgstr ""
+
+#: to_do.module:63
+msgid "create to do list"
+msgstr ""
+
+#: to_do.module:64
+msgid "administer to do list"
+msgstr ""
+
+#: to_do.module:65
+msgid "view all to do listings"
+msgstr ""
+
+#: to_do_action.module:9
+msgid "A user clicked on the Started button."
+msgstr ""
+
+#: to_do_action.module:12
+msgid "One of your reminder date and time was reached."
+msgstr ""
+
+#: to_do_action.module:15
+msgid "Today the deadline was reached."
+msgstr ""
+
+#: to_do_action.module:18
+msgid "You are late. The deadline was not met."
+msgstr ""
+
+#: to_do_action.module:21
+msgid "The To do item was marked as finished."
+msgstr ""
+
+#: to_do_action.module:24
+msgid "The To do item was unpublished."
+msgstr ""
+
+#: to_do_action.module:27
+msgid "The To do item is about to be deleted."
+msgstr ""
+
+#: to_do_block.module:91
+msgid "to do list block callback"
+msgstr ""
+
+#: to_do_block.module:92
+msgid "Provides a callback function for the ajax features of the to do list block"
+msgstr ""
+
+#: to_do.install:152
+msgid "Indicates who can mark this item finished. 0 = creator only, 1 = any assigned user"
+msgstr ""
+
+#: to_do.info:0
+msgid "Creates a to do list content type"
+msgstr ""
+
+#: to_do_action.info:0
+msgid "To do action"
+msgstr ""
+
+#: to_do_action.info:0
+msgid "Add trigger support to the To do list by adding hooks."
+msgstr ""
+
+#: to_do_block.info:0
+msgid "To do block"
+msgstr ""
+
+#: to_do_block.info:0
+msgid "Displays a block to users with his To do items."
+msgstr ""
+
+#: to_do_views.info:0
+msgid "To do views"
+msgstr ""
+
+#: to_do_views.info:0
+msgid "Add views support to the To do list by exposing its fields."
+msgstr ""
+
+#: templates/to_do_info.tpl.php:5
+msgid "To Do Actions"
+msgstr ""
+

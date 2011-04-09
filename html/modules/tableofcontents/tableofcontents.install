@@ -1,0 +1,54 @@
+<?php
+// $Id: tableofcontents.install,v 1.1.2.4 2010/05/24 19:26:54 alexiswilke Exp $
+
+/**
+ * Implementation of hook_schema()
+ */
+function tableofcontents_schema() {
+  $schema['tableofcontents_node_toc'] = array(
+    'description' => 'Extra info on nodes linked to the toc',
+    'fields' => array(
+      'nid' => array(
+        'description' => 'The node identifier.',
+        'type' => 'int',
+        'not null' => TRUE,
+      ),
+      'toc_automatic' => array(
+        'description' => 'The automatic mode of the table of contents for that node. (null or 0, ignore)',
+        'type' => 'int',
+      ),
+    ),
+    'primary keys' => array('nid'),
+  );
+
+  return $schema;
+}
+
+/**
+ * Implementation of hook_install()
+ */
+function tableofcontents_install() {
+  drupal_install_schema('tableofcontents');
+}
+
+/**
+ * Implementation of hook_uninstall()
+ */
+function tableofcontents_uninstall() {
+  drupal_uninstall_schema('tableofcontents');
+  db_query("DELETE FROM {variable} WHERE name LIKE 'tableofcontents_%'");
+}
+
+/**
+ * Implementation of hook_update_#()
+ */
+function tableofcontents_update_6000() {
+  $ret = array();
+
+  $schema = tableofcontents_schema();
+  db_create_table($ret, 'tableofcontents_node_toc', $schema['tableofcontents_node_toc']);
+
+  return $ret;
+}
+
+// vim: syntax=php

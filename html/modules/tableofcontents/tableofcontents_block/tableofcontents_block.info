@@ -1,0 +1,13 @@
+; $Id: tableofcontents_block.info,v 1.1.2.1 2010/02/08 10:17:02 alexiswilke Exp $
+name = Table of Contents Block
+description = "Display the table of contents in a block."
+package = Input filters
+dependencies[] = tableofcontents
+core = 6.x
+
+; Information added by drupal.org packaging script on 2010-06-01
+version = "6.x-3.6"
+core = "6.x"
+project = "tableofcontents"
+datestamp = "1275366307"
+

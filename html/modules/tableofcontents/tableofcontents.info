@@ -1,0 +1,12 @@
+; $Id: tableofcontents.info,v 1.1.2.1.2.1.2.3.2.2 2009/07/05 10:43:38 alexiswilke Exp $
+name = Table of Contents
+description = "Adds a filter that generates Tables of contents for pages with  '[toc ...]' tags or that have a predetermined number of headers."
+package = Input filters
+core = 6.x
+
+; Information added by drupal.org packaging script on 2010-06-01
+version = "6.x-3.6"
+core = "6.x"
+project = "tableofcontents"
+datestamp = "1275366307"
+

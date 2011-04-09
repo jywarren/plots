@@ -1,0 +1,300 @@
+<?php
+// $Id: to_do.install,v 1.1.2.6 2010/08/04 09:17:36 alexiswilke Exp $
+
+/**
+ * @file
+ * Installation file with schemas and update functions.
+ */
+
+/**
+ * Implementation of hook_schema().
+ *
+ * XXX -- Should we remove the vid? It does not look like the
+ *        system would really support the vid capability properly
+ *        at this point and I'm not sure there is a point in
+ *        having such a feature in this module.
+ */
+function to_do_schema() {
+  $schema['to_do'] = array(
+    'fields' => array(
+      'nid' => array(
+        'description' => 'The node representing this To do item entry.',
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'default' => 0,
+      ),
+      'vid' => array(
+        'description' => 'The node revision being linked to this To do item entry.',
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'default' => 0,
+      ),
+      'item_status' => array(
+        'description' => 'The current status of the item (see TO_DO_STATUS_... in .module.)',
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'default' => 0,
+      ),
+      'priority' => array(
+        'description' => 'The priority of this item (low, medium, high, immediate.)',
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'default' => 0,
+      ),
+      'start_date' => array(
+        'description' => 'The date when the To do item is expected to be started or was started.',
+        'type' => 'int',
+      ),
+      'deadline' => array(
+        'description' => 'The date when the To do item is expected to be completed.',
+        'type' => 'int',
+      ),
+      'date_finished' => array(
+        'description' => 'The date when the To do item was marked finished.',
+        'type' => 'int',
+      ),
+      'deadline_event' => array(
+        'description' => 'The last event that was sent in regard to the deadline.',
+        'type' => 'int',
+        'size' => 'tiny',
+        'default' => 0,
+      ),
+      'auto_close' => array(
+        'description' => 'If set to 1, automatically close this To do item.',
+        'type' => 'int',
+        'size' => 'tiny',
+        'default' => 0,
+      ),
+      'mark_permissions' => array(
+        'description' => 'Indicates who can mark this item finished. 0 = creator only, 1 = any assigned user',
+        'type' => 'int',
+        'size' => 'tiny',
+        'default' => 0,
+      ),
+    ),
+    'indexes' => array(
+      'deadline' => array('deadline'),
+      'auto_close' => array('auto_close', 'deadline'),
+    ),
+    'primary key' => array('vid'),
+  );
+
+  $schema['to_do_assigned_users'] = array(
+    'fields' => array(
+      'nid' => array(
+        'description' => 'The node identifier.',
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'default' => 0,
+      ),
+      'vid' => array(
+        'description' => 'The node revision identifier.',
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'default' => 0,
+      ),
+      'uid' => array(
+        'description' => 'The user identifier.',
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'default' => 1,
+      ),
+    ),
+    'primary key' => array('vid', 'uid'),
+  );
+
+  return $schema;
+}
+
+/**
+ * Implementation of hook_install().
+ */
+function to_do_install() {
+  drupal_install_schema('to_do');
+}
+
+/**
+ * Implementation of hook_uninstall().
+ */
+function to_do_uninstall() {
+  // we delete all the to_do nodes because otherwise the resulting nodes just
+  // don't work at all (cannot be edited, etc.)
+  $sql = "SELECT nid FROM {node} WHERE type = 'to_do'";
+  $result = db_query($sql);
+  while ($node = db_fetch_array($result)) {
+    node_delete($node['nid']);
+  }
+
+  drupal_uninstall_schema('to_do');
+  db_query("DELETE FROM {variable} WHERE name LIKE 'to_do_%%'");
+}
+
+/**
+ * Implementation of hook_update_N().
+ */
+function to_do_update_6000() {
+  $ret = array();
+  db_add_field(
+    $ret,
+    'to_do',
+    'auto_close',
+    array(
+      'type' => 'int',
+      'size' => 'tiny',
+      'default' => 0,
+    )
+  );
+  db_add_field(
+    $ret,
+    'to_do',
+    'mark_permissions',
+    array(
+      'description' => t('Indicates who can mark this item finished. 0 = creator only, 1 = any assigned user'),
+      'type' => 'int',
+      'size' => 'tiny',
+      'default' => 0,
+    )
+  );
+  return $ret;
+}
+
+/**
+ * Implementation of hook_update_N().
+ */
+function to_do_update_6001() {
+  $ret = array();
+  db_drop_table($ret, 'to_do_roles');
+  return $ret;
+}
+
+/**
+ * Implementation of hook_update_N().
+ *
+ * Done in to_do and not to_do_block, even though it is in link with
+ * blocks, because that new module was added recently.
+ */
+function to_do_update_6002() {
+  $ret = array();
+
+  // we removed the to_do_list_tabs_display variable and use -1 in the tab selection instead
+  if (!variable_get('to_do_list_tabs_display', 1)) {
+    variable_set('to_do_block_list_selection', -1);
+  }
+  else {
+    variable_set('to_do_block_list_selection', variable_get('to_do_tabs_display_single_selection', TO_DO_SELECTION_LAST_SELECTION));
+  }
+  variable_del('to_do_list_tabs_display');
+
+  return $ret;
+}
+
+/**
+ * Implementation of hook_update_N().
+ *
+ * This function converts the 3 timestamp fields in integers instead.
+ * That way we can just deal with a Unix date 99% of the time (only
+ * the interface has to deal with Day Month Year...)
+ */
+function to_do_update_6003() {
+  global  $db_type;
+
+  $ret = array();
+
+  // We do the transfer by hand because we need that UNIX_TIMESTAMP() call.
+  // We do it only for MySQL. PostgreSQL users will have to install from scratch.
+  if ($db_type == 'mysql' || $db_type == 'mysqli') {
+    // Lock the table so if an error occurs a ROLLBACK will happen
+    //db_lock_table('to_do'); -- this fails... 8-(
+
+    db_add_field($ret, 'to_do', 'new_start_date',    array('type' => 'int'));
+    db_add_field($ret, 'to_do', 'new_deadline',      array('type' => 'int'));
+    db_add_field($ret, 'to_do', 'new_date_finished', array('type' => 'int'));
+
+    $sql = "UPDATE {to_do} SET new_start_date = UNIX_TIMESTAMP(start_date),"
+        . " new_deadline = UNIX_TIMESTAMP(deadline),"
+        . " new_date_finished = UNIX_TIMESTAMP(date_finished)";
+    $ret[] = update_sql($sql);
+
+    db_drop_field($ret, 'to_do', 'start_date');
+    db_drop_field($ret, 'to_do', 'deadline');
+    db_drop_field($ret, 'to_do', 'date_finished');
+
+    db_change_field($ret, 'to_do', 'new_start_date',    'start_date',    array('type' => 'int'));
+    db_change_field($ret, 'to_do', 'new_deadline',      'deadline',      array('type' => 'int'));
+    db_change_field($ret, 'to_do', 'new_date_finished', 'date_finished', array('type' => 'int'));
+
+    //db_unlock_tables();
+  }
+
+  return $ret;
+}
+
+/**
+ * Implementation of hook_update_N().
+ *
+ * Add the new 'deadline_event' field.
+ */
+function to_do_update_6004() {
+  $ret = array();
+  db_add_field(
+    $ret,
+    'to_do',
+    'deadline_event',
+    array(
+      'description' => 'The last event that was sent in regard to the deadline.',
+      'type' => 'int',
+      'size' => 'tiny',
+      'default' => 0,
+    )
+  );
+  return $ret;
+}
+
+/**
+ * Implementation of hook_update_N().
+ *
+ * Update permission names. See http://drupal.org/node/839260.
+ */
+function to_do_update_6005() {
+  // permissions to change: $old => $new
+  $perms = array(
+    'to do list assignment' => 'can be assigned to dos',
+    'create to do list' => 'create to do content',
+    'view all to do listings' => 'access all to do content'
+  );
+  $roles = user_roles();
+  $ret = array();
+
+  foreach ($roles as $role_id => $role_name) {
+    // get old permission for each role
+    $result = db_fetch_array(db_query("SELECT perm FROM {permission} WHERE rid = %d", $role_id));
+    $old_perms = explode(", ", $result["perm"]);
+
+    // find and replace old perms with new
+    foreach ($perms as $old => $new) {
+      $key = array_search($old, $old_perms);
+      if ($key !== FALSE) {
+        $old_perms[$key] = $new;
+      }
+    }
+
+    // re-implode into stupid drupal 6 format and pump into the DB. delete and re-insert so permissions are cleared. Check user_admin_perm_submit() in modules/user/user.admin.inc
+    $new_perms = implode(", ", $old_perms);
+
+    // set new permissions, and get return array:
+    $ret[] = update_sql("DELETE FROM {permission} WHERE rid = $role_id");
+    $ret[] = update_sql("INSERT INTO {permission} (rid, perm) VALUES ($role_id, '" . db_escape_string($new_perms) . "')");
+  }
+
+  // reboot node access table
+  node_access_needs_rebuild(TRUE);
+
+  return $ret;
+}
+
+// vim: ts=2 sw=2 et syntax=php
