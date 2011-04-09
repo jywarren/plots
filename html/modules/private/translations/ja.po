@@ -1,0 +1,55 @@
+# $Id: ja.po,v 1.1.2.1 2008/07/26 05:57:14 eaton Exp $
+# -----------------------------------------------------------------------------
+# Japanese translation of Drupal (private.module)
+#
+# Copyright (c) 2006-2007  Drupal Japan  ( http://drupal.jp/ )  /
+#                          Drupal Nippon ( http://drupon.org/ ) /
+#                          Takafumi      ( jp.drupal@imagine **reverse order**)
+#
+# Generated from file:
+#  private.module,v 1.1.2.1 2007/01/10 04:31:57 eaton
+#  private.info,v 1.1.2.1 2007/01/10 04:31:57 eaton
+#
+# -----------------------------------------------------------------------------
+msgid ""
+msgstr ""
+"POT-Creation-Date: 2007-04-22 23:17+0900\n"
+"Last-Translator: Takafumi <jp.drupal@imagine **reverse order**>\n"
+"Language-Team: Drupal Japan / Drupal Nippon\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n!=1);\n"
+
+#: private.module:151;199 private.info:0
+msgid "Private"
+msgstr "プライベート"
+
+#: private.module:153
+msgid "Check here if this content should be set private and only shown to authorized users."
+msgstr "このコンテンツをプライベートにして、許可されたユーザにのみ表示する場合は、ここにチェックを入れてください。"
+
+#: private.module:199
+msgid "This content is private"
+msgstr "このコンテンツはプライベートです"
+
+#: private.module:69
+msgid "mark content as private"
+msgstr "コンテンツへのプライベートマーク付け"
+
+#: private.module:69
+msgid "access private content"
+msgstr "プライベートコンテンツへのアクセス"
+
+#: private.module:69
+msgid "edit private content"
+msgstr "プライベートコンテンツの編集"
+
+#: private.info:0
+msgid "Allows users to mark content as private, and hide that content from visitors."
+msgstr "コンテンツをプライベートにして訪問者から隠すことができるようになります。"
+
+#: private.info:0
+msgid "private"
+msgstr "private"
+

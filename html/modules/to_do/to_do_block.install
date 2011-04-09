@@ -1,0 +1,71 @@
+<?php
+// $Id: to_do_block.install,v 1.1.2.3 2010/08/04 09:17:36 alexiswilke Exp $
+
+/**
+ * @file
+ * Installation info for the to_do block: schema and variables.
+ */
+
+/**
+ * Implementation of hook_schema().
+ */
+function to_do_block_schema() {
+  // XXX - rename to_do_block_user_preferences
+  $schema['to_do_block_user_preferences'] = array(
+    'description' => 'This table is used by users to assign different preferences on  a per user basis.',
+    'fields' => array(
+      'uid' => array(
+        'description' => 'The user being assigned these preferences.',
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'default' => 0
+      ),
+      'sidebar_items' => array(
+        'description' => 'Number of items to show in the user block.',
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'default' => 5,
+      ),
+      'low_priority_items_display' => array(
+        'description' => 'Whether items marked as Low priority are to be shown.',
+        'type' => 'int',
+        'size' => 'tiny',
+        'unsigned' => TRUE,
+        'default' => 1,
+      ),
+    ),
+    'primary_key' => array('uid')
+  );
+
+  return $schema;
+}
+
+/**
+ * Implementation of hook_install().
+ */
+function to_do_block_install() {
+  drupal_install_schema('to_do_block');
+
+  // this is being moved from one module to another!
+  if (db_table_exists('to_do_preferences')) {
+    $sql = "INSERT INTO {to_do_block_user_preferences} (uid, sidebar_items)"
+      . " SELECT uid, sidebar_items FROM {to_do_preferences}";
+    db_query($sql);
+
+    $ret = array();
+    db_drop_table($ret, 'to_do_preferences');
+    // ignore $ret...
+  }
+}
+
+/**
+ * Implementation of hook_uninstall().
+ */
+function to_do_block_uninstall() {
+  // XXX -- some variables still don't have the proper name
+  db_query("DELETE FROM {variable} WHERE name LIKE 'to_do_block_%%'");
+  drupal_uninstall_schema('to_do_block');
+}
+
+// vim: ts=2 sw=2 et syntax=php

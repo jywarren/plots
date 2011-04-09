@@ -1,0 +1,11 @@
+; $Id: hide_this_block.info,v 1.1 2010/04/30 13:40:00 digibike Exp $ 
+name = Hide this Block
+description = Adds AJAX link to user-configurable blocks, providing one-click interface to hide blocks.
+core = 6.x
+
+; Information added by drupal.org packaging script on 2010-05-08
+version = "6.x-1.0-beta3"
+core = "6.x"
+project = "hide_this_block"
+datestamp = "1273362007"
+

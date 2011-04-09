@@ -481,3 +481,63 @@ ul.primary li.active a:hover .tab {
 	clear:left;
 }
 
+#toc {
+	float:right;
+	margin:20px;
+	padding:8px;
+	background:#eee;
+	border:1px dotted #aaa;
+}
+#toc .toc-title {
+	text-align:left;
+}
+
+.field-field-main-image {
+	margin-bottom:8px;
+}
+
+.hide-this-block {
+	float:right;
+	clear:both;
+}
+.hide-this-block a {
+	padding:4px;
+	font-size:10px;
+	color:white;
+}
+.hide-this-block a:hover {
+	color:#aaa;
+	background:black;
+}
+
+.openlayers-views-map {
+	font-size:10px;
+	line-height:20px;
+}
+
+#content-area .places-grid {
+	width:500px;
+	padding-right:18px;
+}
+#content-area .places-grid .views-view-grid tr {
+	display:block;
+}
+#content-area .places-grid .views-row h3 {
+	font-size:18px;
+}
+#content-area .places-grid .views-row {
+	margin-bottom:8px;
+	width:220px;
+	font-size:10px;
+	float:left;
+	padding-right:20px;
+	background: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAADCAYAAAC09K7GAAAABHNCSVQICAgIfAhkiAAAABJJREFUCJljYECA/wxYOP8xZABf0wP96WTlbgAAAABJRU5ErkJggg==") repeat-x top;
+	padding-top:12px;
+}
+#content-area .places-grid .views-row-odd {
+	clear:left;
+}
+
+.page-data #header {
+	height:280px;
+}

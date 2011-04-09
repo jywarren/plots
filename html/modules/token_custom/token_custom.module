@@ -1,0 +1,314 @@
+<?php
+// $Id: token_custom.module,v 1.2.2.4 2009/01/19 13:25:42 hanoii Exp $
+/**
+ * @file
+ * The Token Custom module.
+ *
+ * It gives the user the ability to create custom tokens using PHP code
+ * for specific replacements that can improve other modules relying on Token.
+ *
+ * Port from Drupal 5 to Drupal 6
+ */
+
+/**
+ * Evaluate a string of PHP code. (Copy from drupal_eval())
+ *
+ * This is a wrapper around PHP's eval(). It uses output buffering to capture both
+ * returned and printed text.
+ *
+ * Using this wrapper also ensures that the PHP code which is evaluated can not
+ * overwrite any variables in the calling code except the ones we need.
+ *
+ * @param $code
+ *   The code to evaluate.
+ * @return
+ *   A string containing the printed output of the code, followed by the returned
+ *   output of the code.
+ */
+function _token_eval($code, $type, $object = NULL) {
+  $$type = $object;
+  ob_start();
+  print eval($code);
+  $output = ob_get_contents();
+  ob_end_clean();
+  return $output;
+}
+
+function _token_custom_load($tkid) {
+  $row = db_fetch_object(db_query("SELECT * FROM {token_custom} WHERE tkid =%d", $tkid));
+
+  return $row;
+}
+
+/**
+ * Implementation of hook_menu().
+ */
+function token_custom_menu() {
+  $items['admin/build/tokens'] = array(
+    'title' => 'Tokens',
+    'description' => 'Create custom tokens.',
+    'page callback' => '_token_custom_page',
+    'access arguments' => array('create PHP code for execution by Token Custom'),
+    'type' => MENU_NORMAL_ITEM,
+  );
+  $items['admin/build/tokens/list'] = array(
+    'title' => 'List',
+    'description' => 'List of of custom tokens',
+    'access arguments' => array('create PHP code for execution by Token Custom'),
+    'type' => MENU_DEFAULT_LOCAL_TASK,
+  );
+  $items['admin/build/tokens/create'] = array(
+    'title' => 'Create',
+    'description' => 'Create custom tokens',
+    'page callback' => '_token_custom_create_page',
+    'access arguments' => array('create PHP code for execution by Token Custom'),
+    'weight' => 1,
+    'type' => MENU_LOCAL_TASK,
+  );
+  $items['admin/build/tokens/help'] = array(
+    'title' => 'Tokens',
+    'description' => 'Token\'s list',
+    'page callback' => 'theme',
+    'page arguments' => array('token_help'),
+    'access arguments' => array('create PHP code for execution by Token Custom'),
+    'weight' => 2,
+    'type' => MENU_LOCAL_TASK,
+  );
+  $items['admin/build/tokens/edit'] = array(
+    'title' => 'Edit',
+    'page callback' => '_token_custom_edit_page',
+    'access arguments' => array('create PHP code for execution by Token Custom'),
+    'type' => MENU_CALLBACK,
+  );
+  $items['admin/build/tokens/delete'] = array(
+    'title' => 'Delete',
+    'page callback' => '_token_custom_delete_page',
+    'access arguments' => array('create PHP code for execution by Token Custom'),
+    'type' => MENU_CALLBACK,
+  );
+
+  return $items;
+}
+
+/**
+ * Implementation of hook_perm().
+ */
+function token_custom_perm() {
+  return array('create PHP code for execution by Token Custom');
+}
+
+/**
+ * Implementation of hook_token_list()
+ */
+function token_custom_token_list($type = 'all') {
+
+  $result = db_query("SELECT * FROM {token_custom}");
+  while ($row = db_fetch_object($result)) {
+    if ($type == $row->type || $type == 'all') {
+      $tokens['token_custom'][$row->id] = $row->description;
+    }
+  }
+
+  return $tokens;
+}
+
+/**
+ * Implementation of hook_token_values()
+ */
+function token_custom_token_values($type, $object = NULL, $options = array()) {
+
+  $result = db_query("SELECT * FROM {token_custom} WHERE type = '%s'", $type);
+  while ($row = db_fetch_object($result)) {
+    switch ($row->type) {
+      case 'taxonomy':
+      case 'node':
+      case 'comment':
+      case 'user':
+        $tokens[$row->id] = _token_eval($row->php, $row->type, $object);
+        break;
+
+      case 'global':
+        $tokens[$row->id] = _token_eval($row->php, $row->type);
+        break;
+    }
+  }
+
+  return $tokens;
+}
+
+/**
+ * Callbacks
+ */
+function _token_custom_page() {
+  $result = db_query("SELECT * FROM {token_custom}");
+  $headers = array();
+  $headers[] = t('Token ID');
+  $headers[] = t('Description');
+  $headers[] = t('Type');
+  $headers[] = t('Demo (if available)');
+  $headers[] = '';
+  $rows = array();
+  while ($row = db_fetch_object($result)) {
+    $r = array();
+    $r[] = $row->id;
+    $r[] = $row->description;
+    $r[] = $row->type;
+    $text = "[{$row->id}]";
+    switch ($row->type) {
+      case 'user':
+        global $user;
+        $r[] = token_replace($text, $row->type, $user);
+        break;
+
+      default:
+        $r[] = token_replace($text, $row->type);
+        break;
+    }
+    $r[] = l('edit', 'admin/build/tokens/edit/'. $row->tkid);
+    $rows[] = $r;
+  }
+
+  $demo_notes = t('<p>Available demos and notes:<ul><li>Global</li><li>User: Using your current user</li></ul></p>');
+
+  return $demo_notes . theme('table', $headers, $rows);
+}
+
+function _token_custom_create_page() {
+  return drupal_get_form('token_custom_edit_form');
+}
+
+function _token_custom_edit_page($tkid) {
+  if ($_POST['op'] == t('Delete')) {
+    // Note: we redirect from node/nid/edit to node/nid/delete to make the tabs disappear.
+    if ($_REQUEST['destination']) {
+      $destination = drupal_get_destination();
+      unset($_REQUEST['destination']);
+    }
+    drupal_goto('admin/build/tokens/delete/'. $tkid, $destination);
+  }
+
+  return drupal_get_form('token_custom_edit_form', $tkid);
+}
+
+function token_custom_edit_form_validate($form, &$form_state) {
+  if (substr($form_state['values']['token_custom_id'], 0, 13) != 'token_custom_') {
+    form_set_error('token_custom_id', t('Token ID must start with <b><i>token_custom_</i></b>'));
+  }
+
+  $args = array();
+  $args[] = $form_state['values']['token_custom_id'];
+  if ($form_state['values']['token_custom_tkid']) {
+    $where = ' AND tkid != %d ';
+    $args[] = $form_state['values']['token_custom_tkid'];
+  }
+  $tkid = db_result(db_query("SELECT tkid FROM {token_custom} WHERE id = '%s' $where", $args));
+  if ($tkid) {
+    form_set_error('token_custom_id', t('Token ID already exists and must be unique, please change it'));
+  }
+}
+
+function token_custom_edit_form_submit($form, &$form_state) {
+
+  if (!$form_state['values']['token_custom_tkid']['storage']) {
+    db_query(
+      "INSERT INTO {token_custom} (id, description, type, php) VALUES ('%s', '%s', '%s', '%s')",
+      $form_state['values']['token_custom_id'],
+      $form_state['values']['token_custom_description'],
+      $form_state['values']['token_custom_type'],
+      $form_state['values']['token_custom_php']
+    );
+  }
+  else {
+    $tkid = $form_state['values']['token_custom_tkid'];
+    db_query(
+      "UPDATE {token_custom} SET id = '%s', description = '%s', type = '%s', php = '%s' WHERE tkid = %d",
+      $form_state['values']['token_custom_id'],
+      $form_state['values']['token_custom_description'],
+      $form_state['values']['token_custom_type'],
+      $form_state['values']['token_custom_php'],
+      $tkid
+    );
+  }
+
+  drupal_set_message(t('%id saved.', array('%id' => $form_state['values']['token_custom_id'])));
+
+  $form_state['redirect'] = "admin/build/tokens";
+  // $form_state['nid'] = $node->nid;
+}
+
+function token_custom_edit_form(&$form_state, $tkid = NULL) {
+  if ($tkid) {
+    $token = _token_custom_load($tkid);
+    $form['token_custom_tkid'] = array('#type' => 'value', '#value' => $tkid);
+  }
+  $form['token_custom_id'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Token ID'),
+    '#description' => t('Machine name of the token ID. It must start with token_custom_'),
+    '#default_value' => $tkid ? $token->id : 'token_custom_',
+    '#required' => TRUE,
+  );
+
+  $form['token_custom_description'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Description'),
+    '#description' => t('Description that will appear in the token\'s help.'),
+    '#default_value' => $tkid ? $token->description : NULL,
+    '#required' => TRUE,
+  );
+
+  $options = array();
+  $options['global'] = t('Global');
+  $options['node'] = t('Node');
+  $options['user'] = t('User');
+  $options['taxonomy'] = t('Taxonomy');
+  $options['comment'] = t('Comment');
+
+  $form['token_custom_type'] = array(
+    '#type' => 'radios',
+    '#title' => t('Type'),
+    '#description' => t('Select the type of the token you would like to add. Depending on the type you\'ll have access to the specific object in your php code.'),
+    '#required' => TRUE,
+    '#options' => $options,
+    '#default_value' => $tkid ? $token->type : NULL,
+  );
+
+  $form['token_custom_php'] = array(
+    '#type' => 'textarea',
+    '#title' => t('PHP replacement'),
+    '#description' => t('Enter the php code that will be evaluated. You do not need to use enclose the code between %php. You have $user, $comment, $node and $taxonomy available depending on the type. You have also the variable $type which the actual type of token. Global has no particular object to use. The code should return a string.', array('%php' => '<?php ?>')),
+    '#required' => TRUE,
+    '#default_value' => $tkid ? $token->php : NULL,
+  );
+
+  $form['submit'] = array('#type' => 'submit', '#value' => t('Submit'));
+  if ($tkid) {
+    $form['delete'] = array('#type' => 'button', '#value' => t('Delete'), '#weight' => 50);
+  }
+
+  return $form;
+}
+
+function token_custom_delete_form_submit($form, &$form_state) {
+  $token = _token_custom_load($form_state['values']['token_custom_tkid']);
+  db_query("DELETE FROM {token_custom} WHERE tkid = %d", $form_state['values']['token_custom_tkid']);
+  drupal_set_message(t('%id deleted.', array('%id' => $token->id)));
+  $form_state['redirect'] = "admin/build/tokens";
+}
+
+function token_custom_delete_form(&$form_state, $tkid) {
+  $token = _token_custom_load($tkid);
+  $form['token_custom_tkid'] = array('#type' => 'value', '#value' => $tkid);
+  return confirm_form(
+    $form,
+    t('Are you sure you want to delete %id?', array('%id' => $token->id)),
+    isset($_GET['destination']) ? $_GET['destination'] : 'admin/build/tokens',
+    t('This action cannot be undone.'),
+    t('Delete'),
+    t('Cancel')
+  );
+}
+
+function _token_custom_delete_page($tkid) {
+  return drupal_get_form('token_custom_delete_form', $tkid);
+}

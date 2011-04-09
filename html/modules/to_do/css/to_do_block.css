@@ -1,0 +1,117 @@
+/* $Id: to_do_block.css,v 1.2.2.3 2010/11/23 07:04:13 alexiswilke Exp $
+ * To do block CSS
+ */
+
+#block-to_do_block-0 tr.to-do-immediate,
+#block-to_do_block-0 tr.to-do-now {
+  background-color: #F99;
+}
+#block-to_do_block-0 tr.to-do-late {
+  background-color: #F49;
+}
+
+#block-to_do_block-0 table {
+  font-size:10px;
+  clear: both;
+}
+
+#block-to_do_block-0 table tr {
+  padding:4px;
+}
+
+#block-to_do_block-0 table.immediate {
+  margin-bottom: 0;
+}
+
+#block-to_do_block-0 p {
+  margin: 0;
+  padding: 0;
+  font-size: 0.8em;
+  line-height: 0.9;
+}
+
+#block-to_do_block-0 td.middle {
+  white-space: nowrap;
+}
+
+#to_do_pagination {
+  text-align: center;
+}
+
+.to-do-links {
+  height: 30px;
+  padding-top: 5px;
+  padding-bottom: 10px;
+}
+
+#to_do_add_link {
+  float: left;
+  display: block;
+  margin-left: 20px;
+  padding-top: 30px;
+  overflow: hidden;
+  width: 30px;
+  height: 1px;
+  background: url(../images/add.png) no-repeat top left;
+}
+
+#to_do_add_link:hover {
+}
+
+#to_do_list_link {
+  float: left;
+  display: block;
+  margin-left: 20px;
+  padding-top: 30px;
+  overflow: hidden;
+  width: 30px;
+  height: 1px;
+  background: url(../images/icon.png) no-repeat top left;
+}
+
+#to_do_list_link:hover {
+}
+
+#to_do_help_link {
+  float: left;
+  display: block;
+  margin-left: 20px;
+  padding-top: 30px;
+  overflow: hidden;
+  width: 30px;
+  height: 1px;
+  background: url(../images/help.png) no-repeat top left;
+}
+
+#to_do_help_link:hover {
+}
+
+span.to-do-block-throbbing {
+  width: 15px;
+  height: 15px;
+  margin: 2px;
+  background: transparent url(/misc/throbber.gif) no-repeat 0 -18px;
+  padding-right: 18px;
+}
+
+#block-to_do_block-0 .item-list ul li {
+  margin-left: 0.75em;
+}
+
+#block-to_do_block-0 ul.primary {
+  padding:5px;
+  padding-left:0;
+  padding-bottom:6px;
+}
+#block-to_do_block-0 ul.primary a {
+  padding:5px;
+  padding-bottom:0;
+  border:1px solid #ccc;
+  display:block;
+  float:left;
+  margin-right:4px;
+}
+#block-to_do_block-0 ul.primary a:hover {
+  background:#ddd;
+}
+

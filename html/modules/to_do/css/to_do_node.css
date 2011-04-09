@@ -1,0 +1,21 @@
+/* $Id: to_do_node.css,v 1.1.2.3 2010/08/04 09:17:36 alexiswilke Exp $ */
+
+.to-do-info dt
+{
+  font-weight: bold;
+}
+
+.to-do-fieldset
+{
+  padding: 10px;
+}
+
+.to-do-info ul {
+  padding-left: 0px;
+}
+
+.to-do-info li {
+  list-style-image: none;
+  list-style-type: none;
+  padding-left: 0px;
+}

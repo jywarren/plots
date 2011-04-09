@@ -1,0 +1,108 @@
+# $Id: pl.po,v 1.1.2.1 2009/03/18 20:33:20 deviantintegral Exp $
+#
+# LANGUAGE translation of Drupal (general)
+# Copyright YEAR NAME <EMAIL@ADDRESS>
+# Generated from files:
+#  headinganchors.module,v 1.2.4.2.2.2.2.1 2008/06/21 18:19:19 deviantintegral
+#  tableofcontents.module,v 1.2.4.2.2.2.2.8 2008/08/18 15:47:25 deviantintegral
+#  tableofcontents.info,v 1.1.2.1.2.1.2.1 2008/02/17 18:49:31 deviantintegral
+#  tableofcontents.js,v 1.1.2.1.2.2 2008/06/21 18:11:12 deviantintegral
+#  headinganchors.info,v 1.1.2.1.4.1 2008/02/17 18:49:31 deviantintegral
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: 1.0\n"
+"POT-Creation-Date: 2008-09-23 14:55+0200\n"
+"PO-Revision-Date: 2008-09-23 15:14+0200\n"
+"Last-Translator: KrzysieQ aka Sh4dow <sh4dow4@gmail.com>\n"
+"Language-Team: Polish <sh4dow4@gmail.com>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+
+#: headinganchors.module:30
+msgid "A module to create named anchors based on HTML headings."
+msgstr "Moduł tworzy zakotwiczenia bazując na nagłówkach HTML."
+
+#: headinganchors.module:39
+msgid "Every instance heading tags will be modified to include an id attribute for anchor linking."
+msgstr "Każdy nagłówek zostanie zmodyfikowany by zawierał atrybut id z możliwością zakotwiczenia."
+
+#: headinganchors.module:42
+msgid "Insert heading anchors automatically."
+msgstr "Wstaw zakotwiczenie nagłówku automatycznie."
+
+#: headinganchors.module:54
+msgid "Headings to Anchors"
+msgstr "Nagłówki na zakotwiczenia"
+
+#: headinganchors.module:61
+msgid "Inserts named anchors for heading tags automatically."
+msgstr "Wstawia nazwy zakotwiczeń do nagłówków automatycznie."
+
+#: headinganchors.module:0
+msgid "headinganchors"
+msgstr "headinganchors"
+
+#: tableofcontents.module:43
+msgid "A module to create a table of contents based on HTML header tags. Changes headers to anchors for processing so it may be incompatible with other filters that process header tags. It does use existing IDs on the header tags if already present and only operates on header levels 1 - 6."
+msgstr "Moduł tworzy spis treści w obrębie  danego węzła bazujący na tagach HTML nagłówków. Zmiana nagłówków na zakotwiczenia może być niekompatybilna z innymi filtrami modyfikującymi nagłówki. Moduł używa istniejących pól ID jako oznaczenie nagłówków (o ile istnieją) i osbługuje nagłówki w poziomach 1 - 6."
+
+#: tableofcontents.module:52
+msgid "Every instance of \"&lt;!--tableofcontents--&gt;\" in the input text will be replaced with a collapsible mediawiki-style table of contents. Accepts options for title, list style, minimum heading level, and maximum heading level as follows: &lt;!--tableofcontents list: ol; title: Table of Contents; minlevel: 1; maxlevel: 3;--&gt;. All arguments are optional and defaults are shown."
+msgstr "Każdy znacznik \"&lt;!--tableofcontents--&gt;\" zostanie zastąpiony rozwijanym spisem treści w stylu mediawiki. Akceptowalnymi parametrami jest zmiana tytułu, styl listy, minimalny i maksymalny poziom nagłówka jako kolejno: &lt;!--tableofcontents list: ol; title: Spis treści; minlevel: 1; maxlevel: 3;--&gt;. Wszytskie agumenty są opcjonalne i domyślnie są widoczne."
+
+#: tableofcontents.module:55
+msgid "Insert &lt;!--tableofcontents [list: ol; title: Table of Contents; minlevel: 1; maxlevel: 3;]--&gt; to insert a mediawiki style collapsible table of contents. Arguments within [] are optional (defaults are shown)."
+msgstr "Wstaw &lt;!--tableofcontents [list: ol; title: Table of Contents; minlevel: 1; maxlevel: 3;]--&gt; aby wstawić zwijane pole spisu treści. Argumenty w nawiasie [] są opcjonalne (domyślnie są widoczne)."
+
+#: tableofcontents.module:65 tableofcontents.info:0
+msgid "Table of Contents"
+msgstr "Spis treści"
+
+#: tableofcontents.module:72
+msgid "Inserts a table of contents in the place of &lt;!--tableofcontents--&gt; tags."
+msgstr "Dołącza spis treści w miejsjcu umieszczenia tagu &lt;!--tableofcontents--&gt;"
+
+#: tableofcontents.module:129
+msgid "!attachments is an invalid attachments option. Attachments option must be set to yes or no."
+msgstr "!attachments jest nie poprawną opcją załączników. Opcje załączników moga byc ustawione tylko jako 'tak' lub 'nie'."
+
+#: tableofcontents.module:137
+msgid "%error"
+msgstr "%error"
+
+#: tableofcontents.module:194 tableofcontents.js:0;0
+msgid "hide"
+msgstr "ukryj"
+
+#: tableofcontents.module:236
+msgid "Attachments"
+msgstr "Załączniki"
+
+#: tableofcontents.module:0
+msgid "tableofcontents"
+msgstr "tableofcontents"
+
+#: headinganchors.info:0
+msgid "Headings anchors"
+msgstr "Zakotwiczenie nagłówków"
+
+#: headinganchors.info:0
+msgid "Filter that marks H2 and H3 headings with id anchors from which Tables of Contents can be generated."
+msgstr "Filtr dodający do nagłówków H2 i H3 automatycznie pole id za pomocą ktorego generowany jest spis treści."
+
+#: headinganchors.info:0 tableofcontents.info:0
+msgid "Filters"
+msgstr "Filtry"
+
+#: tableofcontents.info:0
+msgid "Adds a filter that generates Tables of Contents for pages marked with  '&lt;!--tableofcontents--&gt;'."
+msgstr "Dodaje filtr generujący Spis Treści dla strony zawierającej '&lt;!--tableofcontents--&gt;'."
+
+#: tableofcontents.js:0
+msgid "show"
+msgstr "pokaż"
+

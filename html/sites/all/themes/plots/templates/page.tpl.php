@@ -130,6 +130,7 @@
 	<a href="/reports">Reports</a> 
 	<a href="/tools">Tools</a> 
 	<a href="/events">Events</a> 
+	<a href="/explore">Explore</a> 
 	<div class="right"> 
 		<a href="/note/add">Note [+]</a> 
 	</div> 

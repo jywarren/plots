@@ -1,0 +1,11 @@
+; $Id: to_do.info,v 1.1.2.1 2010/05/22 08:32:47 alexiswilke Exp $
+name = To do tasks
+description = Creates a to do content type
+core = 6.x
+
+; Information added by drupal.org packaging script on 2010-12-14
+version = "6.x-1.4"
+core = "6.x"
+project = "to_do"
+datestamp = "1292303761"
+

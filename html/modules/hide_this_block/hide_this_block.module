@@ -1,0 +1,86 @@
+<?php
+// $Id: hide_this_block.module,v 1.4 2010/05/08 23:33:34 digibike Exp $
+
+
+/**
+ * Implementation of hook_menu().
+ */
+function hide_this_block_menu() {
+  $items = array();
+  $items["hide-this-block/%/%"] = array(
+    "title" => "Hide this Block",
+    "page callback" => "hide_this_block_hide",
+    "page arguments" => array(1, 2),
+    "access callback" => "user_is_logged_in",
+    "type" => MENU_CALLBACK,
+  );
+  $items['admin/settings/hide-this-block'] = array(
+    'title' => 'Hide this Block',
+    'description' => 'Configure the settings for the Hide this Block module.',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('hide_this_block_admin_settings_form'),
+    'access arguments' => array('administer blocks'),
+    'type' => MENU_NORMAL_ITEM,
+  );
+  return $items;
+}
+
+
+/**
+ * Save block visibility per user.
+ */
+function hide_this_block_hide($module, $delta) {
+  if (user_is_logged_in()) {
+    global $user;
+    // handle settigns for modules that implement multiple blocks
+    $block = $user->block;
+    $block[$module][$delta] = 0;
+    // save user block settings
+    user_save($user, array("block" => $block));
+  }
+  drupal_goto();
+}
+
+
+/**
+ * Preprocess function to add "hide" link to user-configurable blocks.
+ */
+function hide_this_block_preprocess_block(&$vars) {
+  if ($vars["block"]->custom > 0) {
+    if (user_is_logged_in()) {
+      $bid = $vars["block"]->bid;
+      $module = $vars["block"]->module;
+      $delta = $vars["block"]->delta;
+      $link = l(t(variable_get("hide_this_block_link_text", "Hide this block")), "hide-this-block/$module/$delta", array(
+        "attributes" => array("class" => "hide-this-block-ajax"),
+        "query" => drupal_get_destination(),
+      ));
+      $vars["block"]->content .= '<div id="hide-this-block-' . $bid . '" class="hide-this-block">' . $link . '</div>';
+      drupal_add_js(drupal_get_path("module", "hide_this_block") . "/hide_this_block.js");
+    }
+  }
+}
+
+
+/**
+ * Implementation of hook_admin_settings().
+ */
+function hide_this_block_admin_settings_form(&$form_state) {
+  $form["global"] = array(
+    "#type" => "fieldset",
+    "#title" => t("Global settings"),
+    "#collapsible" => FALSE,
+  );
+  $form["global"]["hide_this_block_link_text"] = array(
+    "#type" => "textfield",
+    "#title" => t("Link text"),
+    "#default_value" => variable_get("hide_this_block_link_text", "Hide this block"),
+    "#size" => 50,
+    "#maxlength" => 150,
+    "#required" => TRUE,
+    "#description" => t("Override the link text that is displayed below each block. The default text is <em>Hide this block</em>."),
+  );
+  return system_settings_form($form);
+}
+
+

@@ -1,0 +1,67 @@
+<?php
+// $Id: token_custom.install,v 1.2.2.1 2008/11/21 13:59:35 hanoii Exp $
+
+/**
+ * @file
+ * The install/uninstall code for the Token Custom module.
+ */
+
+/**
+ * Implementation of hook_install().
+ */
+function token_custom_install() {
+  drupal_install_schema('token_custom');
+  drupal_set_message(t('The Token Custom module was installed.'));
+}
+
+/**
+ * Implementation of hook_uninstall().
+ */
+function token_custom_uninstall() {
+  drupal_uninstall_schema('token_custom');  
+}
+
+/**
+ * Implementation of hook_schema(), new for Drupal 6
+ */
+function token_custom_schema() {
+  $schema = array();
+  $schema['token_custom'] = array(
+    'description' => t('The database table for the Token Custom module.'),
+    'fields' => array(
+      'tkid' => array(
+        'type' => 'serial',
+        'size' => 'medium',
+        'not null' => TRUE,
+        'description' => t('tkid field description goes here.'),
+      ),
+      'id' => array(
+        'type' => 'varchar',
+        'length' => 100,
+        'not null' => TRUE,
+        'description' => t('id field description goes here.'),
+      ),
+      'description' => array(
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+        'description' => t('description field description goes here.'),
+      ),
+      'type' => array(
+        'type' => 'varchar',
+        'length' => 32,
+        'not null' => TRUE,
+        'description' => t('type field description goes here.'),
+      ),
+      'php' => array(
+        'type' => 'text',
+        'size' => 'big',
+        'not null' => TRUE,
+        'description' => t('php field description goes here.'),
+      ),      
+    ),
+    'primary key' => array('tkid'),
+  );
+  
+  return $schema;
+}

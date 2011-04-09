@@ -1,0 +1,22 @@
+<?php
+// $Id: private.install,v 1.1.2.1.2.1 2008/07/26 05:56:49 eaton Exp $
+
+function private_schema() {
+  $schema['private'] = array(
+    'fields' => array(
+      'nid'     => array('type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE, 'default' => 0),
+      'private' => array('type' => 'int', 'not null' => TRUE, 'default' => 0),
+    ),
+    'primary key' => array('nid'),
+  );
+  
+  return $schema;
+}
+
+function private_install() {
+  drupal_install_schema('private');
+}
+
+function private_uninstall() {
+  drupal_uninstall_schema('private');
+}

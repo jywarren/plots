@@ -1,0 +1,12 @@
+name = MapBox
+description = MapBox Layers for OpenLayers
+core = 6.x
+dependencies[] = openlayers
+
+
+; Information added by drupal.org packaging script on 2010-06-08
+version = "6.x-1.0-alpha3"
+core = "6.x"
+project = "mapbox"
+datestamp = "1276009810"
+
