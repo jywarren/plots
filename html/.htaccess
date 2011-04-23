@@ -26,7 +26,8 @@ php_value post_max_size 20M
 </Files>
 
 # Set the default handler.
-DirectoryIndex index.php
+#DirectoryIndex index.php
+DirectoryIndex index.php index.html
 
 # Override PHP settings. More in sites/default/settings.php
 # but the following cannot be changed at runtime.
