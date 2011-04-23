@@ -117,6 +117,8 @@
   <?php print $head; ?>
   <?php print $styles; ?>
   <?php print $scripts; ?>
+  <script src="/scripts/jquery-nivo-slider-pack.js" type="text/javascript"></script>
+  <link rel="stylesheet" href="/scripts/nivo-slider.css" type="text/css" media="screen" />
 </head>
 <body class="<?php print $classes; ?>">
 

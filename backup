@@ -4,3 +4,5 @@ rsync -r html/ --exclude='backup/*' publiclaboratory.org-$NOW/
 tar -cf html/backup/publiclaboratory.org-$NOW.tgz publiclaboratory.org-$NOW/
 rm -r publiclaboratory.org-$NOW/
 mysqldump --add-drop-table -u publiclaboratory --password=grassy publiclaboratory | bzip2 -c > html/backup/publiclaboratory.org-$NOW.sql.bz2
+s3sync.rb -v html/backup/publiclaboratory.org-$NOW.sql.bz2 publiclaboratory:backup/publiclaboratory.org
+s3sync.rb -v html/backup/publiclaboratory.org-$NOW.tgz publiclaboratory:backup/publiclaboratory.org
