@@ -309,12 +309,20 @@ div.widget {
 #content-area ul.links {
 	display:block;
 	width:97%;
-	padding:8px;
+	padding:8px 0;
 	margin-top:8px;
 	margin-right:8px;
 	background: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAADCAYAAAC09K7GAAAABHNCSVQICAgIfAhkiAAAABJJREFUCJljYECA/wxYOP8xZABf0wP96WTlbgAAAABJRU5ErkJggg==") repeat-x top;
-	text-align:right;
 }
+#content-area ul.links li {
+	display:block;
+	padding:4px 0;
+	font-size:10px;	
+}
+#content-area ul.links li.print_html, #content-area ul.links li.print_mail, #content-area ul.links li.print_pdf {
+	margin-left:0;
+}
+
 #comments h2.title {
 	font-family:Junction, lucida grande,lucida sans console,sans-serif;
 	font-size:1.5em;
@@ -606,9 +614,16 @@ ul.primary li.active a:hover .tab {
 	height:280px;
 }
 
-#attachments-block th {
+#attachments th {
+	width:100%;
+	padding-top:12px;
+	background: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAADCAYAAAC09K7GAAAABHNCSVQICAgIfAhkiAAAABJJREFUCJljYECA/wxYOP8xZABf0wP96WTlbgAAAABJRU5ErkJggg==") repeat-x top;
 	font-family:Junction, lucida grande,lucida sans console,sans-serif;
 	font-size:14px;
 	font-weight:normal;
+	padding-bottom:4px;
 }
-#attachments-block td { font-size:11px; padding:4px 0;}
+#attachments-block th {
+	background:none;
+}
+#attachments td, #attachments-block td { font-size:11px; padding:4px 2px; }
