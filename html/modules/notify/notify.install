@@ -1,0 +1,39 @@
+<?php
+/**
+ * @file
+ * Install, update and uninstall functions for the notify module.
+ */
+
+// $Id: notify.install,v 1.4.4.6 2010/07/09 23:06:37 matt2000 Exp $
+
+function notify_schema() {
+  $schema['notify'] = array(
+    'fields' => array(
+      'uid' => array('type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE, 'default' => 0, 'disp-width' => '10'),
+      'status' => array('type' => 'int', 'size' => 'tiny', 'not null' => TRUE, 'default' => 0, 'disp-width' => '2'),
+      'node' => array('type' => 'int', 'size' => 'tiny', 'not null' => TRUE, 'default' => 0, 'disp-width' => '2'),
+      'comment' => array('type' => 'int', 'size' => 'tiny', 'not null' => TRUE, 'default' => 0, 'disp-width' => '2'),
+      'attempts' => array('type' => 'int', 'size' => 'tiny', 'not null' => TRUE, 'default' => 0, 'disp-width' => '4'),
+      'teasers' => array('type' => 'int', 'size' => 'tiny', 'not null' => TRUE, 'default' => 0, 'disp-width' => '4'),
+      ),
+    'primary key' => array('uid'),
+  );
+
+  return $schema;
+}
+
+function notify_install() {
+  // Create my tables.
+  drupal_install_schema('notify');
+}
+
+function notify_uninstall() {
+  // Drop my tables.
+  drupal_uninstall_schema('notify');
+
+  //Delete my variables
+  global $conf;
+  db_query("DELETE FROM {variable} WHERE name LIKE 'notify_%'");
+  cache_clear_all('variables', 'cache');
+  unset($conf[$name]);
+}

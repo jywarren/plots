@@ -1,0 +1,141 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: Notify : Drupal 4.6.0\n"
+"POT-Creation-Date: \n"
+"PO-Revision-Date: 2005-06-01 15:20+0100\n"
+"Last-Translator: MicheleF <michele@drupalitalia.org>\n"
+"Language-Team: Drupalitalia | hadakaar <hadakaar@gmail.com>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Poedit-Language: Italian\n"
+"X-Poedit-Country: ITALY\n"
+
+#: notify.inc:10;21
+msgid "Save settings"
+msgstr "Salva le impostazioni"
+
+#: notify.inc:12
+msgid "Notify settings saved"
+msgstr "Impostazioni di notifica salvate"
+
+#: notify.inc:17
+msgid "Notify status"
+msgstr "Status delle notifiche:"
+
+#: notify.inc:17;18;20
+msgid "Enabled"
+msgstr "Abilitato"
+
+#: notify.inc:17
+msgid "Do you wish to receive periodic e-mails when new content is posted?"
+msgstr "Vuoi ricevere e-mail periodiche ogni qual volta vengono pubblicati nuovi contenuti sul sito?"
+
+#: notify.inc:18
+msgid "Notify new content"
+msgstr "Notifica i nuovi contenuti:"
+
+#: notify.inc:18
+msgid "Include new content in the notification mail."
+msgstr "Includi i nuovi contenuti pubblicati nell'e-mail di notifica."
+
+#: notify.inc:19
+msgid "Content"
+msgstr "Contenuto:"
+
+#: notify.inc:19;47
+msgid "Title only"
+msgstr "Solo il titolo"
+
+#: notify.inc:19;47
+msgid "Title + Teaser"
+msgstr "Titolo + descrizione"
+
+#: notify.inc:19;47
+msgid "Title + Body"
+msgstr " Il titolo + il corpo dell'articolo"
+
+#: notify.inc:19
+msgid "Select the amount of each post that you would like to see in your notification e-mails."
+msgstr "Seleziona cosa vuoi ricevere via e-mail"
+
+#: notify.inc:20
+msgid "Notify new comments"
+msgstr "Notifica nuovi commenti:"
+
+#: notify.inc:20
+msgid "Include new comments in the notification mail."
+msgstr "Includi i nuovi commenti nell'e-mail di notifica."
+
+#: notify.inc:30;56
+msgid "Save"
+msgstr "Salva"
+
+#: notify.inc:36
+msgid "username"
+msgstr "nome utente"
+
+#: notify.inc:36
+msgid "e-mail address"
+msgstr "indirizzo e-mail"
+
+#: notify.inc:36
+msgid "content"
+msgstr "contenuto"
+
+#: notify.inc:36
+msgid "teasers"
+msgstr "descrizioni"
+
+#: notify.inc:36
+msgid "comment"
+msgstr "commento"
+
+#: notify.inc:36
+msgid "failed attempts"
+msgstr "tentativi falliti"
+
+#: notify.inc:113
+msgid "notification for %name"
+msgstr "notifiche per %name"
+
+#: notify.inc:117;117
+msgid "Recent content"
+msgstr "Contenuti recenti"
+
+#: notify.inc:120;125
+msgid "%status %type by %author: %title"
+msgstr "%status %type da %author: %title"
+
+#: notify.inc:134;134
+msgid "Recent comments"
+msgstr "Commenti recenti"
+
+#: notify.inc:141
+msgid "%count new comments attached to: %title"
+msgstr "%count nuovi commenti riferiti a: %title"
+
+#: notify.inc:145
+msgid "%title by %author"
+msgstr "%title di %author"
+
+#: notify.inc:151
+msgid "Greetings"
+msgstr "Salve"
+
+#: notify.inc:154
+msgid "This is an automatic mail from"
+msgstr "Questo è un messaggio automatico da"
+
+#: notify.inc:155
+msgid "To stop receiving these mails go to"
+msgstr "Per non ricevere più queste e-mail clicca su"
+
+#: notify.inc:159
+msgid "Notify: User %name (%mail) could not be notified. Mail error."
+msgstr "Notifica: Utente %name (%mail) non può essere notificato. Errore nell'inviare la mail."
+
+#: notify.inc:162
+msgid "Notify: User %name (%mail) notified successfully."
+msgstr "Notifica: Utente %name (%mail) è stato notificato con successo."
+

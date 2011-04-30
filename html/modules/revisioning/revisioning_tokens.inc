@@ -32,6 +32,7 @@ function revisioning_token_list($type = 'all') {
     $tokens['node']['revision-author-name-raw'] = t("Revision author's user name. WARNING - raw user input.");
     $tokens['node']['revision-author-mail'] = t("Revision author's e-mail");
     $tokens['node']['revision-author-mail-raw'] = t("Revision author's e-mail. WARNING - raw user input.");
+    $tokens['node']['revision-author-display-name'] = t("Revision author's display user name");
     return $tokens;
   }
 }
@@ -71,4 +72,12 @@ function _set_revision_author_values($uid, &$values) {
   $values['revision-author-name-raw'] = $account->name;
   $values['revision-author-mail'] = check_plain($account->mail);
   $values['revision-author-mail-raw'] = $account->mail;
+  $result = db_query('SELECT f.name, f.type, v.value FROM {profile_fields} f INNER JOIN {profile_values} v ON f.fid = v.fid WHERE uid = %d', $uid);
+  while ($field = db_fetch_object($result)) {
+    if (empty($account->{$field->name})) {
+      $account->{$field->name} = _profile_field_serialize($field->type) ? unserialize($field->value) : $field->value;
+    }
+  }
+  $values['revision-author-display-name'] = check_plain($account->profile_name);
 }
+

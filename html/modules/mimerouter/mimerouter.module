@@ -1,0 +1,125 @@
+<?php
+
+// This value is taken from mailhandler_get_parts() mailhandler uses this value
+// for any mime data that does not already have a filename
+define('MIMEROUTER_MAILHANDLER_UNNAMED_FILE', 'unnamed_attachment');
+
+
+/**
+ * Implementation of hook_mailhandler
+ */
+function mimerouter_mailhandler($node, $result, $i, $header, $mailbox) {
+  $attachments = mimerouter_get_mailhandler_attachments($node);
+  
+  if (!empty($attachments)) {
+    foreach ($attachments as $attachment) {
+      $field_name = mimerouter_determine_filefield($node, $attachment);
+      if ($field_name != NULL) {
+        $items = isset($node->$field_name) ? $node->$field_name : array();
+        $field = content_fields($field_name, $node->type);
+        $account = user_load($node->uid);
+        $target_dir = filefield_widget_file_path($field, $account);
+        
+        if (!field_file_check_directory($target_dir, FILE_CREATE_DIRECTORY)) {
+          watchdog('mimerouter', 'The directory %directory for the file field %field (content type %type) could not be created or is not accessible. A newly emailed file could not be saved in this directory as a consequence, and the attachment was canceled.', array('%directory' => $target_dir, '%field' => $field_name, '%type' => $node->type));
+        }
+        else {
+          $info = field_file_save_file($attachment->filepath, array(), $target_dir, $account);
+          if ($info) {
+            $info['list'] = array();
+            $info['data'] = array('description' => '');
+            if ($field['list_field']) {
+              $info['list'] = $field['list_default'];
+            }
+            $info = mimerouter_cck_hacks($attachment, $field, $info, $user);
+            $items[] = $info;
+          }
+          else {
+            watchdog('mimerouter', 'The file attachment failed. Tried to save "%source" to "%dest"', array('%source' => $attachment->filepath, '%dest' => $target_dir));
+          }
+        }
+        $node->$field_name = $items;
+      }
+    }
+  }
+  return $node;
+}
+
+/**
+ * This function builds an attachments array from the mailhandler mimeparts
+ * this moves files to actual locations so that necessary calls to mimedetect
+ * and such that are expecting real files work properly
+ */
+function mimerouter_get_mailhandler_attachments($node) {
+  $attachments = array();
+  if (!empty($node->mimeparts)) {
+    foreach ($node->mimeparts as $mimepart) {
+      // make sure we want to process this mime part we skip parts that are
+      // unnamed files unless they are (not text and not multipart data)
+      if ($mimepart->filename != MIMEROUTER_MAILHANDLER_UNNAMED_FILE || ((strpos($mimepart->filemime, 'TEXT') === FALSE) && (strpos($mimepart->filemime, 'MULTIPART') === FALSE))) {
+        // save the data to a temporary file (mimedetect needs an actual file to work with)
+        $filename = file_munge_filename($mimepart->filename, '');
+        $temp_file = file_directory_temp() . '/' . $filename;
+        $filepath = file_save_data($mimepart->data, $temp_file);
+        $attachment = new stdClass;
+        $attachment->filename = $filename;
+        $attachment->filepath = $filepath;
+        $attachment->filemime = strtolower($mimepart->filemime);
+        $attachment->filesize = filesize($filepath);
+        $attachments[] = $attachment;
+      }
+    }
+  }
+  return $attachments;
+}
+
+/**
+ * Given a node object and mailhandler attachment this returns the
+ * filefield that this attachment should be attached to
+ * 
+ * @param $node a node object 
+ * @param $attachment a mime attachment as provided from mailhandler
+ * @return string containing the field name of filefield to place the file 
+ *    in or NULL
+ */
+function  mimerouter_determine_filefield($node, $attachment) {
+  $fields = filefield_get_field_list($node->type);
+  if (!empty($fields)) {
+    foreach ($fields as $key => $field) {
+      $errors = filefield_validate_extensions($attachment, $field['widget']['file_extensions']);
+      if (empty($errors)) {
+        return $key;
+      }
+    }
+  }
+  return NULL;
+}
+
+/**
+ * Since mailhandler doesn't expose a form object we only have a node object to work with.
+ * We need to hack in our values.
+ */
+function mimerouter_cck_hacks($attachment, $field, $info, $user) {
+  
+  if ($field['widget']['type'] == 'imagefield_widget') {
+    // Check if using the default alt text and replace tokens.
+    $default_alt = $field['widget']['custom_alt'];
+    if ($default_alt && function_exists('token_replace')) {
+      $info['data']['alt'] = empty($field['widget']['alt']) ? '' : token_replace($field['widget']['alt'], 'user', $user);
+    }
+    else {
+      $info['data']['alt'] = '';
+    }
+  
+    // Check if using the default title and replace tokens.
+    $default_title = (!$field['widget']['custom_title'] || (empty($file['status']) && empty($file['data']['title'])));
+    if ($default_title && function_exists('token_replace')) {
+      $info['data']['title'] = empty($field['widget']['title']) ? '' : token_replace($field['widget']['title'], 'user', $user);
+    }
+    else {
+      $info['data']['title'] = '';
+    }
+  }
+  
+  return $info;
+}

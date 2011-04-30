@@ -1,0 +1,75 @@
+html {
+	margin:3em;
+}
+
+@font-face {
+	font-family: Prociono;
+	src: url("/fonts/prociono.eot");
+	font-weight: normal;
+	font-style: normal;	
+}
+
+@font-face {
+	font-family: Junction;
+	src: url("/fonts/junction.eot");
+	font-weight: normal;
+	font-style: normal;	
+}
+
+body {
+	font-family: georgia, serif;
+	line-height:1.4em;
+}
+
+hr {
+	height:5px;
+	border:none;
+	margin:10px 0;
+	background: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAADCAYAAAC09K7GAAAABHNCSVQICAgIfAhkiAAAABJJREFUCJljYECA/wxYOP8xZABf0wP96WTlbgAAAABJRU5ErkJggg==") repeat-x bottom;
+}
+
+p {
+	font-size:0.9em;
+}
+
+a {
+	color:#34a;
+}
+
+a:hover {
+	color:#128;
+}
+
+h1,h2,h3,h4 {
+	font-family:Junction, lucida grande,lucida sans console,sans-serif;
+	font-weight:normal;
+	font-style:italic;
+}
+
+h1 {
+	font-size:3.2em;
+	line-height:1.1em;
+	font-family: georgia;
+}
+
+h2 {
+	font-family: Prociono,georgia;
+	/* font-style: italic; */
+	margin-top:0;
+}
+
+h2 a {
+	font-family:Junction, lucida grande,lucida sans console,sans-serif;
+}
+
+img {
+	float:right;
+	margin:1em;
+}
+
+.print-footer, .block-edit, .print-taxonomy, .terms-inline, .print-breadcrumb {
+	display:none; /* this doesn't work, dunno why */
+}
+
+
+

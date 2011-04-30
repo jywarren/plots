@@ -1,0 +1,261 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: Notify module\n"
+"POT-Creation-Date: 2006-07-26 20:31-0400\n"
+"PO-Revision-Date: 2006-07-26 21:47-0400\n"
+"Last-Translator:\n"
+"Language-Team: French\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: notify.inc:26
+msgid "Master switch"
+msgstr "Commutateur principal"
+
+#: notify.inc:27
+msgid "Do you wish to receive periodic e-mails when new content is posted?"
+msgstr ""
+"Souhaitez-vous recevoir des courriels périodiques lorsque du contenu nouveau "
+"est posté ?"
+
+#: notify.inc:27
+msgid "Notify status"
+msgstr "État des notifications"
+
+#: notify.inc:29
+msgid "Detailed settings"
+msgstr "Paramètres détaillés"
+
+#: notify.inc:30
+msgid "Include new content in the notification mail."
+msgstr "Inclure le nouveau contenu dans le courriel de notification."
+
+#: notify.inc:30
+msgid "Notify new content"
+msgstr "Notification de nouveau contenu"
+
+#: notify.inc:31
+msgid "Content"
+msgstr "Contenu"
+
+#: notify.inc:31
+msgid ""
+"Select the amount of each post that you would like to see in your "
+"notification e-mails."
+msgstr "Sélectionnez le contenu à inclure dans le courriel de notification."
+
+#: notify.inc:32
+msgid "Include new comments in the notification mail."
+msgstr "Inclure les nouveaux commentaires dans le courriel de notification."
+
+#: notify.inc:32
+msgid "Notify new comments"
+msgstr "Notification de nouveaux commentaires"
+
+#: notify.inc:36
+msgid ""
+"Your e-mail address must be specified on your <a href=\"%url\">my account</"
+"a> page."
+msgstr "Votre adresse courriel doit être spécifiée dans votre page <a href=\"%url\">mon compte</a>."
+
+#: notify.inc:70
+msgid "%count pending notification e-mails have been sent."
+msgstr "%count courriels de notification ont été envoyés."
+
+#: notify.inc:73
+msgid "%count notification e-mails could not be sent."
+msgstr "%count courriels de notification n'ont pu être envoyés."
+
+#: notify.inc:76
+msgid "No notification e-mails needed to be sent."
+msgstr "Aucun courriel de notification n'a besoin d'être envoyé."
+
+#: notify.inc:92
+msgid "The following table shows all users that have notifications enabled."
+msgstr "Le tableau suivant montre tous les utilisateurs qui ont activé les notifications."
+
+#: notify.inc:110
+msgid "e-mail address"
+msgstr "adresse courriel"
+
+#: notify.inc:110
+msgid "failed attempts"
+msgstr "tentatives ratées"
+
+#: notify.inc:110
+msgid "teasers"
+msgstr "versions abrégées"
+
+#: notify.inc:202
+msgid "%sitename new content notification for %username"
+msgstr "Notification de nouveau contenu de %sitename pour %name"
+
+#: notify.inc:218
+msgid "Queued"
+msgstr "en attente"
+
+#: notify.inc:224
+msgid "Unpublished"
+msgstr "non publié"
+
+#: notify.inc:230
+msgid "%title"
+msgstr ""
+
+#: notify.inc:231
+msgid "%status %type by %author"
+msgstr "%type %status par %author : %title"
+
+#: notify.inc:239
+msgid "1 new node"
+msgid_plural "%count new nodes"
+msgstr[0] "1 nouveau noeud"
+msgstr[1] "%count nouveaux noeuds"
+
+#: notify.inc:239
+msgid "Recent content - %count"
+msgstr "Contenu récent - %count"
+
+#: notify.inc:259
+msgid "%count new comments attached to %type posted by %author: %title"
+msgstr "%type posté par %author avec %count nouveaux commentaires : %title"
+
+#: notify.inc:269
+msgid "%title by %author"
+msgstr "%title par %author"
+
+#: notify.inc:277
+msgid "Recent comments - %count"
+msgstr "Commentaires récents - %count"
+
+#: notify.inc:286
+msgid "Greetings %user,"
+msgstr "%user,"
+
+#: notify.inc:289
+msgid "This is an automatic e-mail from %sitename."
+msgstr "Ceci est un courriel automatique de %sitename."
+
+#: notify.inc:290
+msgid ""
+"To stop receiving these e-mails, change your notification preferences at %"
+"notify-url"
+msgstr "Pour ne plus recevoir ces courriels, veuillez modifier vos options de notification à partir de %notify-url"
+
+#: notify.inc:295
+msgid "Notify: User %name (%mail) could not be notified. Mail error."
+msgstr "Notification : L'utilisateur %name (%mail) n'a pu être notifié. Erreur de courriel."
+
+#: notify.inc:299
+msgid "Notify: User %name (%mail) notified successfully."
+msgstr "Notifications : L'utilisateur %name (%mail) a été notifié avec succès."
+
+#: notify.inc:31;98
+msgid "Title + Body"
+msgstr "Titre et corps"
+
+#: notify.inc:31;98
+msgid "Title + Teaser"
+msgstr "Titre et version abrégée"
+
+#: notify.inc:31;98
+msgid "Title only"
+msgstr "Titre seulement"
+
+#: notify.inc:55;84
+msgid "Notify settings saved."
+msgstr "Paramètres de notification sauvegardés."
+
+#: notify.inc:64;103
+msgid "Save and send now"
+msgstr "Sauvegarder et envoyer maintenant"
+
+#: notify.inc:79;102
+msgid "Save"
+msgstr "Sauvegarder"
+
+#: notify.install:36
+msgid "Notify module installed successfully."
+msgstr "Le module de notifications a été installé avec succès."
+
+#: notify.install:39
+msgid ""
+"Table installation for the Notify module was unsuccessful. The tables may "
+"need to be installed by hand."
+msgstr "L'installation des tables du module de notifications a échoué. Il est possible que les tables doivent être créées manuellement."
+
+#: notify.module:0
+msgid "notify"
+msgstr "notifications"
+
+#: notify.module:10
+msgid ""
+"The notification module allows users to subscribe to periodic e-mails which "
+"include all new or revised content and/or comments much like the daily news "
+"letters sent by some websites.  Even if this feature is not configured for "
+"normal site users, it can be a useful feature for an administrator of a site "
+"to monitor content submissions and comment posts."
+msgstr "Le module de notifications permet aux utilisateurs de s'abonner afin de recevoir des courriels périodiques, à la manière d'un bulletin quotidien, annonçant le nouveau contenu, le contenu modifié et/ou les nouveaux commentaires sur le site. Même si vous ne désirez pas offrir ce service aux utilisateurs normaux de votre site, cette fonction peut être très utile à l'administrateur d'un site afin de surveiller les contributions des utilisateurs."
+
+#: notify.module:11
+msgid ""
+"The administrator sets the frequency of the e-mails in the notify "
+"administration interface. They can also set how many e-mail failures should "
+"occur before notify stops sending notifications.  Note that cron must be "
+"enabled for notifications to be sent out."
+msgstr "L'administrateur détermine la fréquence des courriels de notification à partir de l'interface d'administration du module. Il peut également fixer un nombre maximal d'envois infructueux, nombre après lequel les notifications ne sont plus envoyées. Notez que la commande cron doit être activée afin que les notification puissent être envoyées."
+
+#: notify.module:12
+msgid ""
+"<p>You can</p><ul><li>set up your site to run tasks automatically at "
+"required intervals. For more information, see <a href=\"%admin-help-system"
+"\">cron</a>.</li><li>administer notify <a href=\"%admin-settings-notify"
+"\">administer &gt;&gt; settings &gt;&gt; notify</a>.</li></ul>"
+msgstr "<p>Vous pouvez</p><ul><li>configurer le site pour exécuter des tâches automatiquement à une fréquence choisie. Pour plus d'informations, voyez <a href=\"%admin-help-system\">cron</a>.</li><li>configurer le module Notify <a href=\"%admin-settings-notify\">administer &gt;&gt; settings &gt;&gt; notify</a>.</li></ul>"
+
+#: notify.module:13
+msgid ""
+"For more information please read the configuration and customization "
+"handbook <a href=\"%notify\">Notify page</a>."
+msgstr "Pour plus d'informations, veuillez consulter le <a href=\"%notify\">manuel de configuration du module de notifications</a>."
+
+#: notify.module:16
+msgid "Enables notifications by e-mail."
+msgstr "Active les notifications par courriel."
+
+#: notify.module:43
+msgid "E-mail notification settings"
+msgstr "Paramètres de notification par courriel"
+
+#: notify.module:49
+msgid "Send notifications every"
+msgstr "Envoyer des notifications tous les"
+
+#: notify.module:52
+msgid "Requires crontab."
+msgstr "Requiert crontab."
+
+#: notify.module:57
+msgid "Number of failed sends after which notifications are disabled"
+msgstr "Nombre d'envois infructueux après lequel désactiver les notifications"
+
+#: notify.module:92
+msgid "access notify"
+msgstr "accéder aux notifications"
+
+#: notify.module:92
+msgid "administer notify"
+msgstr "administrer les notifications"
+
+#: notify.module:104
+msgid "my notify settings"
+msgstr "mes paramètres de notification"
+
+#: notify.module:105
+msgid "notifications"
+msgstr "notifications"
+
+#: notify.module:113
+msgid "notify settings"
+msgstr "paramètres de notification"
