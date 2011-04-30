@@ -1,0 +1,233 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: Drupal notify.module\n"
+"POT-Creation-Date: 2008-06-04 12:02+0300\n"
+"PO-Revision-Date: \n"
+"Last-Translator: Ville Alatalo <ville.alatalo@gmail.com>\n"
+"Language-Team:  <ville.alatalo@gmail.com>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Poedit-Language: Finnish\n"
+"X-Poedit-Country: FINLAND\n"
+
+#: notify.install:36
+msgid "Notify module installed successfully."
+msgstr "Ilmoitus-moduuli asennettu."
+
+#: notify.install:39
+msgid "Table installation for the Notify module was unsuccessful. The tables may need to be installed by hand."
+msgstr "Tietokantataulujen asennus Ilmoitus-modulille epäonnistui. Voit joutua asentamaan taulut käsin."
+
+#: notify.inc:26
+msgid "Master switch"
+msgstr "Pääkytkin"
+
+#: notify.inc:27
+msgid "Notify status"
+msgstr "Ilmoitusten tila"
+
+#: notify.inc:27
+msgid "Do you wish to receive periodic e-mails when new content is posted?"
+msgstr "Haluatko saada ilmoituksia uudesta sisällöstä sähköpostiisi?"
+
+#: notify.inc:29
+msgid "Detailed settings"
+msgstr "Tarkemmat asetukset"
+
+#: notify.inc:30
+msgid "Notify new content"
+msgstr "Ilmoita uudesta sisällöstä"
+
+#: notify.inc:30
+msgid "Include new content in the notification mail."
+msgstr "Liitä uusi sisältö mukaan ilmoitukseen."
+
+#: notify.inc:31
+msgid "Content"
+msgstr "Sisältö"
+
+#: notify.inc:31;98
+msgid "Title only"
+msgstr "Vain otsikko"
+
+#: notify.inc:31;98
+msgid "Title + Teaser"
+msgstr "Otsikko ja teaseri"
+
+#: notify.inc:31;98
+msgid "Title + Body"
+msgstr "Otsikko ja sisällön runko"
+
+#: notify.inc:31
+msgid "Select the amount of each post that you would like to see in your notification e-mails."
+msgstr "Valitse kuinka paljon tietoa haluat nähdä ilmoitussähköpostissa."
+
+#: notify.inc:32
+msgid "Notify new comments"
+msgstr "Ilmoita uusista kommenteista"
+
+#: notify.inc:32
+msgid "Include new comments in the notification mail."
+msgstr "Liitä uudet kommentit mukaan ilmoitukseen."
+
+#: notify.inc:36
+msgid "Your e-mail address must be specified on your <a href=\"%url\">my account</a> page."
+msgstr "Sähköpostiosoite täytyy olla määritettynä <a href=\"%url\">omat tiedot</a> -sivulla."
+
+#: notify.inc:55;84
+msgid "Notify settings saved."
+msgstr "Ilmoitusasetukset tallennettu."
+
+#: notify.inc:64;103
+msgid "Save and send now"
+msgstr "Tallenna ja lähetä heti"
+
+#: notify.inc:70
+msgid "%count pending notification e-mails have been sent."
+msgstr "%count odottavaa ilmoitussähköpostia lähetetty."
+
+#: notify.inc:73
+msgid "%count notification e-mails could not be sent."
+msgstr "%count ilmoitussähköpostin lähetys epäonnistui."
+
+#: notify.inc:76
+msgid "No notification e-mails needed to be sent."
+msgstr "Yhtään ilmoitussähköpostia ei lähetetty."
+
+#: notify.inc:79;102
+msgid "Save"
+msgstr "Tallenna"
+
+#: notify.inc:92
+msgid "The following table shows all users that have notifications enabled."
+msgstr "Alla olevassa taulukossa näkyvät kaikki ilmoituksia vastaanottavat käyttäjät."
+
+#: notify.inc:110
+msgid "e-mail address"
+msgstr "sähköpostiosoite"
+
+#: notify.inc:110
+msgid "teasers"
+msgstr "teaserit"
+
+#: notify.inc:110
+msgid "failed attempts"
+msgstr "epäonnistuneet yritykset"
+
+#: notify.inc:202
+msgid "%sitename new content notification for %username"
+msgstr "%sitename -sivuston ilmoitus uudesta sisällöstä käyttäjälle %username"
+
+#: notify.inc:218
+msgid "Queued"
+msgstr "Jonossa"
+
+#: notify.inc:224
+msgid "Unpublished"
+msgstr "Ei julkaistu"
+
+#: notify.inc:230
+msgid "%title"
+msgstr "%title"
+
+#: notify.inc:231
+msgid "%status %type by %author"
+msgstr "%status %type, kirjoittanut %author"
+
+#: notify.inc:239
+msgid "Recent content - %count"
+msgstr "Uusi sisältö - %count"
+
+#: notify.inc:259
+msgid "%count new comments attached to %type posted by %author: %title"
+msgstr "%count uutta kommenttia - %type: %title, kirjoittanut %author"
+
+#: notify.inc:269
+msgid "%title by %author"
+msgstr "%title, kirjoittaunut %author"
+
+#: notify.inc:277
+msgid "Recent comments - %count"
+msgstr "Uudet kommentit - %count"
+
+#: notify.inc:286
+msgid "Greetings %user,"
+msgstr "Hei %user, "
+
+#: notify.inc:289
+msgid "This is an automatic e-mail from %sitename."
+msgstr "Tämä on automaattinen sähköposti %sitename -sivustolta."
+
+#: notify.inc:290
+msgid "To stop receiving these e-mails, change your notification preferences at %notify-url"
+msgstr "Mikäli et halua ilmoitussähköposteja jatkossa, ole hyvä ja päivitä ilmoitusasetuksesi osoitteessa %notify-url"
+
+#: notify.inc:295
+msgid "Notify: User %name (%mail) could not be notified. Mail error."
+msgstr "Ilmoitus-moduuli: Käyttäjälle %user (%mail) ei voitu lähettää ilmoitussähköpostia. Sähköpostivirhe."
+
+#: notify.inc:299
+msgid "Notify: User %name (%mail) notified successfully."
+msgstr "Ilmoitus-moduuli: Käyttäjälle %user (%mail) lähetetty ilmoitussähköposti."
+
+#: notify.module:10
+msgid "The notification module allows users to subscribe to periodic e-mails which include all new or revised content and/or comments much like the daily news letters sent by some websites.  Even if this feature is not configured for normal site users, it can be a useful feature for an administrator of a site to monitor content submissions and comment posts."
+msgstr "Ilmoitus-moduulilla käyttäjät voivat tilata itselleen sähköpostiinsa ilmoituksia sivuston päivittyneestä sisällöstä ja/tai uusista kommenteista. Ilmoitus-moduuli toimii hieman samaan tapaan, kuin joidenkin sivustojen käyttämät päivittäiset uutiskirjeet. Moduulia voi käyttää myös esimerkiksi ylläpidon seurantatyökaluna uuteen sisältöön ja kommentteihin."
+
+#: notify.module:11
+msgid "The administrator sets the frequency of the e-mails in the notify administration interface. They can also set how many e-mail failures should occur before notify stops sending notifications.  Note that cron must be enabled for notifications to be sent out."
+msgstr "Ylläpito määrittää kuinka usein ilmoituksia lähetetään. He voivat myös määritellä kuinka monen epäonnistuneen lähetyskerran jälkeen ilmoituksia ei enää yritetä lähettää lainkaan. Cronin täytyy olla päällä, jotta ilmoitusten lähettäminen toimisi."
+
+#: notify.module:12
+msgid "<p>You can</p><ul><li>set up your site to run tasks automatically at required intervals. For more information, see <a href=\"%admin-help-system\">cron</a>.</li><li>administer notify <a href=\"%admin-settings-notify\">administer &gt;&gt; settings &gt;&gt; notify</a>.</li></ul>"
+msgstr "<p>Voit</p><ul><li>asettaa sivustosi suorittamaan tehtäviä automaattisesti. Katso lisätietoja: <a href=\"%admin-help-system\">cron</a>.</li><li>ylläpitää ilmoitusasetuksia <a href=\"%admin-settings-notify\">ylläpito &gt;&gt; sivuston asetukset &gt;&gt; ilmoitusasetukset</a>.</li></ul>"
+
+#: notify.module:13
+msgid "For more information please read the configuration and customization handbook <a href=\"%notify\">Notify page</a>."
+msgstr "Lisätietoa Drupalin Configuration and customization handbookissa <a href=\"%notify\">Notify -sivulla</a>."
+
+#: notify.module:16
+msgid "Enables notifications by e-mail."
+msgstr "Lähettää ilmoituksia sähköpostilla."
+
+#: notify.module:43
+msgid "E-mail notification settings"
+msgstr "Sähköposti-ilmoitusten asetukset"
+
+#: notify.module:49
+msgid "Send notifications every"
+msgstr "Ilmoitusten lähetysväli"
+
+#: notify.module:52
+msgid "Requires crontab."
+msgstr "Vaatii crontabin."
+
+#: notify.module:57
+msgid "Number of failed sends after which notifications are disabled"
+msgstr "Epäonnistuneiden lähetysten määrä, jonka jälkeen ilmoitukset poistetaan käytöstä"
+
+#: notify.module:104
+msgid "my notify settings"
+msgstr "omat ilmoitusasetukset"
+
+#: notify.module:105
+msgid "notifications"
+msgstr "ilmoitukset"
+
+#: notify.module:113
+msgid "notify settings"
+msgstr "ilmoitusasetukset"
+
+#: notify.module:92
+msgid "access notify"
+msgstr "ilmoitusten käyttö"
+
+#: notify.module:92
+msgid "administer notify"
+msgstr "ilmoitusten ylläpito"
+
+#: notify.module:0
+msgid "notify"
+msgstr "ilmoitus"
+

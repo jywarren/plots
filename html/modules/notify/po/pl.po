@@ -1,0 +1,217 @@
+# translation of pl.po to Polish
+# Polish translation of Drupal (contributions-HEAD\modules\notify\notify.module)
+# Copyright Sergiusz Pawłowicz <sergiusz@pawlowicz.name>
+# Generated from file: notify.module,v 2.57 2005/10/26 12:01:28 killes
+#
+# Sergiusz Pawłowicz <sergiusz@pawlowicz.name>, 2006.
+msgid ""
+msgstr ""
+"Project-Id-Version: pl\n"
+"POT-Creation-Date: 2006-01-08 20:42+0100\n"
+"PO-Revision-Date: 2006-03-14 02:11+0100\n"
+"Last-Translator: Sergiusz Pawłowicz <sergiusz@pawlowicz.name>\n"
+"Language-Team: Polish <pl@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: contributions-HEAD\modules\notify\notify.module:7
+msgid "Enables notifications by e-mail."
+msgstr "Umożliwia powiadamianie pocztą elektroniczną"
+
+#: contributions-HEAD\modules\notify\notify.module:15
+msgid "Send notifications every"
+msgstr "Wyślij powiadomienie co"
+
+#: contributions-HEAD\modules\notify\notify.module:15
+msgid "Requires crontab."
+msgstr "Wymaga crontab."
+
+#: contributions-HEAD\modules\notify\notify.module:16
+msgid "Number of failed sends after which notifications are disabled."
+msgstr "Liczba bezskutecznych prób wysłania powiadomień przed ich wyłączeniem."
+
+#: contributions-HEAD\modules\notify\notify.module:52
+msgid "my notify settings"
+msgstr "moje ustawienia powiadomień"
+
+#: contributions-HEAD\modules\notify\notify.module:53
+msgid "notifications"
+msgstr "powiadomienia"
+
+#: contributions-HEAD\modules\notify\notify.module:43
+msgid "access notify"
+msgstr "dostęp do powiadomień"
+
+#: contributions-HEAD\modules\notify\notify.module:43
+msgid "administer notify"
+msgstr "zarządzanie powiadomieniami"
+
+#: contributions-HEAD\modules\notify\notify.module:0
+msgid "notify"
+msgstr "powiadomienia"
+
+#: contributions-HEAD\modules\notify\notify.inc:10;25
+msgid "Save settings"
+msgstr "Zachowaj ustawienia"
+
+#: contributions-HEAD\modules\notify\notify.inc:12
+msgid "Notify settings saved"
+msgstr "Ustawienia zapisane"
+
+#: contributions-HEAD\modules\notify\notify.inc:18
+msgid "Master switch"
+msgstr "Główny przełącznik"
+
+#: contributions-HEAD\modules\notify\notify.inc:19
+msgid "Notify status"
+msgstr "Stan powiadomień"
+
+#: contributions-HEAD\modules\notify\notify.inc:19;22;24
+msgid "Disabled"
+msgstr "Wyłączony"
+
+#: contributions-HEAD\modules\notify\notify.inc:19;22;24
+msgid "Enabled"
+msgstr "Włączony"
+
+#: contributions-HEAD\modules\notify\notify.inc:19
+msgid "Do you wish to receive periodic e-mails when new content is posted?"
+msgstr "Czy pragniesz regularnie otrzymywać listy w przypadku nowych wiadomości na serwerze?"
+
+#: contributions-HEAD\modules\notify\notify.inc:21
+msgid "Detailed settings"
+msgstr "Ustawienia szczegółowe"
+
+#: contributions-HEAD\modules\notify\notify.inc:22
+msgid "Notify new content"
+msgstr "Powiadom o nowej zawartości"
+
+#: contributions-HEAD\modules\notify\notify.inc:22
+msgid "Include new content in the notification mail."
+msgstr "Dołącz treść zmian w liście powiadomienia."
+
+#: contributions-HEAD\modules\notify\notify.inc:23
+msgid "Content"
+msgstr "Zawartość"
+
+#: contributions-HEAD\modules\notify\notify.inc:23;54
+msgid "Title only"
+msgstr "Tylko tytuł"
+
+#: contributions-HEAD\modules\notify\notify.inc:23;54
+msgid "Title + Teaser"
+msgstr "Tytuł + opis"
+
+#: contributions-HEAD\modules\notify\notify.inc:23;54
+msgid "Title + Body"
+msgstr "Tytuł + treść"
+
+#: contributions-HEAD\modules\notify\notify.inc:23
+msgid "Select the amount of each post that you would like to see in your notification e-mails."
+msgstr "Wskaż objętość każdego artykułu który otrzymasz w powiadomieniu."
+
+#: contributions-HEAD\modules\notify\notify.inc:24
+msgid "Notify new comments"
+msgstr "Powiadamiaj o nowych komentarzach"
+
+#: contributions-HEAD\modules\notify\notify.inc:24
+msgid "Include new comments in the notification mail."
+msgstr "Dołącz nowe komentarze do listu powiadomienia."
+
+#: contributions-HEAD\modules\notify\notify.inc:28
+msgid "You need to set a e-mail address on your <a href=\"%url\">my account</a> page."
+msgstr "Musisz podać swój adres e-mail na <a href=\"%url\">twoim koncie</a>."
+
+#: contributions-HEAD\modules\notify\notify.inc:38;58
+msgid "Save"
+msgstr "Zapisz"
+
+#: contributions-HEAD\modules\notify\notify.inc:48
+msgid "The following table shows all users that have notifications enabled."
+msgstr "Następująca tabela pokazuje wszystkich użytkowników którzy włączyli powiadomienia."
+
+#: contributions-HEAD\modules\notify\notify.inc:65
+msgid "username"
+msgstr "Nazwa użytkownika"
+
+#: contributions-HEAD\modules\notify\notify.inc:65
+msgid "e-mail address"
+msgstr "Adres e-mail"
+
+#: contributions-HEAD\modules\notify\notify.inc:65
+msgid "content"
+msgstr "zawartość"
+
+#: contributions-HEAD\modules\notify\notify.inc:65
+msgid "teasers"
+msgstr "skrót"
+
+#: contributions-HEAD\modules\notify\notify.inc:65
+msgid "comment"
+msgstr "komentarz"
+
+#: contributions-HEAD\modules\notify\notify.inc:65
+msgid "failed attempts"
+msgstr "nieudane próby"
+
+#: contributions-HEAD\modules\notify\notify.inc:136
+msgid "%sitename notification for %username"
+msgstr "%sitename powiadomienie dla %username"
+
+#: contributions-HEAD\modules\notify\notify.inc:140
+msgid "Recent content"
+msgstr "Ostatnia zawartość"
+
+#: contributions-HEAD\modules\notify\notify.inc:143;148
+msgid "%status %type by %author: %title"
+msgstr "%status %type przez %author: %title"
+
+#: contributions-HEAD\modules\notify\notify.inc:143
+msgid "queued"
+msgstr "skolejkowano"
+
+#: contributions-HEAD\modules\notify\notify.inc:148
+msgid "published"
+msgstr "opublikowane"
+
+#: contributions-HEAD\modules\notify\notify.inc:157
+msgid "Recent comments"
+msgstr "Ostatnie komentarze"
+
+#: contributions-HEAD\modules\notify\notify.inc:164
+msgid "%count new comments attached to: %title"
+msgstr "%count nowych komentarzy do %title"
+
+#: contributions-HEAD\modules\notify\notify.inc:168
+msgid "%title by %author"
+msgstr "%title przez %author"
+
+#: contributions-HEAD\modules\notify\notify.inc:174
+msgid "Greetings %user,"
+msgstr "Witaj, %user,"
+
+#: contributions-HEAD\modules\notify\notify.inc:177
+msgid "This is an automatic mail from %sitename"
+msgstr "To automatyczna poczta z %sitename"
+
+#: contributions-HEAD\modules\notify\notify.inc:178
+msgid "To stop receiving these mails go to %notify-url"
+msgstr "Aby zrezygnować z otrzymywania powiadomień idź do %notify-url "
+
+#: contributions-HEAD\modules\notify\notify.inc:182
+msgid "Notify: User %name (%mail) could not be notified. Mail error."
+msgstr "Powiadomienia: Użytkownik %name (%mail) nie został powiadomiony. Błąd poczty elektronicznej."
+
+#: contributions-HEAD\modules\notify\notify.inc:185
+msgid "Notify: User %name (%mail) notified successfully."
+msgstr "Powiadomienia: User %name (%mail) został powiadomiony."
+
+#: contributions-HEAD\modules\notify\notify.inc:182
+msgid "error"
+msgstr "błąd"
+
+#: contributions-HEAD\modules\notify\notify.inc:185
+msgid "user"
+msgstr "użytkownik"
+

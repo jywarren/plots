@@ -1,0 +1,303 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: Russian translation of Drupal 5.x.\n"
+"POT-Creation-Date: 2006-10-19 04:57-0400\n"
+"PO-Revision-Date: 2007-02-24 20:01+0500\n"
+"Last-Translator: vadbars <vadbars@mail.ru>\n"
+"Language-Team: Russian Drupal Translation Team (RDTT) <translators@drupal.ru>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=3; plural=((((n%10)==1)&&((n%100)!=11))?(0):(((((n%10)>=2)&&((n%10)<=4))&&(((n%100)<10)||((n%100)>=20)))?(1):2));\n"
+"X-Poedit-Language: Russian\n"
+"X-Poedit-Country: RUSSIAN FEDERATION\n"
+
+#: notify.module:10
+msgid "The notification module allows users to subscribe to periodic e-mails which include all new or revised content and/or comments much like the daily news letters sent by some websites.  Even if this feature is not configured for normal site users, it can be a useful feature for an administrator of a site to monitor content submissions and comment posts."
+msgstr "Модуль извещений позволяет пользователям подписываться на получение периодических извещений по электронной почте о всех новых или измененных материалах и/или комментариях. Наподобие ежедневных новостных рассылок, которые рассылаются некоторыми сайтами. Если не настраивать эту возможность для обычных пользователей сайта, ее можно использовать для администратора сайта для слежения за размещением материалов и комментариев."
+
+#: notify.module:11
+msgid "The administrator sets the frequency of the e-mails in the notify administration interface. They can also set how many e-mail failures should occur before notify stops sending notifications.  Note that cron must be enabled for notifications to be sent out."
+msgstr "Администратор устанавливает в административном интерфейсе частоту отправки электронной почты. Там же можно установить, после какого количества ошибок при отправке почты останавливать рассылку извещений. Обратите внимание, что для извещений требуется cron."
+
+#: notify.module:12
+msgid "<p>You can</p><ul><li>set up your site to run tasks automatically at required intervals. For more information, see <a href=\"@admin-help-system\">cron</a>.</li><li>administer notify <a href=\"@admin-settings-notify\">administer &gt;&gt; settings &gt;&gt; notify</a>.</li></ul>"
+msgstr "<p>Вы можете</p><ul><li>настроить ваш сайт для запуска задач через определенный интервал времени. Дополнительную информацию см. <a href=\"%admin-help-system\">cron</a>.</li><li>управлять извещениями<a href=\"%admin-settings-notify\">управление &gt;&gt; настройки &gt;&gt; извещения</a>.</li></ul>"
+
+#: notify.module:13
+msgid "For more information please read the configuration and customization handbook <a href=\"@notify\">Notify page</a>."
+msgstr "Подробности читайте руководство про конфигурацию и настройку <a href=\"%notify\">модуля Notify</a>."
+
+#: notify.module:36
+msgid "Never"
+msgstr "Никогда"
+
+#: notify.module:43
+msgid "Send notifications every"
+msgstr "Отправлять извещения с периодичностью"
+
+#: notify.module:46
+msgid "How often should new content notifications be sent? Requires cron to be running."
+msgstr "Насколько часто нужно рассылать извещения о новых материалах? Требуется cron."
+
+#: notify.module:51
+msgid "Number of failed sends after which notifications are disabled"
+msgstr "После какого количества извещений прекратить рассылки, если пользователь не реагирует на извещения (не заходит на сайт)"
+
+#: notify.module:53
+#: ;157;165;177
+msgid "Disabled"
+msgstr "Отключено"
+
+#: notify.module:96
+msgid "My notification settings"
+msgstr "Настроить мои извещения"
+
+#: notify.module:103
+msgid "Notifications"
+msgstr "Извещения"
+
+#: notify.module:110
+#: ;124
+msgid "Notification settings"
+msgstr "Настройки извещений"
+
+#: notify.module:111
+msgid "Adjust settings for new content notifications sent by e-mail."
+msgstr "Настройки для рассылки на электронную почту извещений о новых материалах."
+
+#: notify.module:153
+msgid "Master switch"
+msgstr "Включение/выключение извещений"
+
+#: notify.module:155
+msgid "Notify status"
+msgstr "Статус извещений"
+
+#: notify.module:157
+#: ;165;177
+msgid "Enabled"
+msgstr "Включено"
+
+#: notify.module:158
+msgid "Do you wish to receive periodic e-mails when new content is posted?"
+msgstr "Вы хотите получать периодические извещения по электронной почте о размещении новых материалов?"
+
+#: notify.module:161
+msgid "Detailed settings"
+msgstr "Детальные настройки"
+
+#: notify.module:163
+msgid "Notify new content"
+msgstr "Извещать о новых материалах"
+
+#: notify.module:166
+msgid "Include new content in the notification mail."
+msgstr "Включать новые материалы в письмо-извещение."
+
+#: notify.module:169
+#: ;261
+msgid "Content"
+msgstr "Содержание"
+
+#: notify.module:171
+#: ;212
+msgid "Title only"
+msgstr "Только заголовок"
+
+#: notify.module:171
+#: ;212
+msgid "Title + Teaser"
+msgstr "Заголовок + Анонс"
+
+#: notify.module:171
+#: ;212
+msgid "Title + Body"
+msgstr "Заголовок + Текст"
+
+#: notify.module:172
+msgid "Select the amount of each post that you would like to see in your notification e-mails."
+msgstr "Выберите компоненты сообщений, которые вы хотите видеть в извещениях на электронную почту."
+
+#: notify.module:175
+msgid "Notify new comments"
+msgstr "Извещения о новых комментариях"
+
+#: notify.module:178
+msgid "Include new comments in the notification mail."
+msgstr "Включать новые комментарии в письмо-извещение."
+
+#: notify.module:181
+#: ;224
+msgid "Save settings"
+msgstr "Сохранить настройки"
+
+#: notify.module:184
+msgid "Your e-mail address must be specified on your <a href=\"@url\">my account</a> page."
+msgstr "Ваш адрес электронной почты нужно указать на вашей странице <a href=\"@url\">моя учетная запись</a>."
+
+#: notify.module:193
+#: ;238
+msgid "Notify settings saved."
+msgstr "Настройки извещений сохранены."
+
+#: notify.module:202
+msgid "The following table shows all users that have notifications enabled."
+msgstr "Нижеследующие таблицы показывают всех пользователей, которые включили извещения."
+
+#: notify.module:218
+msgid "Flush e-mail queue"
+msgstr "Очистить очередь электронной почты."
+
+#: notify.module:221
+msgid "Send out any pending notification e-mails currently in queue."
+msgstr "Разослать все находящиеся в очереди извещения по электронной почте."
+
+#: notify.module:245
+msgid "@count pending notification e-mails have been sent."
+msgstr "Отправлено @count извещений по электронной почте."
+
+#: notify.module:248
+msgid "@count notification e-mails could not be sent."
+msgstr "Не удается отправить @count извещений по электронной почте."
+
+#: notify.module:251
+msgid "No notification e-mails needed to be sent."
+msgstr "Нет извещений для отправки по электронной почте."
+
+#: notify.module:261
+msgid "Username"
+msgstr "Имя пользователя"
+
+#: notify.module:261
+msgid "E-mail address"
+msgstr "Адрес электронной почты"
+
+#: notify.module:261
+msgid "Teasers"
+msgstr "Анонсы"
+
+#: notify.module:261
+msgid "Comment"
+msgstr "Комментарий"
+
+#: notify.module:261
+msgid "Failed attempts"
+msgstr "Ошибки"
+
+#: notify.module:275
+msgid "No users have notifications enabled."
+msgstr "Нет пользователей, подписавшихся на извещения."
+
+#: notify.module:365
+msgid "Published"
+msgstr "Опубликовано"
+
+#: notify.module:368
+msgid "Unpublished"
+msgstr "Неопубликовано"
+
+#: notify.module:374
+msgid "@title"
+msgstr "@title"
+
+#: notify.module:375
+msgid "@status @type by @author"
+msgstr "@status @type от @author"
+
+#: notify.module:383
+msgid "Recent content - @count"
+msgstr "Последний материал - @count"
+
+#: notify.module:406
+msgid "@count attached to @type posted by @author: @title"
+msgstr "@count новых комментариев к @type размещены @author: @title"
+
+#: notify.module:410
+msgid "@title by @author"
+msgstr "@title от @author"
+
+#: notify.module:418
+msgid "Recent comments - @count"
+msgstr "Последних комментариев - @count"
+
+#: notify.module:430
+msgid "@sitename new content notification for @username"
+msgstr "извещение для @username о новых материалах на сайте @sitename"
+
+#: notify.module:432
+msgid "Greetings @user,"
+msgstr "Здравствуйте, @user,"
+
+#: notify.module:435
+msgid "This is an automatic e-mail from @sitename."
+msgstr "Это автоматическое письмо с сайта @sitename."
+
+#: notify.module:436
+msgid "To stop receiving these e-mails, change your notification preferences at @notify-url"
+msgstr "Чтобы остановить получение этих извещений, измените ваши настройки на странице @notify-url"
+
+#: notify.module:442
+msgid "Notify: User %name (%mail) could not be notified. Mail error."
+msgstr "Извещение: Пользователя %name (%mail) не удается известить. Ошибка почтовой отправки."
+
+#: notify.module:446
+msgid "Notify: User %name (%mail) notified successfully."
+msgstr "Извещение: Пользователь %name (%mail) извещен."
+
+#: notify.module:442
+msgid "error"
+msgstr "ошибка"
+
+#: notify.module:446
+msgid "user"
+msgstr "пользователь"
+
+#: notify.module:383
+msgid "1 new post"
+msgid_plural "@count new posts"
+msgstr[0] "@count новый материал"
+msgstr[1] "@count новых материала"
+msgstr[2] "@count новых материалов"
+
+#: notify.module:406
+#: ;418
+msgid "1 new comment"
+msgid_plural "@count new comments"
+msgstr[0] "@count новый комментарий"
+msgstr[1] "@count новых комментария"
+msgstr[2] "@count новых комментариев"
+
+#: notify.module:84
+msgid "access notify"
+msgstr "иметь доступ к извещениям"
+
+#: notify.module:84
+msgid "administer notify"
+msgstr "управлять извещениями"
+
+#: notify.module:0
+#: notify.info:0
+msgid "notify"
+msgstr "извещение"
+
+#: notify.info:0
+msgid "Notify"
+msgstr "Извещение"
+
+#: notify.info:0
+msgid "Enables notifications of new content and comments by e-mail."
+msgstr "Включает извещения на электронную почту о новых материалах и комментариях на сайте."
+
+#: notify.info:0
+msgid "Mail"
+msgstr "Электронная почта"
+
+#: notify.install:36
+msgid "Notify module installed successfully."
+msgstr "Модуль Notify установлен."
+
+#: notify.install:39
+msgid "Table installation for the Notify module was unsuccessful. The tables may need to be installed by hand."
+msgstr "Установка таблиц для модуля Notify не завершена. Таблицы следует установить вручную."
+

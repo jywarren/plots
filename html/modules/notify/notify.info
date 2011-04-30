@@ -1,0 +1,12 @@
+; $Id: notify.info,v 2.2.2.2 2009/12/07 06:51:56 matt2000 Exp $
+name = Notify
+description = "Enables notifications of new content and comments by e-mail."
+package = Mail
+core = 6.x
+
+; Information added by drupal.org packaging script on 2010-08-05
+version = "6.x-1.2"
+core = "6.x"
+project = "notify"
+datestamp = "1281037575"
+

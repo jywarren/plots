@@ -1,0 +1,298 @@
+# Traducción al español del módulo notify.
+# Esta traducción ha sido financiada por interactors. <http://interactors.coop>.
+# Gerard Farràs <gerard.farras@km103.com>, 2005.
+# Interactors <info@interactors.coop>, 2005.
+# Camille Plourde-Lescelleur <camishka@phear.org>, 2006
+# Sébastien Grenier sebas at koumbit.org, 2006
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Notify\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2006-07-26 20:31-0400\n"
+"PO-Revision-Date: 2006-07-21 11:59-0500\n"
+"Last-Translator: Vassili Tchersky <vt@phear.org>\n"
+"Language-Team: Spanish\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: notify.inc:26
+msgid "Master switch"
+msgstr "Commutador principal"
+
+#: notify.inc:27
+msgid "Do you wish to receive periodic e-mails when new content is posted?"
+msgstr ""
+"¿Quereis recibir periódicamente correos electrónicos cuando se publique "
+"nuevo contenido?"
+
+#: notify.inc:27
+msgid "Notify status"
+msgstr "Estado de la notificación"
+
+#: notify.inc:29
+msgid "Detailed settings"
+msgstr "Parámetros en detalle"
+
+#: notify.inc:30
+msgid "Include new content in the notification mail."
+msgstr "Incluir el nuevo contenido en el correo de notificación."
+
+#: notify.inc:30
+msgid "Notify new content"
+msgstr "Notificar nuevo contenido"
+
+#: notify.inc:31
+msgid "Content"
+msgstr "Contenido"
+
+#: notify.inc:31
+msgid ""
+"Select the amount of each post that you would like to see in your "
+"notification e-mails."
+msgstr ""
+"Seleccione el contenido de la publicación que estará enviado en el correo de "
+"notificación."
+
+#: notify.inc:32
+msgid "Include new comments in the notification mail."
+msgstr "Incluir los nuevos comentarios en el correo de notificación."
+
+#: notify.inc:32
+msgid "Notify new comments"
+msgstr "Notifica nuevos comentarios"
+
+#: notify.inc:36
+msgid ""
+"Your e-mail address must be specified on your <a href=\"%url\">my account</"
+"a> page."
+msgstr ""
+"Hay que especefiar su dirección de correo electrónico en la pagina <a href="
+"\"%url\">mi cuenta</a>."
+
+#: notify.inc:70
+msgid "%count pending notification e-mails have been sent."
+msgstr "%count correos electronicos de notificación fueron enviados."
+
+#: notify.inc:73
+msgid "%count notification e-mails could not be sent."
+msgstr "%count correos electronicos de notificación no pueden ser enviados."
+
+#: notify.inc:76
+msgid "No notification e-mails needed to be sent."
+msgstr "Nigún correo electrónico de notificación necesita ser enviado."
+
+#: notify.inc:92
+msgid "The following table shows all users that have notifications enabled."
+msgstr ""
+"En esta lista figuran todos los usarios para quien las notificaciones estan "
+"habilitadas."
+
+#: notify.inc:110
+msgid "e-mail address"
+msgstr "dirección de correo electrónico"
+
+#: notify.inc:110
+msgid "failed attempts"
+msgstr "intentos fallidos"
+
+#: notify.inc:110
+msgid "teasers"
+msgstr "resúmenes"
+
+#: notify.inc:202
+msgid "%sitename new content notification for %username"
+msgstr "nuevo contenido de notificación de %sitename para %username"
+
+#: notify.inc:218
+msgid "Queued"
+msgstr "En cola"
+
+#: notify.inc:224
+msgid "Unpublished"
+msgstr "no publicado"
+
+#: notify.inc:230
+msgid "%title"
+msgstr "%title"
+
+#: notify.inc:231
+msgid "%status %type by %author"
+msgstr "%status %type por %author: %title"
+
+#: notify.inc:239
+msgid "1 new node"
+msgid_plural "%count new nodes"
+msgstr[0] "un nuevo nodo"
+msgstr[1] "%count nuevos nodos"
+
+#: notify.inc:239
+msgid "Recent content - %count"
+msgstr "%count nuevos contenidos"
+
+#: notify.inc:259
+msgid "%count new comments attached to %type posted by %author: %title"
+msgstr "%count nuevos comentarios adjuntos a %type publicado por %author: %title"
+
+#: notify.inc:269
+msgid "%title by %author"
+msgstr "%title por %author"
+
+#: notify.inc:277
+msgid "Recent comments - %count"
+msgstr "%count nuevos comentarios"
+
+#: notify.inc:286
+msgid "Greetings %user,"
+msgstr "Felicidades %user,"
+
+#: notify.inc:289
+msgid "This is an automatic e-mail from %sitename."
+msgstr "Éste es un correo electrónico automático de %sitename."
+
+#: notify.inc:290
+msgid ""
+"To stop receiving these e-mails, change your notification preferences at %"
+"notify-url"
+msgstr "Para dejar de recibir estos correos, cambie su configuracíon aquí %notify-url"
+
+#: notify.inc:295
+msgid "Notify: User %name (%mail) could not be notified. Mail error."
+msgstr ""
+"Notify: No se ha podido notificar al usuario %name (%mail). Error en el "
+"correo."
+
+#: notify.inc:299
+msgid "Notify: User %name (%mail) notified successfully."
+msgstr "Notify: Se ha podido notificar con éxito el usuario %name (%mail)."
+
+#: notify.inc:31;98
+msgid "Title + Body"
+msgstr "El título y el cuerpo"
+
+#: notify.inc:31;98
+msgid "Title + Teaser"
+msgstr "El título y el resumen"
+
+#: notify.inc:31;98
+msgid "Title only"
+msgstr "El título solo"
+
+#: notify.inc:55;84
+msgid "Notify settings saved."
+msgstr "Parámetros de notificacíon guardados."
+
+#: notify.inc:64;103
+msgid "Save and send now"
+msgstr "Guardar y enviar ahora"
+
+#: notify.inc:79;102
+msgid "Save"
+msgstr "Guardar"
+
+#: notify.install:36
+msgid "Notify module installed successfully."
+msgstr "El módulo Notify ha sido instalado con éxito."
+
+#: notify.install:39
+msgid ""
+"Table installation for the Notify module was unsuccessful. The tables may "
+"need to be installed by hand."
+msgstr ""
+"La instalación de la tabla para el módulo Notify no ha sido un éxito. Las "
+"tablas pueden necesitar una instalación manual."
+
+#: notify.module:0
+msgid "notify"
+msgstr "notify"
+
+#: notify.module:10
+msgid ""
+"The notification module allows users to subscribe to periodic e-mails which "
+"include all new or revised content and/or comments much like the daily news "
+"letters sent by some websites.  Even if this feature is not configured for "
+"normal site users, it can be a useful feature for an administrator of a site "
+"to monitor content submissions and comment posts."
+msgstr ""
+"El módulo de notificación permite que los usarios se inscriban a recibir "
+"periodicamente correos electrónicos que contienen todo el contenido nuevo o "
+"revisado y/o comentarios, un poco como los boletínes de noticias de ciertos "
+"sitios web. Aunque esta característica no esta configurada para los usuarios "
+"normales del sitio, puede ser una característica útil a un administrador de "
+"sitio que quiere supervisar las nuevas publicaciones y les nuevos "
+"comentarios."
+
+#: notify.module:11
+msgid ""
+"The administrator sets the frequency of the e-mails in the notify "
+"administration interface. They can also set how many e-mail failures should "
+"occur before notify stops sending notifications.  Note that cron must be "
+"enabled for notifications to be sent out."
+msgstr ""
+"Los administradores arreglan la frecuencia de los correos electrónicos en la "
+"interfaz de administración del modulo Notify. También pueden establecer "
+"cuantos fallos de correo van a succeder antes que pare de mandar las "
+"notificaciónes. Nota que el cron debe funcionar para que las notificaciónes "
+"pueden ser enviadas."
+
+#: notify.module:12
+msgid ""
+"<p>You can</p><ul><li>set up your site to run tasks automatically at "
+"required intervals. For more information, see <a href=\"%admin-help-system"
+"\">cron</a>.</li><li>administer notify <a href=\"%admin-settings-notify"
+"\">administer &gt;&gt; settings &gt;&gt; notify</a>.</li></ul>"
+msgstr ""
+"<p>Usted puede</p><ul><li>programar su sitio para que las tareas operan "
+"autómaticamente y en requeridos intervalos. Para otras informaciónes, "
+"consulta <a href=\"%admin-help-system\">cron</a>.</li><li>administrar Notify "
+"<a href=\"%admin-settings-notify\">administrar&gt;&gt; parámetros de &gt;&gt;"
+"Notify</a>.</li></ul>"
+
+#: notify.module:13
+msgid ""
+"For more information please read the configuration and customization "
+"handbook <a href=\"%notify\">Notify page</a>."
+msgstr ""
+"Si quiere más información, puede leer el manual sobre configuración y "
+"personalización en la <a href=\"%notify\">página de Notify</a>."
+
+#: notify.module:16
+msgid "Enables notifications by e-mail."
+msgstr "Habilita las notificaciones por correo electrónico."
+
+#: notify.module:43
+msgid "E-mail notification settings"
+msgstr "Los parámetros correos de notificación"
+
+#: notify.module:49
+msgid "Send notifications every"
+msgstr "Envía notificaciones cada"
+
+#: notify.module:52
+msgid "Requires crontab."
+msgstr "Requiere el crontab."
+
+#: notify.module:57
+msgid "Number of failed sends after which notifications are disabled"
+msgstr "Cuantidad de intentos fallidos antes de dehabilitar las notificaciones"
+
+#: notify.module:92
+msgid "access notify"
+msgstr "notificación de acceso"
+
+#: notify.module:92
+msgid "administer notify"
+msgstr "administrar notify"
+
+#: notify.module:104
+msgid "my notify settings"
+msgstr "mis parámetros de notificación"
+
+#: notify.module:105
+msgid "notifications"
+msgstr "notificaciones"
+
+#: notify.module:113
+msgid "notify settings"
+msgstr "Parámetros de notificación"

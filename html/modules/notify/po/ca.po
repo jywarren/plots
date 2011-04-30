@@ -1,0 +1,214 @@
+# Traducció al català del mòdul notify.
+# Aquesta traducció ha estat finançada per interactors. <http://interactors.coop/>.
+# Gerard Farràs <gerard.farras@km103.com>, 2005.
+# Interactors <info@interactors.coop>, 2005.
+#
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Drupal 4.6\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2004-04-10 15:29+0200\n"
+"PO-Revision-Date: 2005-08-24 21:51+0200\n"
+"Last-Translator: Gerard Farràs <gerard.farras@km103.com>\n"
+"Language-Team: Catalan <info@interactors.coop>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n == 1)"
+
+#: notify.inc:17 ;19;21 notify.module:16
+msgid "Disabled"
+msgstr "Dehabilitat"
+
+#: notify.module:7
+msgid "Enables notifications by e-mail."
+msgstr "Habilita les notificacions per correu electrònic."
+
+#: notify.module:15
+msgid "Send notifications every"
+msgstr "Envia notificacions cada"
+
+#: notify.module:15
+msgid "Requires crontab."
+msgstr "Requereix el contrab."
+
+#: notify.module:16
+msgid "Number of failed sends after which notifications are disabled"
+msgstr "Número d'enviaments fallits després que es dehabilitessin les notificacions"
+
+#: notify.module:40
+msgid "my notify settings"
+msgstr "els meus paràmetres de notificació"
+
+#: notify.module:41
+msgid "notifications"
+msgstr "notificacions"
+
+#: notify.module:31
+msgid "access notify"
+msgstr "notificació d'accés"
+
+#: notify.module:31
+msgid "administer notify"
+msgstr "administra el notificador"
+
+#: notify.module:0
+msgid "notify"
+msgstr "notificador"
+
+#: notify.inc:10 ;23
+msgid "Save settings"
+msgstr "Desa paràmetres"
+
+#: notify.inc:12
+msgid "Notify settings saved"
+msgstr "Paràmetres del notificador desats"
+
+#: notify.inc:17
+msgid "Notify status"
+msgstr "Estat del notificador"
+
+#: notify.inc:17 ;19;21
+msgid "Enabled"
+msgstr "Habilitat"
+
+#: notify.inc:17
+msgid "Do you wish to receive periodic e-mails when new content is posted?"
+msgstr "Desitgeu rebre correus electrònics periòdics per quan s'enviï nou contingut?"
+
+#: notify.inc:18
+msgid "Master switch"
+msgstr "Commutador principal"
+
+#: notify.inc:19
+msgid "Notify new content"
+msgstr "Notifica nou contingut"
+
+#: notify.inc:19
+msgid "Include new content in the notification mail."
+msgstr "Inclou el nou contingut en el correu de notificació."
+
+#: notify.inc:20
+msgid "Content"
+msgstr "Contingut"
+
+#: notify.inc:20 ;49
+msgid "Title only"
+msgstr "Solament el títol"
+
+#: notify.inc:20 ;49
+msgid "Title + Teaser"
+msgstr "Títol + Resum"
+
+#: notify.inc:20 ;49
+msgid "Title + Body"
+msgstr "Títol + Cos"
+
+#: notify.inc:20
+msgid ""
+"Select the amount of each post that you would like to see in your "
+"notification e-mails."
+msgstr ""
+"Seleccioneu la quantitat de cada enviament que desitgeu visualitzar en els correus de notificació."
+
+#: notify.inc:21
+msgid "Notify new comments"
+msgstr "Notifica nous comentaris"
+
+#: notify.inc:21
+msgid "Include new comments in the notification mail."
+msgstr "Inclou nous comentaris en el correu de notificació."
+
+#: notify.inc:22
+msgid "Detailed settings"
+msgstr "Paràmetres en detall"
+
+#: notify.inc:32 ;58
+msgid "Save"
+msgstr "Desa"
+
+#: notify.inc:38
+msgid "username"
+msgstr "nom d'usuari"
+
+#: notify.inc:38
+msgid "e-mail address"
+msgstr "adreça de correu electrònic"
+
+#: notify.inc:38
+msgid "content"
+msgstr "contingut"
+
+#: notify.inc:38
+msgid "teasers"
+msgstr "resums"
+
+#: notify.inc:38
+msgid "comment"
+msgstr "comentari"
+
+#: notify.inc:38
+msgid "failed attempts"
+msgstr "intents fallits"
+
+#: notify.inc:115
+msgid "%sitename notification for %username"
+msgstr "notificació de %sitename per a %username"
+
+#: notify.inc:119
+msgid "Recent content"
+msgstr "Contingut recent"
+
+#: notify.inc:122 ;127
+msgid "%status %type by %author: %title"
+msgstr "%status %type per %author: %title"
+
+#: notify.inc:122
+msgid "queued"
+msgstr "a la cua"
+
+#: notify.inc:127
+msgid "published"
+msgstr "publicat"
+
+#: notify.inc:136
+msgid "Recent comments"
+msgstr "Comentaris recents"
+
+#: notify.inc:143
+msgid "%count new comments attached to: %title"
+msgstr "%count nous comentaris adjunts a: %title"
+
+#: notify.inc:147
+msgid "%title by %author"
+msgstr "%title per %autor"
+
+#: notify.inc:153
+msgid "Greetings %user,"
+msgstr "Felicitats %user,"
+
+#: notify.inc:156
+msgid "This is an automatic mail from %sitename"
+msgstr "Aquest és un correu electrònic automàtic provinent de %sitename"
+
+#: notify.inc:157
+msgid "To stop receiving these mails go to %notify-url"
+msgstr "Per a aturar la recepció d'aquests correus aneu a %notify-url"
+
+#: notify.inc:161
+msgid "Notify: User %name (%mail) could not be notified. Mail error."
+msgstr "Notificador: No s'ha pogut notificar l'usuari %name ("
+
+#: notify.inc:164
+msgid "Notify: User %name (%mail) notified successfully."
+msgstr "Notificador: S'ha notificat amb èxit l'usuari %name (%mail)."
+
+#: notify.inc:161
+msgid "error"
+msgstr "error"
+
+#: notify.inc:164
+msgid "user"
+msgstr "usuari"
+
