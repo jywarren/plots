@@ -1,0 +1,111 @@
+# $Id$
+#
+# LANGUAGE translation of Drupal (general)
+# Copyright YEAR NAME <EMAIL@ADDRESS>
+# No version information was available in the source files.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: German translation for Protected Node 5.x-1.0 \n"
+"POT-Creation-Date: 2007-10-08 14:21-0300\n"
+"PO-Revision-Date: YYYY-mm-DD HH:MM+ZZZZ\n"
+"Last-Translator: Ositoblanco\n"
+"Language-Team: Ositoblanco\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: protected_node.module:23
+msgid "With this module anybody who has edit protected content right can password protect his or her own node."
+msgstr "Mit diesem Modul kann man den Inhalt einer Node mit einem Paßwort schützen, wenn man die entsprechende Berechtigung besitzt."
+
+#: protected_node.module:49
+msgid "Here if you check the checkbox and provide a password your newly created node will be password protected."
+msgstr "Ihr Inhalt wird mit einem Paßwort geschützt, wenn Sie diese Option auswählen und ein Paßwort festlegen."
+
+#: protected_node.module:50
+msgid "Protected node"
+msgstr "Geschützte Node"
+
+#: protected_node.module:56
+msgid "Node is protected"
+msgstr "Node schützen"
+
+#: protected_node.module:57
+msgid "Check here if this content should be protected by a password."
+msgstr "Wählen Sie diese Option, wenn dieser Inhalt mit einem Paßwortschutz versehen werden soll."
+
+#: protected_node.module:63
+msgid "Password"
+msgstr "Paßwort"
+
+#: protected_node.module:64
+msgid "Enter node password here."
+msgstr "Bitte geben Sie das Paßwort ein."
+
+#: protected_node.module:70
+msgid "Password again"
+msgstr "Paßwortwiederholung"
+
+#: protected_node.module:71
+msgid "Enter again node password here."
+msgstr "Bitte geben Sie das Paßwort erneut ein."
+
+#: protected_node.module:102
+msgid "Password fields at protected node must match!"
+msgstr "Passwörter in beiden Feldern müssen übereinstimmen!"
+
+#: protected_node.module:141
+msgid "Protected node - Enter Password"
+msgstr "Geschützter Inhalt - Bitte Paßwort eingeben"
+
+#: protected_node.module:142
+msgid "Here you can enter the password for the node"
+msgstr "Hier können Sie das Paßwort für diesen Inhalt eingeben"
+
+#: protected_node.module:193
+msgid "Illegal call to /protected-node"
+msgstr ""
+
+#: protected_node.module:199
+msgid "The node you are trying to view is password protected. Please enter password below to proceed."
+msgstr "Der gewünschte Inhalt ist paßwortgeschützt. Bitte geben Sie das Paßwort ein um fortzufahren."
+
+#: protected_node.module:204
+msgid "Node password"
+msgstr "Paßwort"
+
+#: protected_node.module:213
+msgid "OK"
+msgstr "OK"
+
+#: protected_node.module:226
+msgid "Incorrect password!"
+msgstr "Paßwort ist nicht korrekt!"
+
+#: protected_node.module:193;0
+msgid "protected_node"
+msgstr ""
+
+#: protected_node.module:33
+msgid "access protected content"
+msgstr "zugriffgeschützter Inhalt"
+
+#: protected_node.module:33
+msgid "edit protected content"
+msgstr "geschützten Inhalt bearbeiten"
+
+#: protected_node.info:0
+msgid "Protected Node"
+msgstr ""
+
+#: protected_node.info:0
+msgid "Controls wether selected nodes are protected with password."
+msgstr "Legt fest, ob die gewählten Inhalte mit Paßwort geschützt werden sollen."
+
+#: protected_node.info:0
+msgid "Access"
+msgstr "Zugriff"
+

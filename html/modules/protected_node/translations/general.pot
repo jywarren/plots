@@ -1,0 +1,134 @@
+# $Id$
+#
+# LANGUAGE translation of Drupal (general)
+# Copyright YEAR NAME <EMAIL@ADDRESS>
+# Generated from files:
+#  protected_node.module,v 1.15 2008/10/14 08:46:47 tolmi
+#  protected_node.install,v 1.11 2008/10/14 08:58:10 tolmi
+#  protected_node.info: n/a
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PROJECT VERSION\n"
+"POT-Creation-Date: 2008-10-14 11:26+0200\n"
+"PO-Revision-Date: YYYY-mm-DD HH:MM+ZZZZ\n"
+"Last-Translator: NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <EMAIL@ADDRESS>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
+
+#: protected_node.module:17
+msgid "With this module anybody who has edit protected content right can password protect his or her own node."
+msgstr ""
+
+#: protected_node.module:40;47
+msgid "Protected nodes access rights"
+msgstr ""
+
+#: protected_node.module:41
+msgid "At least one of the roles has access to protected contents"
+msgstr ""
+
+#: protected_node.module:48
+msgid "None of the roles has !access"
+msgstr ""
+
+#: protected_node.module:53
+msgid "Without giving access at least one of the available roles no-one can protect nodes or access protected contents"
+msgstr ""
+
+#: protected_node.module:86
+msgid "Here if you check the checkbox and provide a password your newly created node will be password protected."
+msgstr ""
+
+#: protected_node.module:87
+msgid "Protected node"
+msgstr ""
+
+#: protected_node.module:93
+msgid "Node is protected"
+msgstr ""
+
+#: protected_node.module:94
+msgid "Check here if this content should be protected by a password."
+msgstr ""
+
+#: protected_node.module:103
+msgid "Enter the node password here."
+msgstr ""
+
+#: protected_node.module:261
+msgid "The node you are trying to view is password protected. Please enter password below to proceed."
+msgstr ""
+
+#: protected_node.module:266
+msgid "Node password"
+msgstr ""
+
+#: protected_node.module:271
+msgid "OK"
+msgstr ""
+
+#: protected_node.module:285
+msgid "Incorrect password!"
+msgstr ""
+
+#: protected_node.module:305
+msgid "Password page info"
+msgstr ""
+
+#: protected_node.module:307
+msgid "You can use node type tokens from the token module if you have installed it previously."
+msgstr ""
+
+#: protected_node.module:247;0
+msgid "protected_node"
+msgstr ""
+
+#: protected_node.module:34
+msgid "perm LIKE '%"
+msgstr ""
+
+#: protected_node.module:34
+msgid "%'"
+msgstr ""
+
+#: protected_node.module:68
+msgid "access protected content"
+msgstr ""
+
+#: protected_node.module:69
+msgid "edit protected content"
+msgstr ""
+
+#: protected_node.module:72
+msgid "edit protected "
+msgstr ""
+
+#: protected_node.install:15
+msgid "The table to store the node - password hash pairs."
+msgstr ""
+
+#: protected_node.install:18
+msgid "The primary identifier for a node"
+msgstr ""
+
+#: protected_node.install:24
+msgid "The sha1 hashed password for the given node."
+msgstr ""
+
+#: protected_node.info:0
+msgid "Protected Node"
+msgstr ""
+
+#: protected_node.info:0
+msgid "Controls whether selected nodes are protected with a password."
+msgstr ""
+
+#: protected_node.info:0
+msgid "Access"
+msgstr ""
+

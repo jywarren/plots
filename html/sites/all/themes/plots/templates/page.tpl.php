@@ -114,6 +114,8 @@
 
 <head>
   <title><?php print $head_title; ?></title>
+  <META NAME="description" CONTENT="The Public Laboratory for Open Technology and Science (PLOTS) collaboratively develops and publicizes accessible technologies for investigating and reporting on local environmental health and justice issues. PLOTS provides an online research space for citizens, linking them to scientists, social scientists, and technologists. PLOTS is an expansion of Grassroots Mapping, where citizens use helium-filled balloons and digital cameras to generate high resolution “satellite” maps.">
+  <meta name="viewport" content=""/>
   <?php print $head; ?>
   <?php print $styles; ?>
   <?php print $scripts; ?>
@@ -125,7 +127,7 @@
   <div id="page-wrapper"><div id="page">
 
     <div id='links'> 
-	<a href="/">Home</a> 
+	<a href="/">PLOTS</a> 
 	<a href="/about">About</a> 
 	<a href="/places">Places</a> 
 	<a href="/notes">Updates</a> 
@@ -155,9 +157,11 @@
         <?php print $highlight; ?>
 
         <?php print $breadcrumb; ?>
-        <?php if ($title): ?>
+        <?php if ($title && strlen($title) < 100) { ?>
           <h1 class="title"><?php print $title; ?></h1>
-        <?php endif; ?>
+        <?php } else if ($title) { ?>
+          <h1 class="title"><small><?php print $title; ?></small></h1>
+        <?php } ?>
         <?php print $messages; ?>
         <?php if ($tabs): ?>
           <div class="tabs"><?php print $tabs; ?></div>

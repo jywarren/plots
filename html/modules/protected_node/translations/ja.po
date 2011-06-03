@@ -1,0 +1,134 @@
+# $Id$
+# -----------------------------------------------------------------------------
+# Japanese translation of Drupal (modules-protected_node)
+#
+# Copyright (c) 2006-2008  Drupal Japan  ( http://drupal.jp/ )  /
+#                          Takafumi      ( jp.drupal@imagine **reverse order**)
+#
+# Generated from file:
+#  protected_node.module: n/a
+#  protected_node.install: n/a
+#  protected_node.info: n/a
+#
+# -----------------------------------------------------------------------------
+msgid ""
+msgstr ""
+"POT-Creation-Date: 2008-04-14 22:46+0900\n"
+"Last-Translator: Takafumi <jp.drupal@imagine **reverse order**>\n"
+"Language-Team: Drupal Japan\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n!=1);\n"
+
+#: protected_node.module:23
+msgid "With this module anybody who has edit protected content right can password protect his or her own node."
+msgstr "このモジュールで、プロテクトコンテンツの編集権限を持ったユーザは、自分のノードをパスワードで保護することができます。"
+
+#: protected_node.module:54
+msgid "Here if you check the checkbox and provide a password your newly created node will be password protected."
+msgstr "ここでチェックボックスにチェックを入れ、パスワードを与えた場合、このノードはパスワードで保護されます。"
+
+#: protected_node.module:55;163
+msgid "Protected node"
+msgstr "プロテクトノード"
+
+#: protected_node.module:61
+msgid "Node is protected"
+msgstr "プロテクトノードにする"
+
+#: protected_node.module:62
+msgid "Check here if this content should be protected by a password."
+msgstr "このノードをパスワードで保護する場合、ここにチェックを入れてください。"
+
+#: protected_node.module:67
+msgid "Enter the node password here."
+msgstr "ノードのパスワードを入力してください。"
+
+#: protected_node.module:223
+msgid "The node you are trying to view is password protected. Please enter password below to proceed."
+msgstr "表示しようとしているノードはパスワードで保護されています。 続行するには以下にパスワードを入力してください。"
+
+#: protected_node.module:228
+msgid "Node password"
+msgstr "ノードパスワード"
+
+#: protected_node.module:233
+msgid "OK"
+msgstr "OK"
+
+#: protected_node.module:248
+msgid "Incorrect password!"
+msgstr "パスワードが間違っています！"
+
+#: protected_node.module:268
+msgid "Users may protect these node types"
+msgstr "プロテクトノード対応のコンテンツタイプ"
+
+#: protected_node.module:271
+msgid "There will be the option to protect nodes by password and you can set it for these node types."
+msgstr "プロテクトノードにすることができるコンテンツタイプを指定してください。 チェックを入れられたコンテンツタイプには、パスワードによってノードをプロテクトできるオプションが追加されます。"
+
+#: protected_node.module:277
+msgid "Password page info"
+msgstr "パスワードページの情報"
+
+#: protected_node.module:279
+msgid "You can use node type tokens from the token module if you have installed it previously."
+msgstr "パスワードページに付加する情報を記入してください。 事前にtokenモジュールをインストールしてある場合、コンテンツタイプのトークンを使用することができます。"
+
+#: protected_node.module:209;0
+msgid "protected_node"
+msgstr "protected_node"
+
+#: protected_node.module:209
+msgid "Illegal call to /protected-node"
+msgstr "/protected-nodeへの不正なコール"
+
+#: protected_node.module:32
+msgid "access protected content"
+msgstr "プロテクトコンテンツへのアクセス"
+
+#: protected_node.module:32
+msgid "edit protected content"
+msgstr "プロテクトコンテンツの編集"
+
+#: protected_node.module:34
+msgid "edit protected "
+msgstr "プロテクトの編集"
+
+#: protected_node.module:164
+msgid "Here you change protected node settings"
+msgstr "プロテクトノードの設定を行います。"
+
+#: protected_node.module:170
+msgid "Protected node - Enter Password"
+msgstr "プロテクトノード － パスワード入力"
+
+#: protected_node.module:171
+msgid "Here you can enter the password for the node"
+msgstr "ノードのパスワードを入力します。"
+
+#: protected_node.install:23
+msgid "The table to store the node - password hash pairs."
+msgstr "ノードのパスワードとハッシュのペアを格納するテーブルです"
+
+#: protected_node.install:26
+msgid "The primary identifier for a node"
+msgstr "ノード用基本識別子"
+
+#: protected_node.install:31
+msgid "The sha1 hashed password for the given node."
+msgstr "ノードパスワードのsha1ハッシュ値"
+
+#: protected_node.info:0
+msgid "Protected Node"
+msgstr "プロテクトノード"
+
+#: protected_node.info:0
+msgid "Controls whether selected nodes are protected with a password."
+msgstr "選択されたノードがパスワードで保護されるかどうかをコントロールします。"
+
+#: protected_node.info:0
+msgid "Access"
+msgstr "アクセス"
