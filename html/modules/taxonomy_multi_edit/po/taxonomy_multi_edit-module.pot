@@ -1,0 +1,65 @@
+# LANGUAGE translation of Drupal (taxonomy_multi_edit.module)
+# Copyright YEAR NAME <EMAIL@ADDRESS>
+# Generated from file: taxonomy_multi_edit.module,v 1.10.2.1 2005/04/15 18:56:50 weitzman
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PROJECT VERSION\n"
+"POT-Creation-Date: 2006-10-22 13:25+0200\n"
+"PO-Revision-Date: YYYY-mm-DD HH:MM+ZZZZ\n"
+"Last-Translator: NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <EMAIL@ADDRESS>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
+
+#: taxonomy_multi_edit.module:12
+msgid "Apply multiple category assignments at once."
+msgstr ""
+
+#: taxonomy_multi_edit.module:15
+msgid "Attach  categories to your posts, and then click the <b>Submit</b> button."
+msgstr ""
+
+#: taxonomy_multi_edit.module:26
+msgid "assign categories"
+msgstr ""
+
+#: taxonomy_multi_edit.module:75
+msgid "vocabulary terms associated with node"
+msgstr ""
+
+#: taxonomy_multi_edit.module:91
+msgid "Submit"
+msgstr ""
+
+#: taxonomy_multi_edit.module:109
+msgid "Title"
+msgstr ""
+
+#: taxonomy_multi_edit.module:110
+msgid "Terms"
+msgstr ""
+
+#: taxonomy_multi_edit.module:111
+msgid "Type"
+msgstr ""
+
+#: taxonomy_multi_edit.module:112
+msgid "Author"
+msgstr ""
+
+#: taxonomy_multi_edit.module:132
+msgid "No posts available."
+msgstr ""
+
+#: taxonomy_multi_edit.module:181
+msgid "The update has been performed."
+msgstr ""
+
+#: taxonomy_multi_edit.module:0
+msgid "taxonomy_multi_edit"
+msgstr ""
+

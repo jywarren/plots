@@ -1,0 +1,19 @@
+There is now a simple API with three functions ready to be used by 3rd party modules:
+
+bool protected_node_set_protected(int $nid, string $password)
+=============================================================
+With this method you can set a node (identified by the provided nid) to protected with the given password.
+If the node was already protected, it will update its password to provided one.
+
+This method returns TRUE if the action performed was successful. It will return FALSE not only when the
+database action was unsuccessful, but when you provide a $nid with not a numeric type or an empty password.
+
+bool protected_node_unset_protected(int $nid)
+=============================================
+This method removes protection from the node identified by the provided nid. It will return TRUE if the 
+action was successful, but returns FALSE if the action wasn't successful or you provided a non-numeric nid.
+
+bool protected_node_isset_protected(int $nid)
+=============================================
+This method returns TRUE if the node identified by the provided nid is set to be protected. Returns FALSE if
+the node isn't protected or you provided a non-numeric nid.

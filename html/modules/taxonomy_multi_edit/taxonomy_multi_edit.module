@@ -1,0 +1,263 @@
+<?php
+// $Id: taxonomy_multi_edit.module,v 1.16.2.1 2008/11/19 07:08:06 dman Exp $
+/**
+ * @file Adds term tagging to the node admin screen
+ * 
+ * Adds an action to the node operations drop-down found in admin/content/node
+ * This is suitable for adding one term to many nodes.
+ * 
+ * Provides a new tab alongside admin/content/node where all terms are listed
+ * next to their nodes. This provides more finely-grained control, but is a bit
+ * clunkier.
+ * 
+ * Note this code includes a hack in 
+ * taxonomy_multi_edit_operations_categorize()
+ * that peeks at the raw form submission (non-FAPI) because the node admin form
+ * does not allow for extra information. Node operations are atomic and binary,
+ * but I needed to add a modifier (which terms to add) to that process.
+ * 
+ * 
+ * @author Dan Morrison (dman) http://coders.co.nz/
+ */
+
+function taxonomy_multi_edit_help($section = "admin/help#taxonomy_multi_edit") {
+  $output = "";
+  switch ($section) {
+    case 'admin/modules#description':
+      $output = t("Apply multiple category assignments at once.");
+      break;
+    case 'admin/content/node/taxonomy_multi_edit':
+      return t('Attach  categories to your posts, and then click the <b>Submit</b> button.');
+  }
+  return $output;
+}
+
+function taxonomy_multi_edit_menu() {
+  $items['admin/content/node/taxonomy_multi_edit'] = array( 
+    'title' => 'Assign categories',
+    'description' => 'Edit taxonomy associations on many nodes at once.', 
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('taxonomy_multi_edit_overview'),
+    'access arguments' => array('administer nodes'),
+    'weight' => 5,
+    'type' => MENU_LOCAL_TASK
+  );
+  return $items;
+}
+
+/**
+ * Forms API form def
+ */
+function taxonomy_multi_edit_overview() {
+  $form = array('nodes' => array('#tree' => TRUE));
+
+  $sql = "SELECT n.nid, n.vid, title, type FROM {node} n ORDER BY changed DESC";
+  $result = pager_query(db_rewrite_sql($sql), variable_get('default_nodes_main', 10));
+  while ($node = db_fetch_object($result)) {
+
+    $node->taxonomy = taxonomy_node_get_terms($node);
+		// $form_taxonomy = taxonomy_node_form($node);
+  	$fakeform = array(
+      'type' => array('#value' => $node->type), 
+      '#node' => $node,
+    );
+    $form_state = NULL;
+    taxonomy_form_alter($fakeform, $form_state, $node->type. '_node_form');
+
+    unset($fakeform['type'], $fakeform['taxonomy']['#type']); // kill the fieldset and type field
+    // kill description fields
+    foreach ((array)$fakeform['taxonomy'] as $key => $arr) {
+      if (is_numeric($key)) {
+        unset($fakeform['taxonomy'][$key]['#description']); 
+      }
+    }
+		$form['nodes'][$node->nid] = $fakeform;
+    unset($fakeform);
+  }
+  $form['submit'] = array('#type' => 'submit', '#value' => t('Save categories'));
+  $form['pager'] = array('#value' => theme('pager', NULL, variable_get('default_nodes_main', 10), 0));
+  #dpm($form);
+  return $form;
+}
+
+/**
+ * Lay the form out into an admin table
+ * 
+ * TODO make it line up properly for multiple columns. Currently it just
+ * cascades them in.
+ */
+function theme_taxonomy_multi_edit_overview(&$form) {
+
+	foreach (element_children($form['nodes']) as $nid) {
+	  $node_form = $form['nodes'][$nid];
+    $row = array();
+    $row[] = l(truncate_utf8($form['nodes'][$nid]['#node']->title, 20), "node/$nid");
+    foreach (element_children($form['nodes'][$nid]['taxonomy']) as $vid) {
+      // disperse into rows. May give odd layout results with mixed node types
+      $row[] = array('data' => drupal_render($form['nodes'][$nid]['taxonomy'][$vid]));
+    }
+
+    // Special addition for image nodes :-)
+    if ($node_form['#node']->type == 'image' && function_exists('image_display')) {
+      $node = node_load($node_form['#node']->nid);
+      $row[] = image_display($node, IMAGE_THUMBNAIL);
+    }
+
+    $rows[] = $row;
+  }
+  $header = array(
+    array("data" => t('title'), ),
+    array("data" => t('vocabularies'))
+  );
+
+  $output = theme('table', $header, $rows);
+  $output .= drupal_render($form);
+  return $output;
+}
+
+/**
+ * Forms API form callback hook
+ */
+function taxonomy_multi_edit_overview_submit($form, &$form_state) {
+  foreach ($form_state['values']['nodes'] as $nid => $node_info) {
+    if (!$tax = $node_info['taxonomy']) {
+      $tax = $node_info['tags'];
+    }
+    $node = node_load($nid);
+    taxonomy_node_save($node, $tax);
+  }
+  drupal_set_message(t('Categories updated.'));
+}
+
+/**
+ * Below here is the normal Drupal content management page integration.
+ */
+
+/**
+ * Hook Implimentation
+ * 
+ * Change the content admin form
+ */
+function taxonomy_multi_edit_form_alter(&$form, $form_state, $form_id) {
+  // Enhance the node overview page
+  if ($form_id == 'node_admin_content') {
+    taxonomy_multi_edit_content_form_alter($form);
+  }
+}
+
+/**
+ * Add a bulk classification function to the content admin
+ * 
+ * Adds a javascript addition to the operations selector which displays a list
+ * of all terms
+ */
+function taxonomy_multi_edit_content_form_alter(&$form){
+  $form['admin']['options']['operation']['#attributes']['onchange'] = 'changedOperation(this)';
+
+  $form['admin']['options']['terms-wrapper'] = array(
+    '#type' => 'fieldset',
+    '#attributes' => array('id'=>'edit-terms-wrapper', 'style'=>'display:none;'),
+    'terms' => array(
+      '#type' => 'select',
+      '#title' => t("term"),
+      '#default_value' => array(),
+      '#options' => taxonomy_form_all(),
+      '#multiple' => TRUE,
+      '#size' => 10,
+      '#theme' => 'taxonomy_term_select',
+      '#description' => t("<p>Warning, using this form may override some of the normal vocabulary restrictions.</p>"),
+    ),
+  );
+  
+  # D6 does not allow us to add submit handlers, because it uses a button-specific submit handler in node_admin_nodes()
+  # It expects us to pipe our actions though 'operations' instead
+
+  drupal_add_js(taxonomy_multi_edit_content_form_javascript(),'inline'); 
+}  
+
+
+
+/**
+ * Implementation of hook_node_operations().
+ * 
+ * Declare our ability to tag nodes
+ */
+function taxonomy_multi_edit_node_operations() {
+  $operations = array(
+    'categorize' => array(
+      'label' => t('Assign to a taxonomy term'),
+      'callback' => 'taxonomy_multi_edit_operations_categorize',
+    ),
+    'uncategorize' => array(
+      'label' => t('Remove a taxonomy term'),
+      'callback' => 'taxonomy_multi_edit_operations_categorize',
+      'callback arguments' => array(FALSE),
+    ),
+  );
+  return $operations;
+}
+
+/**
+ * Act on the node admin submission
+ * 
+ * Tag all selected nids
+ * 
+ * @param $add bool whether to add the term. Default is TRUE, but can be FALSE
+ * to remove a term.
+ */
+function taxonomy_multi_edit_operations_categorize($nids, $add = TRUE) {
+
+  // hook_node_operations() gives us nothing but a list of nodes. I need to know the selected terms
+  // CHEAT by snooping on the form submission.
+  // node_admin_nodes_submit() really should tell me more about the context
+  $terms = $_REQUEST['terms'];
+  foreach ($nids as $nid) {
+    // I could have done this direct to database, 
+    // but we'll do it safer via the published methods instead.
+    // Means we can safely merge instead of overwrite
+    if($node = node_load($nid)) {
+      $existing = taxonomy_node_get_terms($node);
+      foreach($terms as $t){ // cannot array_merge as it messes the indexes
+        if ($add) {
+          $existing[$t] = $t;
+        }
+        else {
+          unset($existing[$t]);
+        }
+      }
+      taxonomy_node_save($node, $existing);
+      drupal_set_message(t('Updated terms on node '.l($node->title?$node->title:$nid, "node/$nid")));
+    }
+  }
+  cache_clear_all();
+  drupal_set_message(t('Terms have been updated for the selected nodes.'));
+}
+
+
+function taxonomy_multi_edit_content_form_javascript(){
+  // quoted javascript:
+  return <<<EOT
+  /**
+   * Responds to the 'operation' selectbox on content edit screen by
+   * displaying or hiding extra fields
+   */
+  function changedOperation(elem){
+    var term_div = $('#edit-terms-wrapper');
+    if(!term_div) return;
+    if(elem.options[elem.selectedIndex].value == 'categorize' || elem.options[elem.selectedIndex].value == 'uncategorize' ){
+      term_div.show();
+    }  else {
+      term_div.hide();
+    }
+  }
+EOT;
+}
+
+
+function taxonomy_multi_edit_theme() {
+  return array(
+    'taxonomy_multi_edit_overview' => array(
+      'arguments' => array('form' => NULL),
+    ),
+  );
+}

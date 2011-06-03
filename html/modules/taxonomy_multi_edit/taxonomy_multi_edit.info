@@ -1,0 +1,12 @@
+; $Id: taxonomy_multi_edit.info,v 1.4 2008/11/18 08:13:41 dman Exp $
+name = Taxonomy Multi Editor
+description = A mass category editor. Adds a new operation to the content management screen.
+package = "Taxonomy"
+core = 6.x
+
+; Information added by drupal.org packaging script on 2008-11-19
+version = "6.x-1.1"
+core = "6.x"
+project = "taxonomy_multi_edit"
+datestamp = "1227138627"
+

@@ -1,0 +1,154 @@
+# $Id: fr.po,v 1.1 2009/02/20 16:17:36 sbordage Exp $
+#
+# French translation of Drupal (general)
+# Copyright YEAR NAME <EMAIL@ADDRESS>
+# Generated from files:
+#  protected_node.redirect.inc,v 1.1 2008/10/14 09:35:29 tolmi
+#  protected_node.module,v 1.16 2008/10/14 09:35:29 tolmi
+#  protected_node.settings.inc,v 1.1 2008/10/14 09:35:29 tolmi
+#  protected_node.install,v 1.11 2008/10/14 08:58:10 tolmi
+#  protected_node.info: n/a
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: French translation for Drupal Protected Node\n"
+"POT-Creation-Date: 2009-02-13 21:03+0100\n"
+"PO-Revision-Date: 2009-02-17 19:12+0100\n"
+"Last-Translator: Stéphane Bordage <sbordage@breek.fr>\n"
+"Language-Team: Stéphane Bordage, Breek <sbordage@breek.fr>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Poedit-Language: french\n"
+"X-Poedit-Country: France\n"
+"Plural-Forms: nplurals=2; plural=(n!=1);\n"
+
+#: protected_node.redirect.inc:29
+msgid "The node you are trying to view is password protected. Please enter password below to proceed."
+msgstr "Le noeud que vous essayez de voir est protégé par mot de passe. Saisissez le mot de passe ci-dessous pour continuer."
+
+#: protected_node.redirect.inc:34
+msgid "Node password"
+msgstr "Mot de passe du noeud"
+
+#: protected_node.redirect.inc:39
+msgid "OK"
+msgstr "OK"
+
+#: protected_node.redirect.inc:53
+msgid "Incorrect password!"
+msgstr "Mot de passe incorrect !"
+
+#: protected_node.redirect.inc:15
+#: protected_node.module:0
+msgid "protected_node"
+msgstr "protected_node"
+
+#: protected_node.redirect.inc:15
+msgid "Illegal call to /protected-node"
+msgstr "Appel illégale à /protected-node"
+
+#: protected_node.settings.inc:16
+msgid "Password page info"
+msgstr "Page d'information sur le mot de passe"
+
+#: protected_node.settings.inc:18
+msgid "You can use node type tokens from the token module if you have installed it previously."
+msgstr "Vous pouvez utiliser des jettons (tokens) de type de noeud du module de jettons (tokens) s'il est installé."
+
+#: protected_node.module:17
+msgid "With this module anybody who has edit protected content right can password protect his or her own node."
+msgstr "Avec ce module, toute personne possédant des droits d'édition de contenu protégé peut protéger son noeud avec un mot de passe."
+
+#: protected_node.module:40;47
+msgid "Protected nodes access rights"
+msgstr "Droits d'accès des noeuds protégés"
+
+#: protected_node.module:41
+msgid "At least one of the roles has access to protected contents"
+msgstr "Au moins un rôle à accès aux contenus protégés"
+
+#: protected_node.module:48
+msgid "None of the roles has !access"
+msgstr "Aucun rôle n'a !access"
+
+#: protected_node.module:53
+msgid "Without giving access at least one of the available roles no-one can protect nodes or access protected contents"
+msgstr "Si vous ne donnez pas accès à au moins un rôle disponible, personne ne pourra protéger les noeuds ou accéder aux contenus protégés"
+
+#: protected_node.module:86
+msgid "Here if you check the checkbox and provide a password your newly created node will be password protected."
+msgstr "Si vous cochez la case et fournissez un mot de passe, votre nouveaux noeud sera protégé par un mot de passe."
+
+#: protected_node.module:87;194
+msgid "Protected node"
+msgstr "Protected node"
+
+#: protected_node.module:93
+msgid "Node is protected"
+msgstr "Le noeud est protégé"
+
+#: protected_node.module:94
+msgid "Check here if this content should be protected by a password."
+msgstr "Cliquez ici si ce contenu doit être protégé par un mot de passe."
+
+#: protected_node.module:103
+msgid "Enter the node password here."
+msgstr "Saisissez ici le mot de passe du noeud."
+
+#: protected_node.module:34
+msgid "perm LIKE '%"
+msgstr "perm LIKE '%"
+
+#: protected_node.module:34
+msgid "%'"
+msgstr "%'"
+
+#: protected_node.module:68
+msgid "access protected content"
+msgstr "accéder au contenu protégé"
+
+#: protected_node.module:69
+msgid "edit protected content"
+msgstr "modifier le contenu protégé"
+
+#: protected_node.module:72
+msgid "edit protected "
+msgstr "modifier la protection"
+
+#: protected_node.module:195
+msgid "Here you change protected node settings"
+msgstr "Modifiez les paramètres de protection du noeud ici"
+
+#: protected_node.module:206
+msgid "Protected node - Enter Password"
+msgstr "Noeud protégé, saisissez le mot de passe"
+
+#: protected_node.module:207
+msgid "Here you can enter the password for the node"
+msgstr "Saisissez ici le mot de passe pour le noeud"
+
+#: protected_node.install:15
+msgid "The table to store the node - password hash pairs."
+msgstr "La table dans laquelle stocker les hash noeud - mot de passe."
+
+#: protected_node.install:18
+msgid "The primary identifier for a node"
+msgstr "L'identifiant primaire pour un noeud"
+
+#: protected_node.install:24
+msgid "The sha1 hashed password for the given node."
+msgstr "Le mot de passe sha1 hashed pour un noeud donné."
+
+#: protected_node.info:0
+msgid "Protected Node"
+msgstr "Protected Node"
+
+#: protected_node.info:0
+msgid "Controls whether selected nodes are protected with a password."
+msgstr "Vérifie si les noeuds sélectionnés sont protégés par un mot de passe."
+
+#: protected_node.info:0
+msgid "Access"
+msgstr "Accès"
+

@@ -1,0 +1,328 @@
+<?php
+// $Id: protected_node.module,v 1.18 2009/02/28 09:35:59 tolmi Exp $
+
+
+/*
+ * @file
+ * Protected node module
+ */
+
+/**
+ * Implementation of hook_help().
+ * @link http://api.drupal.org/api/function/hook_help/6
+ */
+function protected_node_help($path, $arg) {
+  switch ($path) {
+    case 'admin/modules#description' :
+      return t( 'With this module anybody who has edit protected content right can password protect his or her own node.' );
+      break;
+  }
+}
+
+/**
+ * Implementation of hook_requirements(). Checks for at least role who has access to protected node functionality.
+ * @link http://api.drupal.org/api/function/hook_requirements/6
+ *
+ * @param string $phase
+ */
+function protected_node_requirements($phase) {
+  if ($phase == 'runtime') {
+    $perms = protected_node_perm();
+
+    $likes = array();
+    foreach ( $perms as $perm ) {
+      $likes[] = "perm LIKE '%" . $perm . "%'";
+    }
+    $sql = "SELECT rid FROM {permission} WHERE " . implode( ' OR ', $likes );
+    $roles = db_affected_rows( db_query( $sql ) );
+    if ($roles) {
+      $reqs['protected_node'] = array(
+        'title' => t( 'Protected nodes access rights' ),
+        'value' => t( 'At least one of the roles has access to protected contents' ),
+        'severity' => REQUIREMENT_OK
+      );
+    }
+    else {
+      $reqs['protected_node'] = array(
+        'title' => t( 'Protected nodes access rights' ),
+        'value' => t( 'None of the roles has !access', array(
+          '!access' => l( 'access to protected contents', 'admin/user/permissions', array(
+            'fragment' => 'module-protected_node'
+          ) )
+        ) ),
+        'description' => t( 'Without giving access at least one of the available roles no-one can protect nodes or access protected contents' ),
+        'severity' => REQUIREMENT_ERROR
+      );
+    }
+
+    return $reqs;
+  }
+}
+
+/**
+ * Implementation of hook_perm().
+ * @link http://api.drupal.org/api/function/hook_perm/6
+ */
+function protected_node_perm( ) {
+  $perms = array(
+    'access protected content',
+  	'bypass password protection',
+    'edit protected content'
+  );
+  foreach ( array_keys( node_get_types() ) as $type ) {
+    $perms[] = 'edit protected ' . $type;
+  }
+
+  return $perms;
+}
+
+/**
+ * Implementation of hook_form_alter().
+ * @link http://api.drupal.org/api/function/hook_form_alter/6
+ */
+function protected_node_form_alter(&$form, &$form_state, $form_id) {
+  $types = node_get_types();
+  $node_type = $types[$form['type']['#value']];
+  if ($form['#id'] == 'node-form' && (user_access( 'edit protected content' ) || user_access( 'edit protected ' . $form['type']['#value'] ))) {
+    $form['protected_node'] = array(
+      '#type' => 'fieldset',
+      '#description' => t( 'Here if you check the checkbox and provide a password your newly created node will be password protected.' ),
+      '#title' => t( 'Password protect this @node', array('@node' => $node_type->name) ),
+      '#collapsible' => TRUE,
+      '#collapsed' => TRUE
+    );
+    $form['protected_node']['is_protected'] = array(
+      '#type' => 'checkbox',
+      '#title' => t( 'This @node is protected', array('@node' => $node_type->name) ),
+      '#description' => t( 'Check here if this content should be protected by a password.' ),
+      '#default_value' => $form['#node']->is_protected
+    );
+    $form['protected_node']['show_title'] = array(
+      '#type' => 'checkbox',
+      '#title' => t( 'Show Title' ),
+      '#description' => t( 'Show the title to users when requesting the password.' ),
+      '#default_value' => variable_get('protected_node-'. $form['nid']['#value'] .'-show_title', FALSE),
+    );
+    $form['protected_node']['was_protected'] = array(
+      '#type' => 'hidden',
+      '#default_value' => $form['#node']->was_protected
+    );
+    $form['protected_node']['password'] = array(
+      '#type' => 'password_confirm',
+      '#description' => t( 'Enter the @node password here.', array('@node' => $node_type->name) ),
+      '#size' => 20
+    );
+  }
+}
+
+/**
+ * Implementation of hook_nodeapi().
+ * @link http://api.drupal.org/api/function/hook_nodeapi/6
+ */
+function protected_node_nodeapi(&$node, $op, $arg = 0, $page = 0) {
+  global $user;
+
+  switch ($op) {
+    case 'load' :
+      $output['is_protected'] = protected_node_isset_protected( $node->nid );
+      $output['was_protected'] = $output['is_protected'];
+      return $output;
+      break;
+    case 'delete' :
+      protected_node_unset_protected( $node->nid );
+      break;
+    case 'insert' :
+      if ($node->is_protected && (!empty( $node->password ) || isset( $_SESSION['_protected_node']['entered_password'] ))) {
+        $pwd = isset( $_SESSION['_protected_node']['entered_password'] ) ? $_SESSION['_protected_node']['entered_password'] : $node->password;
+        unset( $_SESSION['_protected_node']['entered_password'] );
+        protected_node_set_protected( $node->nid, $pwd );
+      }
+      if ($node->show_title) {
+        variable_set('protected_node-'. $node->nid .'-show_title', TRUE );
+      }
+      break;
+    case 'validate' :
+      if ($node->is_protected && !empty($node->password)) {
+        $_SESSION['_protected_node']['entered_password'] = $node->password;
+      }
+      break;
+    case 'update' :
+      // Protected flag was switched off?
+      if ($node->was_protected && !$node->is_protected) {
+        protected_node_unset_protected( $node->nid );
+      }
+
+      if ($node->is_protected && (!empty( $node->password ) || isset( $_SESSION['_protected_node']['entered_password'] ))) {
+        if (db_result( db_query( 'SELECT count(*) FROM {protected_nodes} WHERE nid = %d', $node->nid ) ) > 0) {
+          $pwd = isset( $_SESSION['_protected_node']['entered_password'] ) ? $_SESSION['_protected_node']['entered_password'] : $node->password;
+          unset( $_SESSION['_protected_node']['entered_password'] );
+          protected_node_set_protected( $node->nid, $pwd );
+        }
+        else {
+          protected_node_nodeapi( $node, 'insert', $arg, $page );
+        }
+      }
+
+      //mark the node for show title on password page
+      if ($node->show_title) {
+        variable_set('protected_node-'. $node->nid .'-show_title', TRUE );
+      }
+      else {
+        variable_del('protected_node-'. $node->nid .'-show_title');
+      }
+      break;
+    case 'view' :
+      if ($node->is_protected && !user_access('bypass password protection')) {
+        // If we have been accessed from cron.php (f.e. search indexing)
+        if (variable_get( 'cron_semaphore', FALSE )) {
+          $node->title = '';
+          $node->teaser = '';
+          $node->body = '';
+          $node->content = array();
+        }
+        else {
+          if (!$user->uid && variable_get( 'cache', 0 )) {
+            $GLOBALS['conf']['cache'] = FALSE;
+          }
+
+          if ($node->uid !== $user->uid) {
+            // If node is protected and not teaser nor page view and not owner of node
+            if (!isset( $_SESSION['_protected_node']['passwords'][$node->nid] )) {
+              if (!$arg) {
+                $_SESSION['_protected_node']['current'] = $node->nid;
+                $destination = drupal_get_destination();
+                drupal_goto( 'protected-node', $destination );
+              }
+              else {
+                $node->teaser = '';
+                $node->body = '';
+                $node->content = array();
+              }
+            }
+          }
+        }
+      }
+      break;
+  }
+}
+
+/**
+ * Implementation of hook_menu().
+ * @link http://api.drupal.org/api/function/hook_menu/6
+ */
+function protected_node_menu( ) {
+  $items['admin/settings/protected_node'] = array(
+    'title' => 'Protected node',
+    'description' => 'Here you change protected node settings',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array(
+      'protected_node_admin_settings'
+    ),
+    'access arguments' => array(
+      'administer site configuration'
+    ),
+    'file' => 'protected_node.settings.inc'
+  );
+  $items['protected-node'] = array(
+    'title' => 'Protected node - Enter Password',
+    'description' => 'Here you can enter the password for the node',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array(
+      'protected_node_enterpassword'
+    ),
+    'access arguments' => array(
+      'access protected content'
+    ),
+    'type' => MENU_CALLBACK,
+    'file' => 'protected_node.redirect.inc'
+  );
+
+  return $items;
+}
+
+/**
+ * Implementation of hook_file_download().
+ * @link http://api.drupal.org/api/function/hook_file_download/6
+ */
+function protected_node_file_download($file) {
+  global $user;
+
+  $db_file = db_result( db_query( 'SELECT u.nid FROM {files} f, {upload} u, {protected_nodes} pn, {node} n WHERE pn.nid = u.nid AND u.nid = n.nid AND f.filename = \'%s\' AND u.fid = f.fid', $file ) );
+  if (db_error() || $db_file === FALSE || $user->uid == $db_file || $_SESSION['_protected_node']['passwords'][$db_file] || user_access('bypass password protection')) {
+    return array();
+  }
+  else {
+    return -1;
+  }
+}
+
+/*
+ * Helper functions
+ */
+
+/**
+ * Sets the given node to protected with the provided password.
+ * The password cannot be empty.
+ *
+ * If the node already password protected this method changes the password
+ * to the one you provided as $password parameter.
+ *
+ * @param int $nid The node ID to set protected or change passsword on.
+ * @param string $password The password you wish to set.
+ * @return boolean TRUE if the action was successful, FALSE otherwise.
+ */
+function protected_node_set_protected($nid, $password) {
+  global $protected_node_salt;
+
+  if (empty( $password ) || !is_numeric( $nid )) {
+    return FALSE;
+  }
+
+  $success = FALSE;
+  if (protected_node_isset_protected( $nid )) {
+    $success = db_query( 'UPDATE {protected_nodes} SET passwd = \'%s\' WHERE nid = %d', sha1( $protected_node_salt . $password ), $nid );
+  }
+  else {
+    $success = db_query( 'INSERT INTO {protected_nodes} (nid, passwd) VALUES (%d, \'%s\')', $nid, sha1( $protected_node_salt . $password ) );
+  }
+
+  return $success !== FALSE;
+}
+
+/**
+ * This method removes the protected flag from the specified node.
+ * If the node wasn't protected this method returns FALSE.
+ *
+ * @param int $nid The node id you wish to remove protection from.
+ * @return boolean TRUE if the action was successful, FALSE otherwise.
+ */
+function protected_node_unset_protected($nid) {
+  if (!is_numeric( $nid )) {
+    return FALSE;
+  }
+
+  $success = db_query( 'DELETE FROM {protected_nodes} WHERE nid = %d', $nid );
+
+  return $success !== FALSE;
+}
+
+/**
+ * This method determines the protected flag status for the given node id.
+ *
+ * @param int $nid The node id you wish to check for.
+ * @return boolean TRUE if the node identified by the nid you provided is protected, FALSE otherwise.
+ */
+function protected_node_isset_protected($nid) {
+  if (!is_numeric( $nid )) {
+    return FALSE;
+  }
+
+  $nodes = db_affected_rows( db_query( 'SELECT nid FROM {protected_nodes} WHERE nid = %d', $nid ) );
+  if ($nodes > 0) {
+    return TRUE;
+  }
+  else {
+    return FALSE;
+  }
+
+}

@@ -1,0 +1,88 @@
+<?php
+// $Id: protected_node.install,v 1.11 2008/10/14 08:58:10 tolmi Exp $
+
+
+/*
+ * @file
+ * Protected node module
+ */
+
+/**
+ * Implementation of hook_schema().
+ */
+function protected_node_schema( ) {
+  $schema['protected_nodes'] = array(
+    'description' => t( 'The table to store the node - password hash pairs.' ),
+    'fields' => array(
+      'nid' => array(
+        'description' => t( 'The primary identifier for a node' ),
+        'type' => 'serial',
+        'unsigned' => TRUE,
+        'not null' => TRUE
+      ),
+      'passwd' => array(
+        'description' => t( 'The sha1 hashed password for the given node.' ),
+        'type' => 'char',
+        'length' => 40,
+        'not null' => TRUE,
+        'default' => ''
+      )
+    ),
+    'indexes' => array(
+      'protected_passwd' => array(
+        'passwd'
+      )
+    ),
+    'primary key' => array(
+      'nid'
+    )
+  );
+
+  return $schema;
+}
+
+/**
+ * Implementation of hook_install().
+ */
+function protected_node_install( ) {
+  drupal_install_schema( 'protected_node' );
+  db_query( "UPDATE {system} SET weight = 80 WHERE name = 'protected_node' AND type = 'module'" );
+}
+
+/**
+ * Implementation of hook_uninstall().
+ */
+function protected_node_uninstall( ) {
+  drupal_uninstall_schema( 'protected_node' );
+}
+
+/**
+ * Implementation of hook_update_N().
+ *
+ * We don't need a variable length column just 40 char one for the sha1 hash
+ */
+function protected_node_update_3( ) {
+  $ret = array();
+
+  db_change_field( $ret, 'protected_nodes', 'passwd', 'passwd', array(
+    'type' => 'char',
+    'length' => 40,
+    'not null' => TRUE
+  ) );
+
+  return $ret;
+}
+
+/**
+ * Implementation of hook_update-N()
+ *
+ * Altering node weight from 100 to 80
+ * fixing issue #296685
+ *
+ */
+function protected_node_update_4( ) {
+  $ret = array();
+  $ret[] = update_sql( "UPDATE {system} SET weight = 80 WHERE name = 'protected_node' AND type = 'module'" );
+
+  return $ret;
+}
