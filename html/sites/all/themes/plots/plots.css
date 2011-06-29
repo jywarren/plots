@@ -47,6 +47,10 @@ fieldset table, fieldset{
 	font-size:10px;
 }
 
+#content form fieldset {
+	width:auto;
+}
+
 .body-field-wrapper {
 	font-size:10px;
 }
@@ -334,6 +338,15 @@ div.widget {
 	height:300px;
 }
 
+#share {
+	margin-top:6px;
+	height:25px;
+}
+#share a {
+	float:left;
+	margin-right:6px;
+}
+
 .comment_reply, .node-type-map .comment_add { 
 	margin:12px 0;
 	margin-bottom:6px;
@@ -378,6 +391,9 @@ div.widget {
   float:right;
   width:100px;
   position:relative;
+}
+.page-wrapper-full {
+  height:100%;
 }
 #map-minimize-btn {
   display:none;
@@ -460,6 +476,13 @@ div.widget {
 
 #content form {
 	padding-bottom:10px;
+}
+
+#content blockquote {
+	border-left:6px solid #ddd;
+	margin-left:0;
+	padding-left:8px;
+	color:#444;
 }
 
 #content .figure {
@@ -669,6 +692,12 @@ div.messages {
 	clear:left;
 }
 
+.region-sidebar-second .views-field-title .field-content, 
+.region-sidebar-second .views-field-title .field-content h3 {
+	line-height:1.3em;
+	font-size:14px;
+}
+
 #block-search-0 input#edit-search-block-form-1 {
 	font-size:1.4em;
 }
@@ -870,6 +899,9 @@ div.messages {
     -moz-opacity:0.7;           /* Mozilla 1.6 and below   */
     opacity: 0.7;               /* newer Mozilla and CSS-3 */
 }
+.slider_text_bottom {
+    top:240px;
+}
 .slider_text h2 {
     margin-bottom:5px;
     width:355px;
@@ -882,3 +914,8 @@ div.messages {
     text-decoration:none;
 }
 
+.page-dashboard .tips, #comment_form .tips {
+	display:none;
+}
+.page-dashboard div {
+}

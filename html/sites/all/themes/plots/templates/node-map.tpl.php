@@ -100,8 +100,9 @@
 
 
 <div id="map-fullscreen-btn-div"><a id="map-fullscreen-btn" href="javascript:void();" onClick="fullscreen()">Fullscreen</a></div>
+<div id='map'>
 <a id="map-minimize-btn" href="javascript:void();" onClick="minimize()">Close</a>
-<div id='map'></div>
+</div>
 
 <script>
 <?php 
@@ -246,6 +247,8 @@
 		map.updateSize()
 		$('.region-sidebar-first').hide()
 		$('.region-sidebar-second').hide()
+		$('#links').hide()
+		$('#header').hide()
 		$('#footer').hide()
 		$('#hide-on-fullscreen').hide()
 		$('meta[name=viewport]').attr('content', 'width=320; initial-scale=1.0; maximum-scale=1.0; user-scalable=0;');
@@ -258,7 +261,9 @@
 		$('.region-sidebar-first').show()
 		$('.region-sidebar-second').show()
 		$('#footer').show()
-		$('body').removeClass = 'body-fullscreen';
+		$('#links').show()
+		$('#header').show()
+		$('body').removeClass('body-fullscreen')
 		$('#hide-on-fullscreen').show()
 		$('meta[name=viewport]').attr('content', '');
 	}
@@ -278,6 +283,11 @@
   </div>
   <div class="content nodebody">
     <?php print $content; ?>
+  </div>
+
+  <div id="share">
+	<a name="fb_share" type="button_count" href="http://www.facebook.com/sharer.php">Share</a><script src="http://static.ak.fbcdn.net/connect.php/js/FB.Share" type="text/javascript"></script>  
+	<a href="http://twitter.com/share?text=Grassroots map of <?php print $title; ?> in the Public Laboratory Archive: "><img src="/img/twitter.png" /></a>
   </div>
 
   <?php print $links; ?>

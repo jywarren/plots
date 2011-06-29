@@ -131,7 +131,7 @@
 	<a href="/about">About</a> 
 	<a href="/places">Places</a> 
 	<a href="/notes">Updates</a> 
-	<a href="/reports">Reports</a> 
+	<a href="/archive">Archive</a> 
 	<a href="/tools">Tools</a> 
 	<a href="/events">Events</a> 
 	<a href="/explore">Explore</a> 
