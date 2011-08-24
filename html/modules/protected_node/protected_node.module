@@ -110,9 +110,23 @@ function protected_node_form_alter(&$form, &$form_state, $form_id) {
     $form['protected_node']['password'] = array(
       '#type' => 'password_confirm',
       '#description' => t( 'Enter the @node password here.', array('@node' => $node_type->name) ),
-      '#size' => 20
+      '#size' => 20,
+      '#after_build' => array('protected_node_autocomplete_off')
     );
   }
+}
+
+/**
+ * After_build function to disable autocomplete for the password fields.
+ * 
+ * Without this FF >= 3 will attempt to autocomplete the fields with the user's login info.
+ * 
+ * @link http://api.drupal.org/api/file/developer/topics/forms_api_reference.html/6#after_build
+ */
+function protected_node_autocomplete_off($form_element, &$form_state) {
+  $form_element['pass1']['#attributes']['autocomplete'] = 'off';
+  $form_element['pass2']['#attributes']['autocomplete'] = 'off';
+  return $form_element;
 }
 
 /**

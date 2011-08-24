@@ -3,6 +3,8 @@ html {
 	font-size:11pt;
 }
 
+#iewarning {display:none;}
+
 @font-face {
 	font-family: Prociono;
 	src: url("/fonts/prociono.ttf");

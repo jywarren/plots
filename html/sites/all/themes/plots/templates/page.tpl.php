@@ -121,8 +121,12 @@
   <?php print $scripts; ?>
   <script src="/scripts/jquery-nivo-slider-pack.js" type="text/javascript"></script>
   <link rel="stylesheet" href="/scripts/nivo-slider.css" type="text/css" media="screen" />
+  <!--[if IE]><link rel="stylesheet" href="/sites/all/themes/plots/ie.css" type="text/css" media="screen" /><![endif]-->
+  <!--[if IE 6]><link rel="stylesheet" href="/sites/all/themes/plots/ie.css" type="text/css" media="screen" /><![endif]-->
 </head>
 <body class="<?php print $classes; ?>">
+
+  <div style="border:2px solid red;background:#fcc;padding:10px;" id="iewarning"><h2>Incompatible browser</h2><p>The Public Laboratory website is designed for use in any browser except Internet Explorer. To view it properly, please use <a href="http://firefox.com">Firefox</a>, <a href="http://google.com/chrome">Chrome</a>, or another standards-compliant browser. Support for Internet Explorer is planned, but it's a good idea for you to get another browser anyways -- IE poses a security risk for your computer.</p></div>
 
   <div id="page-wrapper"><div id="page">
 

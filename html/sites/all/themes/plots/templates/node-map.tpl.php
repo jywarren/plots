@@ -271,15 +271,29 @@
 
 <div id="hide-on-fullscreen">
 
+<?php 
+
+function formatbytes($megabytes)  
+{  
+    if ($megabytes > 1024) {
+	return ($megabytes/1024).' gb';
+//    } else if ($megabytes > 1000) {
+    } else {
+	return $megabytes.' mb';
+    }  
+}  
+
+?>
+
 <div class="formats">
 	<h3>Formats:</h3>
-	<?php if ($node->field_openlayers_url[0]['value']) { ?><a class="openlayers-field" href="<?php print $node->field_openlayers_url[0]['value'] ?>">OpenLayers</a><?php } ?>
+<!--	<?php if ($node->field_openlayers_url[0]['value']) { ?><a class="openlayers-field" href="<?php print $node->field_openlayers_url[0]['value'] ?>">OpenLayers</a><?php } ?>-->
 	<?php if ($node->field_tms_url[0]['value']) { ?><a class="tms-field" href="<?php print $node->field_tms_url[0]['value'] ?>">TMS</a><?php } ?>
-	<?php if ($node->field_geotiff_url[0]['value']) { ?><a class="geotiff-field" href="<?php print $node->field_geotiff_url[0]['value'] ?>">GeoTiff</a><?php } ?>
+	<?php if ($node->field_geotiff_url[0]['value']) { ?><a class="geotiff-field" href="<?php print $node->field_geotiff_url[0]['value'] ?>">GeoTiff<?php if ($node->field_geotiff_filesize[0]['value']) { ?> (<?php print formatbytes($node->field_geotiff_filesize[0]['value']) ?>)<?php } ?></a><?php } ?>
 	<?php if ($node->field_mbtiles_url[0]['value']) { ?><a class="mbtiles-field" href="<?php print $node->field_mbtiles_url[0]['value'] ?>">MBTiles</a><?php } ?>
 	<?php if ($node->field_google_maps_url[0]['value']) { ?><a class="googlemaps-field" href="<?php print $node->field_google_maps_url[0]['value'] ?>">Google Maps</a><?php } ?>
- 	<?php if ($node->field_jpg_url[0]['value']) { ?><a class="jpg-field" href="<?php print $node->field_jpg_url[0]['value'] ?>">JPG</a><?php } ?>
-	<?php if ($node->field_raw_images[0]['value']) { ?><a class="raw-field" href="<?php print $node->field_raw_images[0]['value'] ?>">Raw images</a><?php } ?>
+ 	<?php if ($node->field_jpg_url[0]['value']) { ?><a class="jpg-field" href="<?php print $node->field_jpg_url[0]['value'] ?>">JPG<?php if ($node->field_jpg_filesize[0]['value']) { ?> (<?php print formatbytes($node->field_jpg_filesize[0]['value']) ?>)<?php } ?></a><?php } ?>
+	<?php if ($node->field_raw_images[0]['value']) { ?><a class="raw-field" href="<?php print $node->field_raw_images[0]['value'] ?>">Raw images<?php if ($node->field_raw_images_filesize[0]['value']) { ?> (<?php print formatbytes($node->field_raw_images_filesize[0]['value']) ?>)<?php } ?></a><?php } ?>
   </div>
   <div class="content nodebody">
     <?php print $content; ?>
