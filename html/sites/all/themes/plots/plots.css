@@ -661,11 +661,8 @@ div.messages {
 #content .view-Notes .views-row {
 	width:160px;
 	float:left;
-	margin-right:6px;
-	border-right:1px solid #ccc;
-	border-bottom:1px solid #ccc;
-	border-left:5px solid #445;
-	background:#eee;
+	margin-right:10px;
+	background:none;
 }
 #content .view-Notes .views-row .views-field-timestamp, 
 #content .view-Notes .views-row .views-field-body, 
@@ -673,14 +670,17 @@ div.messages {
 #content .view-Notes .views-row .views-field-tid,
 #content .view-Notes .views-row .views-label-name {
 	font-size:11px;
-	padding-left:8px;
+}
+#content .view-Notes .views-row .views-field-timestamp { 
+	color:#555;
 }
 #content .view-Notes .views-row .views-field-body { 
 	padding-top:4px;
 }
+#content .view-Notes .views-row .views-field-view-node {
+	padding-bottom:10px;
+}
 #content .view-Notes .views-row .views-field-title {
-	padding-left:8px;
-	font-weight:bold;
 	margin-top:4px;
 }
 .view-Notes .views-row-1,
