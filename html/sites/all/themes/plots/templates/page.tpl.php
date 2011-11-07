@@ -121,6 +121,7 @@
   <?php print $scripts; ?>
   <script src="/scripts/jquery-nivo-slider-pack.js" type="text/javascript"></script>
   <link rel="stylesheet" href="/scripts/nivo-slider.css" type="text/css" media="screen" />
+  <link href="http://publiclaboratory.org/rss.xml" rel="alternate" type="application/rss+xml" title="The Public Laboratory" />
   <!--[if IE]><link rel="stylesheet" href="/sites/all/themes/plots/ie.css" type="text/css" media="screen" /><![endif]-->
   <!--[if IE 6]><link rel="stylesheet" href="/sites/all/themes/plots/ie.css" type="text/css" media="screen" /><![endif]-->
 </head>
