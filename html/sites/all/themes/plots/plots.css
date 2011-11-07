@@ -436,6 +436,10 @@ div.widget {
 	padding:10px 0;
 }
 
+#content-area h2 {
+	font-size:2em;
+}
+
 #content-area .meta {
 	font-style:italic;
 	font-size:11px;
