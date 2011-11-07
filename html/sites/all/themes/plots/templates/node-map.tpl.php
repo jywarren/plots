@@ -97,7 +97,7 @@
 
 <script type="text/javascript" src="http://openlayers.org/api/2.9/OpenLayers.js"></script>
 <script src='http://maps.google.com/maps?file=api&amp;v=2&amp;key=ABQIAAAANO6Yx8ihhesSqnPHx9a3RxQCA0kQZc0rHxnaN3mazoBpOqX1oBQwLut2gk7rd_T9sYyxcGJrxQK3gg' type='text/javascript'></script> 
-
+<script src="http://api.maps.yahoo.com/ajaxymap?v=3.0&amp;appid=INSERT_YOUR_YAHOO_APP_ID_HERE"></script>
 
 <div id="map-fullscreen-btn-div"><a id="map-fullscreen-btn" href="javascript:void();" onClick="fullscreen()">Fullscreen</a></div>
 <div id='map'>
@@ -176,7 +176,18 @@
 	  sphericalMercator: true, 
 	  numZoomLevels: 25
 	});
+        var yahoosat = new OpenLayers.Layer.Yahoo("Yahoo Satellite",
+        {'type': YAHOO_MAP_SAT, 'sphericalMercator': true});
+
 	map.addLayer(gsat)
+
+// you can try
+// http://hypercube.telascience.org/tilecache/tilecache.py/1.0.0/NAIP_ALL/
+
+// but you might get better performance from newworld which switches
+// between bmng/landsat/naip based on zoom level
+
+// http://hypercube.telascience.org/tilecache/tilecache.py/1.0.0/NewWorld_google
 
 	var tile_url = "http://tilestream.publiclaboratory.org/1.0.0/blue-marble-topo-bathy-jan/"
 	//var tile_url = "http://localhost:8888/1.0.0/blue-marble-topo-bathy-jul/"
@@ -276,7 +287,7 @@
 function formatbytes($megabytes)  
 {  
     if ($megabytes > 1024) {
-	return ($megabytes/1024).' gb';
+	return round($megabytes/1024,1).' gb';
 //    } else if ($megabytes > 1000) {
     } else {
 	return $megabytes.' mb';
