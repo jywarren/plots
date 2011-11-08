@@ -510,15 +510,20 @@ div.widget {
 	margin-right:10px;
 }
 
+.page-tools #content .view-content {
+	width:550px;
+}
 .page-tools #content .views-row {
-	width:230px;
+	width:160px;
+	height:480px;
 	float:left;
 	margin:10px 0;
-	margin-right:24px;
+	margin-right:10px;
 }
 .page-tools #content .views-field-body,
 .page-tools #content .views-field-tid,
 .page-tools #content .views-field-tid-1 {
+	font-size:10px;
 	padding-bottom:6px;
 }
 .page-tools #content .views-field-tid,
@@ -529,7 +534,6 @@ div.widget {
 	padding:0;
 }
 .page-tools #content .views-row-odd {
-	clear:left;
 }
 .node-type-tool p {
 	font-size:11px;
@@ -831,7 +835,7 @@ div.messages {
 }
 
 #content-area .places-grid {
-	width:500px;
+	width:550px;
 	padding-right:18px;
 }
 #content-area .places-grid .views-view-grid tr {
@@ -841,16 +845,14 @@ div.messages {
 	font-size:18px;
 }
 #content-area .places-grid .views-row {
+	height:400px;
 	margin-bottom:8px;
-	width:220px;
+	width:160px;
 	font-size:10px;
 	float:left;
-	padding-right:20px;
+	padding-right:10px;
 	background: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAADCAYAAAC09K7GAAAABHNCSVQICAgIfAhkiAAAABJJREFUCJljYECA/wxYOP8xZABf0wP96WTlbgAAAABJRU5ErkJggg==") repeat-x top;
 	padding-top:12px;
-}
-#content-area .places-grid .views-row-odd {
-	clear:left;
 }
 
 #content .view-people .views-row {
