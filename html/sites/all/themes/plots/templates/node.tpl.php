@@ -109,6 +109,8 @@
   <div id="share">
 	<a name="fb_share" type="button_count" href="http://www.facebook.com/sharer.php">Share</a><script src="http://static.ak.fbcdn.net/connect.php/js/FB.Share" type="text/javascript"></script>  
 	<a href="http://twitter.com/share?text=Public Laboratory: <?php print $title; ?>"><img src="/img/twitter.png" /></a>
+	<g:plusone></g:plusone>
+	<script src="https://apis.google.com/js/plusone.js"></script>
   </div>
 <?php } ?>
 

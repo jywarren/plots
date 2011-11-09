@@ -183,6 +183,13 @@ ul.large {
 	padding-left:14px;
 }
 
+#block-views-your_recent_wiki_edits-block_1 .field-content {
+	font-size:11px;
+}
+#block-views-your_recent_wiki_edits-block_1 .views-row {
+	padding:6px 0;
+}
+
 #links {
 	font-family:Junction, lucida grande,lucida sans console,sans-serif;
 	background: #333;
