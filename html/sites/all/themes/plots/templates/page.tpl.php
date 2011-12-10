@@ -117,29 +117,44 @@
   <META NAME="description" CONTENT="The Public Laboratory for Open Technology and Science (PLOTS) collaboratively develops and publicizes accessible technologies for investigating and reporting on local environmental health and justice issues. PLOTS provides an online research space for citizens, linking them to scientists, social scientists, and technologists. PLOTS is an expansion of Grassroots Mapping, where citizens use helium-filled balloons and digital cameras to generate high resolution “satellite” maps.">
   <meta name="viewport" content=""/>
   <?php print $head; ?>
+  <link rel="stylesheet" href="/sites/all/themes/plots/plots.css" type="text/css" media="screen" />
+  <!--[if !IE]><!--><link rel="stylesheet" href="/sites/all/themes/plots/not-ie.css" type="text/css" media="screen" /><!--<![endif]-->
+  <!--[if IE]>
+  <link rel="stylesheet" href="/sites/all/themes/plots/ie.css" type="text/css" media="screen" />
+  <![endif]-->
+  <!--[if IE 6]><link rel="stylesheet" href="/sites/all/themes/plots/ie.css" type="text/css" media="screen" /><![endif]-->
   <?php print $styles; ?>
   <?php print $scripts; ?>
   <script src="/scripts/jquery-nivo-slider-pack.js" type="text/javascript"></script>
   <link rel="stylesheet" href="/scripts/nivo-slider.css" type="text/css" media="screen" />
   <link href="http://publiclaboratory.org/rss.xml" rel="alternate" type="application/rss+xml" title="The Public Laboratory" />
-  <!--[if IE]><link rel="stylesheet" href="/sites/all/themes/plots/ie.css" type="text/css" media="screen" /><![endif]-->
-  <!--[if IE 6]><link rel="stylesheet" href="/sites/all/themes/plots/ie.css" type="text/css" media="screen" /><![endif]-->
 </head>
 <body class="<?php print $classes; ?>">
 
-  <div style="border:2px solid red;background:#fcc;padding:10px;" id="iewarning"><h2>Incompatible browser</h2><p>The Public Laboratory website is designed for use in any browser except Internet Explorer. To view it properly, please use <a href="http://firefox.com">Firefox</a>, <a href="http://google.com/chrome">Chrome</a>, or another standards-compliant browser. Support for Internet Explorer is planned, but it's a good idea for you to get another browser anyways -- IE poses a security risk for your computer.</p></div>
+  <div style="border:2px solid red;background:#fcc;padding:10px;" id="iewarning"><p><h2>Incompatible browser</h2>
+The Public Laboratory website is designed for use in any browser except Internet Explorer. To view it properly, please use <a href="http://firefox.com">Firefox</a>, <a href="http://google.com/chrome">Chrome</a>, or another standards-compliant browser. Support for Internet Explorer is planned, but it's a good idea for you to get another browser anyways -- IE poses a security risk for your computer.</p></div>
 
   <div id="page-wrapper"><div id="page">
+
+  <script>$('placeHeader').absolutize();</script>
 
     <div id='links'> 
 	<a href="/">PLOTS</a> 
 	<a href="/about">About</a> 
-	<a href="/places">Places</a> 
-	<a href="/notes">Updates</a> 
+	<a href="/places" onMouseOver="$('#placeHeader').show()" onMouseOut="$('#placeHeader').hide()">Places</a> 
+	<div class="sublink" style="display:none;" id="placeHeader">
+	<div class="sublinkContainer">
+		<a href="/place/new-york-city">New York</a>
+		<a href="/place/gulf-coast">Gulf Coast</a>
+		<a href="/place/somerville">Somerville</a>
+		<a href="/place/providence">Providence</a>
+		<a href="/place/butte">Butte</a>
+	</div>
+	</div>
+	<a href="/notes">Research notes</a>
 	<a href="/archive">Archive</a> 
 	<a href="/tools">Tools</a> 
 	<a href="/events">Events</a> 
-	<a href="/explore">Explore</a> 
 	<div class="right"> 
 		<a href="/note/add">Note [+]</a> 
 	</div> 
@@ -215,8 +230,10 @@
 
     </div></div> <!-- /#main, /#main-wrapper -->
 
+    <p class="clearfix"></p>
+
     <?php if ($footer || $footer_message || $secondary_links): ?>
-      <div id="footer"><div class="section">
+      <div id="footer" class="clearfix"><div class="section">
 
         <?php print theme(array('links__system_secondary_menu', 'links'), $secondary_links,
           array(

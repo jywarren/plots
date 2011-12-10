@@ -1,9 +1,11 @@
-#header {
-	display:none;
+#header,#content {
+	clear:both;
 }
 #iewarning {
 	display:block;
 	background:#fcc;
 	border:2px solid red;
 	padding:10px;
+	margin-bottom:10px;
 }
+
