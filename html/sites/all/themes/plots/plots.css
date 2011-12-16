@@ -148,6 +148,11 @@ min-height: 1%;
 	font-size:11px;
 }
 
+.barSparkline {
+	padding:8px;
+	text-align:right;
+}
+
 .sidebar .content p {
 	font-size:13px;
 }
@@ -219,10 +224,10 @@ ul.large {
 	margin-left:8px;
 }
 #links .sublinkContainer {
-	position:relative;
+	position:absolute;
 }
 #links .sublink {
-	position:absolute;
+	position:relative;
 }
 #links .sublink a {
 	margin:0;
