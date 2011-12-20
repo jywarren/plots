@@ -167,7 +167,9 @@ The Public Laboratory website is designed for use in any browser except Internet
 		<ul class="sublinks" style="display:none;" id="toolHeader">
 			<li><a href="/tool/balloon-mapping">Balloon mapping</a></li>
 			<li><a href="/tool/near-infrared-camera">Near-infrared camera</a></li>
+			<li><a href="/tool/thermal-camera">Thermal camera</a></li>
 			<li><a href="/tool/roomba-toxin-mapping">Roomba toxin mapping</a></li>
+			<li><a href="/tool/spectrometer">Spectrometer</a></li>
 			<li><a href="/tool/hydrogen-sulfide-sensing">Hydrogen sulfide sensing</a></li>
 			<li><a href="/tool/environmental-estrogen-testing">Environmental estrogen testing</a></li>
 		</ul>

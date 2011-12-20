@@ -117,8 +117,15 @@
   <?php endif; ?>
 
   <div class="content">
+<?php if ($node->type == "page" && $node->field_toc[0]['value'] == 1) { ?>
+  <ul id="toc"></ul>
+  <script type="text/javascript" charset="utf-8">
+	$(function(){ $("#toc").tableOfContents("#content",{startLevel:2,depth:2}); })
+  </script>
+<?php } ?>
     <?php print $content; ?>
   </div>
+
 
 <?php if (($node->type == "tool" || $node->type == "place" || $node->type == "note" || $node->type == "page") && $node->nid != "356") { ?>
   <div id="share">
