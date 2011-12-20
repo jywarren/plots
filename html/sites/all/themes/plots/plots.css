@@ -860,12 +860,17 @@ div.messages {
 	background:#ddd;
 }
 
-#toc {
+ul#toc {
+	margin:14px;
+	font-size:12px;
+	line-height:18px;
 	float:right;
-	margin:20px;
-	padding:8px;
+	padding:12px;
 	background:#eee;
 	border:1px dotted #aaa;
+}
+ul#toc li {
+	margin-left:18px;
 }
 #toc .toc-title {
 	text-align:left;
