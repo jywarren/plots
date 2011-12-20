@@ -136,28 +136,48 @@ The Public Laboratory website is designed for use in any browser except Internet
 
   <div id="page-wrapper"><div id="page">
 
-  <script>$('placeHeader').absolutize();</script>
-
-    <div id='links'> 
-	<a href="/">PLOTS</a> 
-	<a href="/about">About</a> 
-	<a href="/places" onMouseOver="$('#placeHeader').show()" onMouseOut="$('#placeHeader').hide()">Places</a> 
-	<div class="sublink" style="display:none;" id="placeHeader">
-	<div class="sublinkContainer">
-		<a href="/place/new-york-city">New York</a>
-		<a href="/place/gulf-coast">Gulf Coast</a>
-		<a href="/place/somerville">Somerville</a>
-		<a href="/place/providence">Providence</a>
-		<a href="/place/butte">Butte</a>
-	</div>
-	</div>
-	<a href="/notes">Research notes</a>
-	<a href="/archive">Archive</a> 
-	<a href="/tools">Tools</a> 
-	<a href="/events">Events</a> 
-	<div class="right"> 
-		<a href="/note/add">Note [+]</a> 
-	</div> 
+    <ul id='links'> 
+	<li><a href="/">PLOTS</a></li>
+	<li onMouseOver="$('#aboutHeader').show()" onMouseOut="$('#aboutHeader').hide()">
+		<ul class="sublinks" style="display:none;" id="aboutHeader">
+			<li><a href="/getting-started">Getting started</a></li>
+			<li><a href="/contribute">Contribute</a></li>
+			<li><a href="/join">Join</a></li>
+		</ul>
+		<a href="/about">About</a>
+	</li>
+	<li onMouseOver="$('#placeHeader').show()" onMouseOut="$('#placeHeader').hide()">
+		<ul class="sublinks" style="display:none;" id="placeHeader">
+			<li><a href="/place/new-york-city">New York</a></li>
+			<li><a href="/place/gulf-coast">Gulf Coast</a></li>
+			<li><a href="/place/somerville-ma">Somerville</a></li>
+			<li><a href="/place/providence">Providence</a></li>
+			<li><a href="/place/butte">Butte</a></li>
+			<li><a href="/place/western-carolina-university">Western Carolina University</a></li>
+			<li><a href="/place/texas">Texas</a></li>
+			<li><a href="/place/sumava-czech-republic">Sumava, Czech Republic</a></li>
+			<li><a href="/place/portland-oregon">Portland, OR</a></li>
+			<li><a href="/place/santiago-chile">Santiago Chile</a></li>
+		</ul>
+		<a href="/places">Places</a> 
+	</li>
+	<li><a href="/notes">Research notes</a></li>
+	<li><a href="/archive">Archive</a></li> 
+	<li onMouseOver="$('#toolHeader').show()" onMouseOut="$('#toolHeader').hide()">
+		<ul class="sublinks" style="display:none;" id="toolHeader">
+			<li><a href="/tool/balloon-mapping">Balloon mapping</a></li>
+			<li><a href="/tool/near-infrared-camera">Near-infrared camera</a></li>
+			<li><a href="/tool/roomba-toxin-mapping">Roomba toxin mapping</a></li>
+			<li><a href="/tool/hydrogen-sulfide-sensing">Hydrogen sulfide sensing</a></li>
+			<li><a href="/tool/environmental-estrogen-testing">Environmental estrogen testing</a></li>
+		</ul>
+		<a href="/tools">Tools</a>
+	</li>
+	<li><a href="/events">Events</a></li> 
+	<li class="right"> 
+		<a href="/note/add">Post a note [+]</a> 
+	</li> 
+      </ul>
     </div> 
 
     <div id="header"><div class="clearfix">
@@ -175,6 +195,47 @@ The Public Laboratory website is designed for use in any browser except Internet
       <div id="content" class="column"><div class="section">
 
         <?php print $highlight; ?>
+
+	<?php 
+	$path = explode('/', request_uri() );
+	global $user;
+	$uid = $user->uid;
+	$profilePage = false;
+	if ($path[1] && $path[1] == "people" && $path[2]) {
+		$uid = user_load(array('name' => $path[2]));
+		$uid = $uid->uid;
+		$profilePage = true;
+	}
+
+	if ( request_uri() == "/dashboard" || $profilePage) {
+	
+	$sql = "SELECT n.uid, n.title, n.created FROM {node} n INNER JOIN {term_node} tn ON n.nid = tn.nid WHERE n.status=1 AND n.type='note' AND n.uid ='".$uid."'";
+	
+	$result = db_query($sql);
+	
+	$weeks = array();
+	
+	while ($row = db_fetch_array($result) ) {
+	//print_r($row["title"].":".$row["created"]);
+	  $weeks_ago = time() - $row["created"];
+	  $weeks_ago = $weeks_ago/(60*60*24*7);
+	  $weeks[$weeks_ago]++;
+	}
+	
+	for ($i = 0;$i<52;$i++) {
+	  if (!isset($weeks[$i])) $weeks[$i] = 0;
+	}
+	$weeks = array_reverse(array_slice($weeks,0,52));
+	
+	?>
+	<div id="dashboardGraph">
+	<span class="barSparkline"><?php echo implode(",",$weeks); ?></span>
+	<a href="/wiki/github-graphs"><img class="githubGraph" src="/<?php echo path_to_theme(); ?>/images/52-week-graph.png" /></a>
+	</div>
+	<script type="text/javascript">
+	$('.barSparkline').sparkline('html', {type: 'bar',barColor:'#555',barWidth:2});
+	</script>
+	<?php } ?>
 
         <?php print $breadcrumb; ?>
         <?php if ($title && strlen($title) < 100) { ?>
