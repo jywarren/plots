@@ -95,9 +95,24 @@
         </span>
       <?php endif; ?>
 
-      <?php if ($terms): ?>
-        <div class="terms terms-inline"><?php print $terms; ?></div>
-      <?php endif; ?>
+      <div class="terms">
+      <?php 
+      if ($node->type == "note" || $node->type == "page") {
+        $terms = taxonomy_node_get_terms_by_vocabulary($node, 1);
+        if ($terms) {
+          foreach ($terms as $term) {
+            print '<a href="/notes/'.$term->name.'">'.$term->name.'</a>, ';
+          }
+        }
+        $terms = taxonomy_node_get_terms_by_vocabulary($node, 3);
+        if ($terms) {
+          foreach ($terms as $term) {
+            print '<a href="/notes/'.$term->name.'">'.$term->name.'</a>, ';
+          }
+        }
+      }
+      ?>
+      </div>
     </div>
   <?php endif; ?>
 

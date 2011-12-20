@@ -35,6 +35,10 @@ fieldset table, fieldset{
 .floatright { float:right; }
 .box { padding:6px 14px; border:1px solid #bbb; margin:10px; }
 
+#content iframe {
+	border:0;
+}
+
 #content form fieldset {
 	width:auto;
 }
@@ -152,6 +156,18 @@ min-height: 1%;
 	padding:8px;
 	text-align:right;
 }
+#dashboardGraph {
+	float:right;
+	margin-top:44px;
+}
+.page-dashboard .view-header h3 {
+	width:500px;
+}
+img.githubGraph {
+	display:block;
+	clear:both;
+	padding:1px 8px;
+}
 
 .sidebar .content p {
 	font-size:13px;
@@ -196,43 +212,63 @@ ul.large {
 	padding:6px 0;
 }
 
-#links {
+ul#links {
 	font-family:Junction, lucida grande,lucida sans console,sans-serif;
-	background: #333;
 	font-size:1.4em;
 	display:block;
+	padding:0;
 }
-#links a {
-	text-decoration:none;
-	color:white;
-	padding:12px;
+#links li {
+	list-style:none;
+	position:relative;
+	float:left;
+}
+#links li {
 	background:black;
 	margin-right:8px;
 	margin-bottom:8px;
-	float:left;
-	padding-top:14px;
+	padding:0;
+	color:white;
 }
-#links a:hover {
+#links li a {
+	text-decoration:none;
+	display:block;
+	padding:12px;
+	padding-top:14px;
+	color:white;
+}
+#links li:hover {
 	background:#333;
 	color:#ccc;
 }
+
+#links li ul {
+	padding:0;
+	background:black;
+	position:absolute;
+	top:43px;left:0;
+	z-index:999;
+	float:left;
+	clear:both;
+	font-size:12px;
+}
+#links li ul.sublinks li {
+	width:200px;
+	float:left;
+	display:block;
+	clear:both;
+	list-style:none;
+	margin:0;
+}
+#links li ul.sublinks li a {
+	margin:0;
+}
+
 #links .right {
 	float:right;
 }
-#links .right a {
+#links li.right {
 	margin-right:0;
-	margin-left:8px;
-}
-#links .sublinkContainer {
-	position:absolute;
-}
-#links .sublink {
-	position:relative;
-}
-#links .sublink a {
-	margin:0;
-	display:block;
-	clear:left;
 }
 
 #header {
@@ -457,6 +493,9 @@ div.widget {
 #content-area h2 {
 	font-size:2em;
 }
+#content-area table tr {
+	width:500px;
+}
 
 #content-area .meta {
 	font-style:italic;
@@ -482,6 +521,10 @@ div.widget {
 
 #content-area ul.links li.print_html, #content-area ul.links li.print_mail, #content-area ul.links li.print_pdf {
 	margin-left:0;
+}
+
+#content-area .wysiwyg-format-1 {
+	display:none;
 }
 
 #comments h2.title {
@@ -558,7 +601,6 @@ div.widget {
 /* Taxonomy styling */
 
 #content .terms {
-	display:none
 }
 
 .sidebar #tool-info {
