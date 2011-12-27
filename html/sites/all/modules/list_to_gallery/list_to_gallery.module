@@ -1,0 +1,13 @@
+<?php
+
+function list_to_gallery_nodeapi(&$node, $op, $a3 = NULL, $a4 = NULL) {
+  if (arg(0) == 'node' && arg(1) == $node->nid) {
+    $allowed_types = array( "page", "note");
+    if (in_array($node->type, $allowed_types)) {
+      //force this plugin to load last so it doesnt load before jQuery does.  
+      drupal_add_js("sites/all/libraries/jcarousellite/jcarousellite.js", 'theme', 'footer');
+      drupal_add_js(drupal_get_path('module', 'list_to_gallery') . "/js/list-to-gallery.js");
+      drupal_add_css(drupal_get_path('module', 'list_to_gallery') . "/css/list-to-gallery.css");
+    }
+  }
+}
