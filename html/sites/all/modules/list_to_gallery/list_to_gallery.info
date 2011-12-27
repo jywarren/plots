@@ -1,0 +1,3 @@
+name = List to Gallery
+description = Turns lists of images into image galleries.
+core = 6.x
