@@ -7,7 +7,13 @@
  * Style anything that isn't in the $content variable.
  */
 
+body.section-node-edit .region-sidebar-second, body.page-note-add .region-sidebar-second {
+display: none;
+}
 
+body.section-node-edit .body-field-wrapper textarea, body.page-note-add .body-field-wrapper textarea {
+height: 440px;
+}
 .node /* Node wrapper */ {
 }
 
