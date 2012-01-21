@@ -1,0 +1,397 @@
+# $Id: node_images.pot,v 1.1.2.1 2009/02/03 13:45:50 stefano73 Exp $
+#
+# LANGUAGE translation of Drupal (general)
+# Copyright YEAR NAME <EMAIL@ADDRESS>
+# Generated from files:
+#  node_images.admin.inc,v 1.1.2.2 2008/08/23 08:53:35 stefano73
+#  node_images.pages.inc,v 1.1.2.4 2008/08/26 18:20:17 stefano73
+#  node_images.module,v 1.11.2.15 2009/01/31 14:25:53 stefano73
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PROJECT VERSION\n"
+"POT-Creation-Date: 2009-02-03 12:31+0100\n"
+"PO-Revision-Date: YYYY-mm-DD HH:MM+ZZZZ\n"
+"Last-Translator: NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <EMAIL@ADDRESS>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
+
+#: node_images.admin.inc:17
+msgid "Node images path"
+msgstr ""
+
+#: node_images.admin.inc:20
+msgid "Subdirectory in the directory %dir where the node images will be stored. This directory has to exist and be writable by Drupal. You can use the following variables: %uid, %username, %nid"
+msgstr ""
+
+#: node_images.admin.inc:25
+msgid "Resolution for large images"
+msgstr ""
+
+#: node_images.admin.inc:29
+msgid "The size for large images in the node gallery, expressed as WIDTHxHEIGHT (e.g. 400x300)."
+msgstr ""
+
+#: node_images.admin.inc:33
+msgid "Resolution for thumbnails"
+msgstr ""
+
+#: node_images.admin.inc:37
+msgid "The thumbnail size expressed as WIDTHxHEIGHT (e.g. 100x75)."
+msgstr ""
+
+#: node_images.admin.inc:41
+msgid "Default maximum file size per upload"
+msgstr ""
+
+#: node_images.admin.inc:45
+msgid "The default maximum file size a user can upload. If a maximum resolution is set, the size will be checked after the file has been resized."
+msgstr ""
+
+#: node_images.admin.inc:50
+msgid "Default permitted image extensions"
+msgstr ""
+
+#: node_images.admin.inc:53
+msgid "Default image extensions that users can upload. Separate extensions with a space and do not include the leading dot."
+msgstr ""
+
+#: node_images.admin.inc:57
+msgid "Maximum number of images"
+msgstr ""
+
+#: node_images.admin.inc:61
+msgid "The maximum number of images a user can upload for each node."
+msgstr ""
+
+#: node_images.admin.inc:65
+msgid "MD5 filenames"
+msgstr ""
+
+#: node_images.admin.inc:66
+msgid "Override uploaded filenames with the MD5 hash of the file."
+msgstr ""
+
+#: node_images.pages.inc:21
+msgid "Node images are disabled. The file directories have not been properly configured."
+msgstr ""
+
+#: node_images.pages.inc:23
+msgid "Please visit the <a href=\"@admin-node-images\">node_images configuration page</a>."
+msgstr ""
+
+#: node_images.pages.inc:26
+msgid "Please contact the site administrator."
+msgstr ""
+
+#: node_images.pages.inc:34
+msgid "Node images are disabled in the view page for the current node type."
+msgstr ""
+
+#: node_images.pages.inc:61
+msgid "Upload a new image"
+msgstr ""
+
+#: node_images.pages.inc:70 node_images.module:705
+msgid "Description"
+msgstr ""
+
+#: node_images.pages.inc:74
+msgid "Enter a description for the new image, max 255 chars."
+msgstr ""
+
+#: node_images.pages.inc:78;249 node_images.module:705
+msgid "Weight"
+msgstr ""
+
+#: node_images.pages.inc:82;247 node_images.module:705
+msgid "List"
+msgstr ""
+
+#: node_images.pages.inc:83
+msgid "Yes"
+msgstr ""
+
+#: node_images.pages.inc:83
+msgid "No"
+msgstr ""
+
+#: node_images.pages.inc:88 node_images.module:376
+msgid "Attach new image"
+msgstr ""
+
+#: node_images.pages.inc:90 node_images.module:378
+msgid "Images larger than %resolution will be resized. "
+msgstr ""
+
+#: node_images.pages.inc:90 node_images.module:378
+msgid "The maximum upload size is %filesize. Only files with the following extensions may be uploaded: %extensions. "
+msgstr ""
+
+#: node_images.pages.inc:94
+msgid "Upload"
+msgstr ""
+
+#: node_images.pages.inc:99 node_images.module:388
+msgid "Please wait..."
+msgstr ""
+
+#: node_images.pages.inc:111
+msgid "Image list"
+msgstr ""
+
+#: node_images.pages.inc:162
+msgid "Save changes"
+msgstr ""
+
+#: node_images.pages.inc:181
+msgid "Unable to load node."
+msgstr ""
+
+#: node_images.pages.inc:213
+msgid "The changes have been saved."
+msgstr ""
+
+#: node_images.pages.inc:247 node_images.module:705
+msgid "Delete"
+msgstr ""
+
+#: node_images.pages.inc:249 node_images.module:705
+msgid "Thumbnail"
+msgstr ""
+
+#: node_images.pages.inc:249
+msgid "Description and info"
+msgstr ""
+
+#: node_images.pages.inc:249 node_images.module:705
+msgid "Size"
+msgstr ""
+
+#: node_images.pages.inc:258
+msgid "Author: !name"
+msgstr ""
+
+#: node_images.pages.inc:259
+msgid "Uploaded on: %date"
+msgstr ""
+
+#: node_images.pages.inc:260
+msgid "Path: !path"
+msgstr ""
+
+#: node_images.pages.inc:295
+msgid "No images uploaded for this content."
+msgstr ""
+
+#: node_images.pages.inc:297
+msgid "Click <a href=\"!url\">here</a> to upload new images."
+msgstr ""
+
+#: node_images.pages.inc:365
+msgid "Photo gallery for %title"
+msgstr ""
+
+#: node_images.pages.inc:373
+msgid "Previous"
+msgstr ""
+
+#: node_images.pages.inc:374
+msgid "Image !current of !total"
+msgstr ""
+
+#: node_images.pages.inc:377
+msgid "Next"
+msgstr ""
+
+#: node_images.module:144;151
+msgid "Thumbnails"
+msgstr ""
+
+#: node_images.module:17
+msgid "This page allows you to manage node images."
+msgstr ""
+
+#: node_images.module:20
+msgid "This page allows you to view node images."
+msgstr ""
+
+#: node_images.module:22
+msgid "You can upload new images or edit current images by switching to the default language."
+msgstr ""
+
+#: node_images.module:26
+msgid "Image descriptions can be translated using the localization interface."
+msgstr ""
+
+#: node_images.module:29
+msgid "Image descriptions can be translated using the localization interface and the i18nstrings module (available in the <a href=\"@i18n\">Internationalization</a> package)."
+msgstr ""
+
+#: node_images.module:65;105;162;355
+msgid "Node images"
+msgstr ""
+
+#: node_images.module:66
+msgid "Control how to upload node images."
+msgstr ""
+
+#: node_images.module:73;195
+msgid "Images"
+msgstr ""
+
+#: node_images.module:83
+msgid "Gallery"
+msgstr ""
+
+#: node_images.module:111
+msgid "Position"
+msgstr ""
+
+#: node_images.module:113;121
+msgid "Do not show"
+msgstr ""
+
+#: node_images.module:113
+msgid "Show above node body"
+msgstr ""
+
+#: node_images.module:113
+msgid "Show below node body"
+msgstr ""
+
+#: node_images.module:114
+msgid "Manually set in node template by variable $node->node_images"
+msgstr ""
+
+#: node_images.module:115
+msgid "The position of images in the node view."
+msgstr ""
+
+#: node_images.module:119
+msgid "Link to image gallery"
+msgstr ""
+
+#: node_images.module:121
+msgid "Show"
+msgstr ""
+
+#: node_images.module:122
+msgid "Choose whether to show or not the link to the image gallery."
+msgstr ""
+
+#: node_images.module:126
+msgid "Number of images in node teaser"
+msgstr ""
+
+#: node_images.module:130
+msgid "The maximum number of images to show in the node teaser. 0 will not show images. Leave blank to show all images."
+msgstr ""
+
+#: node_images.module:134
+msgid "Number of images in node body"
+msgstr ""
+
+#: node_images.module:138
+msgid "The maximum number of images to show in the node body. 0 will not show images. Leave blank to show all images."
+msgstr ""
+
+#: node_images.module:142
+msgid "Image format in node teaser"
+msgstr ""
+
+#: node_images.module:144;151
+msgid "Full size images"
+msgstr ""
+
+#: node_images.module:145
+msgid "Image format in node teaser."
+msgstr ""
+
+#: node_images.module:149
+msgid "Image format in node body"
+msgstr ""
+
+#: node_images.module:152
+msgid "Image format in node body."
+msgstr ""
+
+#: node_images.module:165
+msgid "Changes made to the node images are not permanent until you save this post."
+msgstr ""
+
+#: node_images.module:194
+msgid "Click the <strong>!images</strong> tab to edit node images."
+msgstr ""
+
+#: node_images.module:291
+msgid "Edit node images"
+msgstr ""
+
+#: node_images.module:297
+msgid "Open the image gallery"
+msgstr ""
+
+#: node_images.module:383
+msgid "Attach"
+msgstr ""
+
+#: node_images.module:440
+msgid "File upload error."
+msgstr ""
+
+#: node_images.module:524
+msgid "Unable to copy image \"%image\"."
+msgstr ""
+
+#: node_images.module:657
+msgid "Node not valid."
+msgstr ""
+
+#: node_images.module:661
+msgid "You are not allowed to upload node images."
+msgstr ""
+
+#: node_images.module:686
+msgid "The image has been successfully uploaded."
+msgstr ""
+
+#: node_images.module:777
+msgid "View all images"
+msgstr ""
+
+#: node_images.module:836
+msgid "Make sure you have a working image toolkit installed and enabled, for more information see: %settings"
+msgstr ""
+
+#: node_images.module:836
+msgid "the settings page"
+msgstr ""
+
+#: node_images.module:905
+msgid "Its name exceeds the 255 characters limit. Please rename the file and try again."
+msgstr ""
+
+#: node_images.module:41
+msgid "administer node images"
+msgstr ""
+
+#: node_images.module:41
+msgid "edit own node images"
+msgstr ""
+
+#: node_images.module:41
+msgid "edit any node image"
+msgstr ""
+
+#: node_images.module:41
+msgid "delete own node images"
+msgstr ""
+
+#: node_images.module:41
+msgid "delete any node image"
+msgstr ""

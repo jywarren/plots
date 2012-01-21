@@ -128,6 +128,7 @@
   <script src="/scripts/jquery-nivo-slider-pack.js" type="text/javascript"></script>
   <link rel="stylesheet" href="/scripts/nivo-slider.css" type="text/css" media="screen" />
   <link href="http://publiclaboratory.org/rss.xml" rel="alternate" type="application/rss+xml" title="The Public Laboratory" />
+
 </head>
 <body class="<?php print $classes; ?>">
 
@@ -150,10 +151,10 @@ The Public Laboratory website is designed for use in any browser except Internet
 		<ul class="sublinks" style="display:none;" id="placeHeader">
 			<li><a href="/place/new-york-city">New York</a></li>
 			<li><a href="/place/gulf-coast">Gulf Coast</a></li>
-			<li><a href="/place/somerville-ma">Somerville</a></li>
+			<li><a href="/place/somerville-massachusetts">Somerville</a></li>
 			<li><a href="/place/providence">Providence</a></li>
 			<li><a href="/place/butte">Butte</a></li>
-			<li><a href="/place/western-carolina-university">Western Carolina University</a></li>
+			<li><a href="/place/western-north-carolina">Western North Carolina</a></li>
 			<li><a href="/place/texas">Texas</a></li>
 			<li><a href="/place/sumava-czech-republic">Sumava, Czech Republic</a></li>
 			<li><a href="/place/portland-oregon">Portland, OR</a></li>
@@ -162,13 +163,19 @@ The Public Laboratory website is designed for use in any browser except Internet
 		<a href="/places">Places</a> 
 	</li>
 	<li><a href="/notes">Research notes</a></li>
-	<li><a href="/archive">Archive</a></li> 
+	<li onMouseOver="$('#archiveHeader').show()" onMouseOut="$('#archiveHeader').hide()">
+		<ul class="sublinks" style="display:none;" id="archiveHeader">
+			<li><a href="/maps/gulf-coast">Gulf Coast</a></li>
+			<li><a href="/maps/new-york-city">New York City</a></li>
+		</ul>
+		<a href="/archive">Archive</a>
+	</li>
 	<li onMouseOver="$('#toolHeader').show()" onMouseOut="$('#toolHeader').hide()">
 		<ul class="sublinks" style="display:none;" id="toolHeader">
 			<li><a href="/tool/balloon-mapping">Balloon mapping</a></li>
 			<li><a href="/tool/near-infrared-camera">Near-infrared camera</a></li>
-			<li><a href="/tool/thermal-camera">Thermal camera</a></li>
-			<li><a href="/tool/roomba-toxin-mapping">Roomba toxin mapping</a></li>
+			<li><a href="/tool/thermal-photography">Thermal photography</a></li>
+			<li><a href="/tool/indoor-air-quality-mapping">Indoor air quality mapping</a></li>
 			<li><a href="/tool/spectrometer">Spectrometer</a></li>
 			<li><a href="/tool/hydrogen-sulfide-sensing">Hydrogen sulfide sensing</a></li>
 			<li><a href="/tool/environmental-estrogen-testing">Environmental estrogen testing</a></li>
@@ -191,6 +198,18 @@ The Public Laboratory website is designed for use in any browser except Internet
       <?php print $header; ?>
 
     </div></div> <!-- /.section, /#header -->
+
+    <?php if ($node->type == 'map') { ?>
+    <div id="map-fullscreen-btn-div"><a id="map-fullscreen-btn" href="javascript:void();" onClick="fullscreen()">Fullscreen</a></div>
+    <div id='map'>
+      <a id="map-minimize-btn" href="javascript:void();" onClick="minimize()">Close</a>
+    </div>
+    <style> 
+      #header { padding-bottom:0 !important;margin-bottom:0 !important; }
+      #navigation .clearfix { margin:0 !important;background:none !important; }
+      #content-area ul.links { background:none !important;padding-bottom:0 !important; }
+    </style>
+    <?php } ?>
 
     <div id="main-wrapper"><div id="main" class="clearfix<?php if ($primary_links || $navigation) { print ' with-navigation'; } ?>">
 
@@ -240,6 +259,7 @@ The Public Laboratory website is designed for use in any browser except Internet
 	<?php } ?>
 
         <?php print $breadcrumb; ?>
+
         <?php if ($title && strlen($title) < 100) { ?>
           <h1 class="title"><?php print $title; ?></h1>
         <?php } else if ($title) { ?>
@@ -252,6 +272,7 @@ The Public Laboratory website is designed for use in any browser except Internet
         <?php print $help; ?>
 
         <?php print $content_top; ?>
+
 
         <div id="content-area">
           <?php print $content; ?>

@@ -24,6 +24,17 @@ a {
 	color:#34a;
 }
 
+/*
+ * Suggested formats for editors
+ */
+.floatright { float:right;margin:10px; }
+.frame { 
+border: 5px solid #EEE;
+margin: 5px;
+padding: 1px;
+background: #666;
+}
+
 a:hover {
 	color:#128;
 }
@@ -246,8 +257,8 @@ ul#links {
 	padding:0;
 	background:black;
 	position:absolute;
-	top:43px;left:0;
-	z-index:999;
+	top:42px;left:0;
+	z-index:99;
 	float:left;
 	clear:both;
 	font-size:12px;
@@ -309,8 +320,19 @@ div.widget {
 	font-size:10px;
 }
 
-.widget form .filefield-upload input {
+form .filefield-element input.form-submit {
 	margin-top:4px;
+	clear:both;
+}
+.block .form-item .description {
+	font-size:10px;
+}
+.block .filefield-upload .form-file { 
+	margin-bottom:4px;
+}
+.form-submit {
+	font-size:1.4em;
+	padding-bottom:6px;
 }
 
 .widget form .description, .widget form .tips {
@@ -391,7 +413,8 @@ div.widget {
 }
 
 #map {
-	height:300px;
+	height:350px;
+	width:960px;
 }
 
 #share {
@@ -769,7 +792,8 @@ div.messages {
 }
 
 #block-search-0 input#edit-search-block-form-1 {
-	font-size:1.4em;
+	font-size:1.5em;
+	margin-bottom:5px;
 }
 
 #content .archive .views-view-grid .views-field-title {

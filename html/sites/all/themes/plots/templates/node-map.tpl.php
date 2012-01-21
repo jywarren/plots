@@ -89,7 +89,7 @@
       <?php if ($display_submitted): ?>
       <?php endif; ?>
 
-      <?php if ($terms): ?>
+      <?php if (false): //$terms): ?>
         <div class="terms terms-inline"><?php print $terms; ?></div>
       <?php endif; ?>
     </div>
@@ -98,11 +98,6 @@
 <script type="text/javascript" src="http://openlayers.org/api/2.9/OpenLayers.js"></script>
 <script src='http://maps.google.com/maps?file=api&amp;v=2&amp;key=ABQIAAAANO6Yx8ihhesSqnPHx9a3RxQCA0kQZc0rHxnaN3mazoBpOqX1oBQwLut2gk7rd_T9sYyxcGJrxQK3gg' type='text/javascript'></script> 
 <script src="http://api.maps.yahoo.com/ajaxymap?v=3.0&amp;appid=INSERT_YOUR_YAHOO_APP_ID_HERE"></script>
-
-<div id="map-fullscreen-btn-div"><a id="map-fullscreen-btn" href="javascript:void();" onClick="fullscreen()">Fullscreen</a></div>
-<div id='map'>
-<a id="map-minimize-btn" href="javascript:void();" onClick="minimize()">Close</a>
-</div>
 
 <script>
 <?php 
@@ -144,7 +139,7 @@
 		maxResolution: 156543.0339,
 	});
 
-        var grm_tms = new OpenLayers.Layer.TMS( "<?php print $title; ?>",
+        var grm_tms = new OpenLayers.Layer.TMS( "<?php print $title; ?> (<?php echo date("F j, Y",strtotime($node->field_capture_date[0][value])); ?>)",
 	"<?php print $node->field_tms_url[0]['value'] ?>",
         { projection: latlon,
 	  getURL: overlay_getTileURL,
@@ -153,12 +148,13 @@
 	  attribution: '<a href="http://publiclaboratory.org/">Public Laboratory</a>',
           serviceVersion: '.', 
           layername: '.', 
-          type: 'png', 
+          type: '<?php if ($node->field_tms_tile_type[0]['value']) { print $node->field_tms_tile_type[0]['value']; } else { print "png"; } ?>', 
           alpha: true, 
           isBaseLayer: false,
 	 // transitionEffect: "resize",
 	});
         map.addLayer(grm_tms);
+
 
 	// create OSM/OAM layer
 	var osm = new OpenLayers.Layer.TMS( "OpenStreetMap",
@@ -281,20 +277,6 @@
 </script>
 
 <div id="hide-on-fullscreen">
-
-<?php 
-
-function formatbytes($megabytes)  
-{  
-    if ($megabytes > 1024) {
-	return round($megabytes/1024,1).' gb';
-//    } else if ($megabytes > 1000) {
-    } else {
-	return $megabytes.' mb';
-    }  
-}  
-
-?>
 
 <div class="formats">
 	<h3>Formats:</h3>

@@ -56,6 +56,7 @@ scripts[] = js/jquery-1.7.1.min.js
 scripts[] = js/jquery.tableofcontents.min.js
 scripts[] = js/jquery.sparkline.min.js
 scripts[] = js/absolutize.js
+scripts[] = js/jcarousellite_1.0.1.min.js
 
   ; The regions defined in Zen's default page.tpl.php file.  The name in
   ; brackets is the name of the variable in the page.tpl.php file, (e.g.

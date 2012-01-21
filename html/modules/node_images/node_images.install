@@ -1,0 +1,82 @@
+<?php
+// $Id: node_images.install,v 1.4.2.1 2008/08/23 08:53:35 stefano73 Exp $
+
+/**
+ * Implementation of hook_install().
+ */
+function node_images_install() {
+  // Create tables.
+  drupal_install_schema('node_images');
+}
+
+function node_images_uninstall(){
+  drupal_uninstall_schema('node_images');
+  variable_del('node_images_path');
+  variable_del('node_images_md5name');
+  variable_del('node_images_extensions');
+  variable_del('node_images_file_limit');
+  variable_del('node_images_large_resolution');
+  variable_del('node_images_thumb_resolution');
+  variable_del('node_images_uploadsize_default');
+  variable_del('node_images_max_images');
+
+  $names = node_get_types('names');
+  foreach ($names as $key => $name) {
+    variable_del('node_images_position_'. $key);
+    variable_del('node_images_teaser_images_'. $key);
+    variable_del('node_images_body_images_'. $key);
+    variable_del('node_images_teaser_format_'. $key);
+    variable_del('node_images_body_format_'. $key);
+    variable_del('node_images_roles_add_'. $key);
+  }
+}
+
+function node_images_schema(){
+  $schema['node_images'] = array(
+    'fields' => array(
+      'id' => array('type' =>'serial', 'unsigned' => TRUE, 'not null' => TRUE),
+      'nid' => array('type' =>'int', 'unsigned' => TRUE, 'not null' => TRUE, 'default' => 0),
+      'uid' => array('type' =>'int', 'unsigned' => TRUE, 'not null' => TRUE, 'default' => 0),
+      'filename' =>  array('type' => 'varchar', 'length' => 255, 'not null' => TRUE, 'default' => ''),
+      'filepath'  =>  array('type' => 'varchar', 'length' => 255, 'not null' => TRUE, 'default' => ''),
+      'filemime'  =>  array('type' => 'varchar', 'length' => 255, 'not null' => TRUE, 'default' => ''),
+      'filesize' => array('type' =>'int', 'unsigned' => TRUE, 'not null' => TRUE, 'default' => 0),
+      'thumbpath'  =>  array('type' => 'varchar', 'length' => 255, 'not null' => TRUE, 'default' => ''),
+      'thumbsize' => array('type' =>'int', 'unsigned' => TRUE, 'not null' => TRUE, 'default' => 0),
+      'status' => array('type' =>'int', 'size' => 'small', 'unsigned' => TRUE, 'not null' => TRUE, 'default' => 1),
+      'weight' => array('type' =>'int', 'size' => 'small', 'unsigned' => FALSE, 'not null' => TRUE, 'default' => 0),
+      'description'  =>  array('type' => 'varchar', 'length' => 255, 'not null' => TRUE, 'default' => ''),
+      'timestamp'  =>  array('type' => 'int', 'unsigned' => TRUE, 'default' => 0),
+      'list'  =>  array('type' => 'int', 'size' => 'tiny', 'not null' => TRUE, 'unsigned' => TRUE, 'default' => 1),
+    ),
+    'primary key' => array('id'),
+    'indexes' => array(
+      'uid' =>array('uid'),
+      'nid_status' => array('nid', 'status'),
+    )
+  );
+  return $schema;
+}
+
+function node_images_update_1() {
+  $names = node_get_types('names');
+  foreach ($names as $key => $name) {
+    if ($result = variable_get('node_images_'. $key, '')) {
+      variable_set('node_images_position_'. $key, $result);
+      variable_del('node_images_'. $key);
+    }
+  }
+  return array();
+}
+
+function node_images_update_2() {
+  $ret = array();
+  switch ($GLOBALS['db_type']) {
+    case 'mysql':
+    case 'mysqli':
+      $ret[] = update_sql('ALTER TABLE {node_images} ADD timestamp INT(11) NOT NULL default 0');
+      $ret[] = update_sql('ALTER TABLE {node_images} ADD list TINYINT(1) unsigned NOT NULL default 1');
+      break;
+  }
+  return $ret;
+}
