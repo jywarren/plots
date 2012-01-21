@@ -1,0 +1,14 @@
+; $Id: nfcbiblio.info,v 1.1 2009/04/24 21:21:53 hugowetterberg Exp $
+name = Biblio compatability
+description = Adds support for biblio fields
+dependencies[] = nodeformcols
+dependencies[] = biblio
+core = 6.x
+package = Node form columns
+
+; Information added by drupal.org packaging script on 2009-09-21
+version = "6.x-1.6"
+core = "6.x"
+project = "nodeformcols"
+datestamp = "1253514044"
+

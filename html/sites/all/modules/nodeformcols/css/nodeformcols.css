@@ -1,0 +1,14 @@
+/* $Id: nodeformcols.css,v 1.2 2009/03/04 20:14:55 hugowetterberg Exp $ */
+.node-form .form-region-right {
+  width: 29%;
+  float: right;
+}
+
+.node-form-has-region-right .form-region-main {
+  float: left;
+  width: 70%;
+}
+
+.node-form-has-region-right .form-region-footer {
+  clear: both;
+}
