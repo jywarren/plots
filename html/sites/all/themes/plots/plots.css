@@ -16,8 +16,8 @@ hr {
 	margin:10px 0;
 }
 
-p {
-	font-size:0.9em;
+p, #content-area ul {
+	font-size:0.85em;
 }
 
 a {
@@ -319,6 +319,9 @@ div.widget {
 .widget form input, .widget form legend, .widget form select {
 	font-size:10px;
 }
+input.form-file {
+	font-size:11px;
+}
 
 form .filefield-element input.form-submit {
 	margin-top:4px;
@@ -333,6 +336,9 @@ form .filefield-element input.form-submit {
 .form-submit {
 	font-size:1.4em;
 	padding-bottom:6px;
+}
+#edit-field-image-gallery-field-image-gallery-add-more {
+	font-size:11px;
 }
 
 .widget form .description, .widget form .tips {
@@ -417,6 +423,11 @@ form .filefield-element input.form-submit {
 	width:960px;
 }
 
+.node-type-map .field {
+	line-height:1.3em;
+	font-size: 12px;
+}
+
 #share {
 	margin-top:6px;
 	height:25px;
@@ -442,6 +453,9 @@ form .filefield-element input.form-submit {
 
 .comment .submitted {
 	font-size:11px;
+}
+textarea.markitupeditor {
+	width:470px;
 }
 
 /* Attempt to show all base layers at partial opacity, failure so far */
@@ -616,9 +630,6 @@ form .filefield-element input.form-submit {
 	padding:0;
 }
 .page-tools #content .views-row-odd {
-}
-.node-type-tool p {
-	font-size:11px;
 }
 
 /* Taxonomy styling */

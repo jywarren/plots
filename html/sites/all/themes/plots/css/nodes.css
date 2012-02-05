@@ -19,13 +19,20 @@ width: 166px;
 }
 #block-formblock-note {
 background: #EEE;
-padding: 2px;
-border: solid 3px #CCC;
+padding: 8px;
+border-top: 3px solid #CCC;
+}
+
+#block-formblock-note fieldset {
+border:0;
+padding:0;
+}
+#block-formblock-note fieldset legend a {
+padding-left:10px;
+background-position-x:0;
 }
 
 .field-field-image-gallery {
-float: left;
-text-align: center;
 }
 .attachments .description, #field-image-gallery-items .description, #edit-field-main-image-0-upload-wrapper .description {
 display: none;
@@ -38,9 +45,9 @@ width: 166px;
 .field-field-image-gallery .field-items {
 float: left;
 background: #EEE;
-padding: 3px;
-border: solid 1px #CCC;
-margin: 5px;
+padding: 8px;
+border-top: solid 3px #CCC;
+margin: 0 10px 10px 0;
 }
 
 .field-field-image-gallery .field-items img {

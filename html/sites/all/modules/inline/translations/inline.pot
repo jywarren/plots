@@ -1,0 +1,165 @@
+# $Id: inline.pot,v 1.1 2008/08/17 14:22:43 sun Exp $
+#
+# LANGUAGE translation of Drupal (general)
+# Copyright YEAR NAME <EMAIL@ADDRESS>
+# Generated from files:
+#  inline.module,v 1.32 2008/07/05 00:20:18 sun
+#  inline.info,v 1.3 2008/06/15 02:39:45 sun
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PROJECT VERSION\n"
+"POT-Creation-Date: 2008-08-17 16:20+0200\n"
+"PO-Revision-Date: YYYY-mm-DD HH:MM+ZZZZ\n"
+"Last-Translator: NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <EMAIL@ADDRESS>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
+
+#: inline.theme.inc:12
+msgid "Download: @name (@size)"
+msgstr ""
+
+#: inline.theme.inc:44
+msgid "View"
+msgstr ""
+
+#: inline.module:33
+msgid "<p>Sometimes a user may want to add an image or a file inside the body of a node. This can be done with special tags that are replaced by links to the corresponding uploaded file. If the file is an image, it will be displayed inline, otherwise a link to the file will be inserted. To enable this feature and learn the proper syntax, visit the <a href=\"!filters\">filters configuration screen</a>.</p>"
+msgstr ""
+
+#: inline.module:36
+msgid "You may add links to files uploaded with this node <a href=\"!explanation-url\">using special tags</a>"
+msgstr ""
+
+#: inline.module:39
+msgid "<p>You may link to files uploaded with the current node using special tags. The tags will be replaced by the corresponding files. Syntax: <code>[inline:file_id]</code>. Parameter: file_id represents the file uploaded with the node in which to link, assuming that the first uploaded file is labeled as 1 and so on.</p>\n    <p>If the file is an image, it will be displayed inline, otherwise a link to the file will be inserted.</p> "
+msgstr ""
+
+#: inline.module:61
+msgid "Inline filter is not yet enabled for at least one <a href=\"!formats\">input format</a>."
+msgstr ""
+
+#: inline.module:66
+msgid "Image output"
+msgstr ""
+
+#: inline.module:68
+msgid "<strong>Note:</strong> Images are only processed, if a tag is referencing them. However, there is a auto-inline feature to inline all uploaded images automatically. Auto-inline can be enabled for certain <a href=\"!content-types\">content types</a>."
+msgstr ""
+
+#: inline.module:72
+msgid "Link to images"
+msgstr ""
+
+#: inline.module:75
+msgid "Display image only"
+msgstr ""
+
+#: inline.module:76
+msgid "Display image with a link to the image file"
+msgstr ""
+
+#: inline.module:99
+msgid "Image dimensions and scaling"
+msgstr ""
+
+#: inline.module:101
+msgid "Select the <a href=\"!presets\">Imagecache presets</a> to use for inlined images."
+msgstr ""
+
+#: inline.module:101
+msgid "<strong>Note:</strong> If <a href=\"!imagecache\">Imagecache</a> module is installed, Inline provides support for image scaling."
+msgstr ""
+
+#: inline.module:113
+msgid "Teaser preset"
+msgstr ""
+
+#: inline.module:114
+msgid "Select the Imagecache preset to use for inlined images in teaser view."
+msgstr ""
+
+#: inline.module:120
+msgid "Full preset"
+msgstr ""
+
+#: inline.module:121
+msgid "Select the Imagecache preset to use for inlined images in full view."
+msgstr ""
+
+#: inline.module:130
+msgid "Maximum width and height for inline images (format: XXX,YYY)"
+msgstr ""
+
+#: inline.module:135
+msgid "This setting limits the dimensions of displayed images in pixels. They will not be resized. Images exceeding these dimensions are automatically not displayed."
+msgstr ""
+
+#: inline.module:152
+msgid "Display attachments inline automatically"
+msgstr ""
+
+#: inline.module:155
+msgid "Disabled"
+msgstr ""
+
+#: inline.module:156
+msgid "Only in teaser view"
+msgstr ""
+
+#: inline.module:157
+msgid "Only in body view"
+msgstr ""
+
+#: inline.module:158
+msgid "In teaser and body view"
+msgstr ""
+
+#: inline.module:159
+msgid "Choose whether uploaded images should be shown inline automatically. Make sure you set the dimensions at !settings_url"
+msgstr ""
+
+#: inline.module:159
+msgid "inline settings"
+msgstr ""
+
+#: inline.module:175
+msgid "Inline file filter"
+msgstr ""
+
+#: inline.module:178
+msgid "Substitutes [inline:xx] tags with the xxth file uploaded with the node."
+msgstr ""
+
+#: inline.module:193
+msgid "\n      You may link to files uploaded with the current node using special tags. The tags will be replaced by the corresponding files. For example:\n\n      Suppose you uploaded three files (in this order):\n      <ul>\n      <li>imag1.png (referred as file #1)\n      <li>file1.pdf (referred as file #2)\n      <li>imag2.png (referred as file #3)\n      </ul>\n\n      <pre>[inline:1=test]  or  [inline:imag1.png=test]</pre>\n      will be replaced by <em><code>&lt;img src=imag1.png alt=test&gt;</code></em>\n\n      <pre>[file:1=test]  or  [file:imag1.png=test]</pre>\n      will be replaced by <em><code>&lt;a href=imag1.png&gt;test&lt;/a&gt;</code></em>\n\n      <pre>[attachment:2=test]  or  [attachment:file1.pdf=test]</pre>\n      will be replaced by <em><code>&lt;a href=file1.pdf.png&gt;test&lt;/a&gt;</code></em>"
+msgstr ""
+
+#: inline.module:213
+msgid "You may use <a href=\"!inline_help\">[inline:xx] tags</a> to display uploaded files or images inline."
+msgstr ""
+
+#: inline.module:24
+msgid "administer inline settings"
+msgstr ""
+
+#: inline.module:0
+msgid "inline"
+msgstr ""
+
+#: inline.info:0
+msgid "Inline"
+msgstr ""
+
+#: inline.info:0
+msgid "Allows attached files to be placed into the body of a node either automatically or by using simple tags."
+msgstr ""
+
+#: inline.info:0
+msgid "Input filters"
+msgstr ""
+

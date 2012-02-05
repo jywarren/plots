@@ -1,0 +1,309 @@
+# Hungarian translation of inline (6.x-1.x-dev)
+# Copyright (c) 2008 by the Hungarian translation team
+# Generated from files:
+#  inline.module,v 1.34 2008/08/17 14:43:39 sun
+#  inline.theme.inc,v 1.2 2008/08/17 14:43:39 sun
+#  inline.info,v 1.4 2008/08/17 14:22:43 sun
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: inline (6.x-1.x-dev)\n"
+"POT-Creation-Date: 2008-11-22 02:52-0600\n"
+"PO-Revision-Date: 2008-11-21 09:29-0600\n"
+"Last-Translator: Balogh Zoltán\n"
+"Language-Team: Hungarian http://forditas.mindworks.hu\n\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n!=1);\n"
+
+#: inline.module:159
+msgid "Disabled"
+msgstr "Tiltott"
+
+#: inline.theme.inc:48
+msgid "View"
+msgstr "Megtekintés"
+
+#: inline.info:0
+msgid "Inline"
+msgstr "Beágyazott"
+
+#: inline.module:15,15
+msgid "Inline"
+msgstr "Beágyazott"
+
+#: inline.theme.inc:16
+msgid "Download: @name (@size)"
+msgstr "Letöltés: @name (@size)"
+
+#: inline.module:37
+msgid ""
+"<p>Sometimes a user may want to add an image or a file inside the body "
+"of a node. This can be done with special tags that are replaced by "
+"links to the corresponding uploaded file. If the file is an image, it "
+"will be displayed inline, otherwise a link to the file will be "
+"inserted. To enable this feature and learn the proper syntax, visit "
+"the <a href=\"!filters\">filters configuration screen</a>.</p>"
+msgstr ""
+"<p>Néhányszor előfordul, hogy a felhasználó szeretne egy képet "
+"vagy egy állományt elhelyezni a tartalomban. Ezt speciális "
+"jelölőkkel teheti meg, melyek ki lesznek cserélve egy hivatkozásra "
+"a megfelelő csatolmányhoz. Ha az állomány egy kép, akkor az "
+"beágyazva meg fog jelenni, ellenkező esetben egy hivatkozás az "
+"állományhoz lesz beillesztve. A lehetőség engedélyezése, "
+"valamint a helyes szintakszis elsajátítása a <a "
+"href=\"!filters\">beviteli formák beállítása oldalon</a>.</p>"
+
+#: inline.module:40
+msgid ""
+"You may add links to files uploaded with this node <a "
+"href=\"!explanation-url\">using special tags</a>"
+msgstr ""
+"Lehetőség van hivatkozásokat adni a csatolmányokhoz ebben a "
+"tartalomban <a href=\"!explanation-url\">speciális jelölőket "
+"használva</a>"
+
+#: inline.module:43
+msgid ""
+"<p>You may link to files uploaded with the current node using special "
+"tags. The tags will be replaced by the corresponding files. Syntax: "
+"<code>[inline:file_id]</code>. Parameter: file_id represents the file "
+"uploaded with the node in which to link, assuming that the first "
+"uploaded file is labeled as 1 and so on.</p>\n"
+"    <p>If the file is an image, it will be displayed inline, otherwise "
+"a link to the file will be inserted.</p> "
+msgstr ""
+"<p>Lehetőség van hivatkozásokat adni a csatolmányokhoz ebben a "
+"tartalomban speciális jelölőket használva. A jelölők ki lesznek "
+"cserélve a megfelelő állományokra. Használat: "
+"<code>[inline:file_id]</code>. Paraméter: A file_id jelképezi azt a "
+"tartalomhoz feltöltött állományt, amelyikre a hivatkozás "
+"vonatkozik. Az első csatolmány az 1-es, és így tovább.</p>\n"
+"    <p>ha az állomány egy kép, akkor az beágyazva jelenik meg, "
+"egyébként az állományhoz egy hivatkozás lesz beillesztve.</p>"
+
+#: inline.module:65
+msgid ""
+"Inline filter is not yet enabled for at least one <a "
+"href=\"!formats\">input format</a>."
+msgstr ""
+"A beágyazó szűrő nincs engedélyezve egyetlen <a "
+"href=\"!formats\">beviteli forma</a> esetében sem."
+
+#: inline.module:70
+msgid "Image output"
+msgstr "Kép kimenet"
+
+#: inline.module:72
+msgid ""
+"<strong>Note:</strong> Images are only processed, if a tag is "
+"referencing them. However, there is a auto-inline feature to inline "
+"all uploaded images automatically. Auto-inline can be enabled for "
+"certain <a href=\"!content-types\">content types</a>."
+msgstr ""
+"<strong>Megjegyzés:</strong> A képek csak akkor lesznek feldolgozva, "
+"ha egy jelölő hivatkozik rájuk. Mindamellett van egy automatikus "
+"beágyazó lehetőség minden feltöltött kép automatikus "
+"beillesztéséhez. Ezt a lehetőséget a <a "
+"href=\"!content-types\">tartalom típusok</a> oldalon lehet "
+"engedélyezni."
+
+#: inline.module:76
+msgid "Link to images"
+msgstr "Hivatkozás a képhez"
+
+#: inline.module:79
+msgid "Display image only"
+msgstr "Csak a kép megjelenítése"
+
+#: inline.module:80
+msgid "Display image with a link to the image file"
+msgstr "A kép megjelenítése egy hivatkozással a képhez"
+
+#: inline.module:103
+msgid "Image dimensions and scaling"
+msgstr "Kép méretei és átméretezés"
+
+#: inline.module:105
+msgid ""
+"Select the <a href=\"!presets\">Imagecache presets</a> to use for "
+"inlined images."
+msgstr ""
+"Az <a href=\"!presets\">Imagecache egyik előre beállított "
+"értékének</a> kiválasztása a beágyazott képekhez."
+
+#: inline.module:105
+msgid ""
+"<strong>Note:</strong> If <a href=\"!imagecache\">Imagecache</a> "
+"module is installed, Inline provides support for image scaling."
+msgstr ""
+"<strong>Megjegyzés:</strong> Ha az <a "
+"href=\"!imagecache\">Imagecache</a> module telepítve van, az Inline "
+"támogatja a képek átméretezését."
+
+#: inline.module:117
+msgid "Teaser preset"
+msgstr "Előnézeti beállítás"
+
+#: inline.module:118
+msgid "Select the Imagecache preset to use for inlined images in teaser view."
+msgstr ""
+"Az <em>Imagecache</em> egyik előre beállított értékének "
+"kiválasztása az előnézethez."
+
+#: inline.module:124
+msgid "Full preset"
+msgstr "Teljes nézeti beállítás"
+
+#: inline.module:125
+msgid "Select the Imagecache preset to use for inlined images in full view."
+msgstr ""
+"Az <em>Imagecache</em> egyik előre beállított értékének "
+"kiválasztása a teljes nézethez."
+
+#: inline.module:134
+msgid "Maximum width and height for inline images (format: XXX,YYY)"
+msgstr ""
+"A beágyazott képek maximális szélessége és magassága "
+"(formátum: XXX,YYY)"
+
+#: inline.module:139
+msgid ""
+"This setting limits the dimensions of displayed images in pixels. They "
+"will not be resized. Images exceeding these dimensions are "
+"automatically not displayed."
+msgstr ""
+"A megjelenített kép maximális méreteinek beállítása. A képek "
+"nem lesznek átméretezve. A megadott értékeket meghaladó képek "
+"nem jelennek meg automatikusan."
+
+#: inline.module:156
+msgid "Display attachments inline automatically"
+msgstr "A csatolt fájlok automatikus megjelenítése"
+
+#: inline.module:160
+msgid "Only in teaser view"
+msgstr "Csak a bevezetőben"
+
+#: inline.module:161
+msgid "Only in body view"
+msgstr "Csak a teljes nézetben"
+
+#: inline.module:162
+msgid "In teaser and body view"
+msgstr "Az bevezetőben és a teljes nézetben"
+
+#: inline.module:163
+msgid ""
+"Choose whether uploaded images should be shown inline automatically. "
+"Make sure you set the dimensions at !settings_url"
+msgstr ""
+"A feltöltött képek automatikus beágyazásának kiválasztása. Meg "
+"kell győződni arról, hogy a méretek be vannak állítva a "
+"!settings_url oldalon."
+
+#: inline.module:163
+msgid "inline settings"
+msgstr "beágyazó beállítások"
+
+#: inline.module:179
+msgid "Inline file filter"
+msgstr "Beágyazó szűrő"
+
+#: inline.module:182
+msgid ""
+"Substitutes [inline:xx] tags with the xxth file uploaded with the "
+"node."
+msgstr ""
+"Kicseréli az [inline:xx] jelölőket az állományhoz tartozó "
+"xx-edik számú csatolt állománnyal."
+
+#: inline.module:197
+msgid ""
+"\n"
+"      You may link to files uploaded with the current node using "
+"special tags. The tags will be replaced by the corresponding files. "
+"For example:\n"
+"\n"
+"      Suppose you uploaded three files (in this order):\n"
+"      <ul>\n"
+"      <li>imag1.png (referred as file #1)\n"
+"      <li>file1.pdf (referred as file #2)\n"
+"      <li>imag2.png (referred as file #3)\n"
+"      </ul>\n"
+"\n"
+"      <pre>[inline:1=test]  or  [inline:imag1.png=test]</pre>\n"
+"      will be replaced by <em><code>&lt;img src=imag1.png "
+"alt=test&gt;</code></em>\n"
+"\n"
+"      <pre>[file:1=test]  or  [file:imag1.png=test]</pre>\n"
+"      will be replaced by <em><code>&lt;a "
+"href=imag1.png&gt;test&lt;/a&gt;</code></em>\n"
+"\n"
+"      <pre>[attachment:2=test]  or  "
+"[attachment:file1.pdf=test]</pre>\n"
+"      will be replaced by <em><code>&lt;a "
+"href=file1.pdf.png&gt;test&lt;/a&gt;</code></em>"
+msgstr ""
+"Ebben a tartalomban lehetőség van hivatkozni a csatolmányokra "
+"speciális jelölők használatával. A jelölők le lesznek "
+"lecserélve the megfelelő állományokra. Például:\n"
+"\n"
+"      Tételezzük fel, hogy 3 állomány van feltöltve (ebben a "
+"sorrendben):\n"
+"      <ul>\n"
+"      <li>imag1.png (mint #1)\n"
+"      <li>file1.pdf (mint #2)\n"
+"      <li>imag2.png (mint #3)\n"
+"      </ul>\n"
+"\n"
+"      <pre>[inline:1=test]  vagy  [inline:imag1.png=test]</pre>\n"
+"      erre lesz lecserélve <em><code>&lt;img src=imag1.png "
+"alt=test&gt;</code></em>\n"
+"\n"
+"      <pre>[file:1=test]  vagy  [file:imag1.png=test]</pre>\n"
+"      erre lesz lecserélve <em><code>&lt;a "
+"href=imag1.png&gt;test&lt;/a&gt;</code></em>\n"
+"\n"
+"      <pre>[attachment:2=test]  vagy  "
+"[attachment:file1.pdf=test]</pre>\n"
+"      erre lesz lecserélve <em><code>&lt;a "
+"href=file1.pdf.png&gt;test&lt;/a&gt;</code></em>"
+
+#: inline.module:217
+msgid ""
+"You may use <a href=\"!inline_help\">[inline:xx] tags</a> to display "
+"uploaded files or images inline."
+msgstr ""
+"Használható az <a href=\"!inline_help\">[inline:xx] jelölő</a> a "
+"feltöltött állományok vagy képek beágyazásához."
+
+#: inline.module:28
+msgid "administer inline settings"
+msgstr "beágyazó beállításainak adminisztrációja"
+
+#: inline.module:16
+msgid ""
+"Manage automatic and manual inclusion of attachments in the content of "
+"your posts."
+msgstr ""
+"Kezeli a csatolmányok automatikus és manuális beágyazását a "
+"tartalomba."
+
+#: inline.module:0
+msgid "inline"
+msgstr "inline"
+
+#: inline.info:0
+msgid ""
+"Allows attached files to be placed into the body of a node either "
+"automatically or by using simple tags."
+msgstr ""
+"Lehetővé teszi a csatolt állományok elhelyezését a tartalomban "
+"automatikusan, vagy egyszerű jelölők segítségével."
+
+#: inline.info:0
+msgid "Input filters"
+msgstr "Beviteli szűrők"
+

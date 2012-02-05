@@ -1,0 +1,197 @@
+# Danish translation of Drupal (inline.module)
+# Copyright 2005, 2007 Morten Wulff <wulff@ratatosk.net>
+msgid ""
+msgstr ""
+"Project-Id-Version: Danish translation of Drupal (inline.module) $Id: da.po,v 1.1 2008/08/17 14:22:43 sun Exp $\n"
+"POT-Creation-Date: 2005-07-06 14:43+0200\n"
+"PO-Revision-Date: 2007-09-22 15:10+0100\n"
+"Last-Translator: Morten Wulff <wulff@ratatosk.net>\n"
+"Language-Team: Danish <l10n@drupaldanmark.dk>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Poedit-Language: Danish\n"
+"X-Poedit-Country: DENMARK\n"
+
+#: inline.module:14
+#: inline.info:0
+msgid "Inline"
+msgstr "Inline"
+
+#: inline.module:15
+msgid "Manage automatic and manual inclusion of attachments in the content of your posts."
+msgstr "Håndter automatisk og manuel integration af vedhæftede filer i brødtekst."
+
+#: inline.module:38
+msgid "<p>Sometimes a user may want to add an image or a file inside the body of a node. This can be done with special tags that are replaced by links to the corresponding uploaded file. If the file is an image, it will be displayed inline, otherwise a link to the file will be inserted. To enable this feature and learn the proper syntax, visit the <a href=\"!filters\">filters configuration screen</a>.</p>"
+msgstr "<p>Af og til kan brugerne have brug for at tilføje billeder eller filer til brødtekst. Det kan gøres med specielle mærker, der erstattes med henvisninger til de vedhæftede filer. Hvis der henvises til et vedhæftet billede vises det direkte i teksten, henvises der til en fil indsættes en henvisning til filen. Aktiver denne egenskab og læs mere om syntaksen under <a href=\"!filters\">filtre</a>.</p>"
+
+#: inline.module:41
+msgid "You may add links to files uploaded with this node <a href=\"!explanation-url\">using special tags</a>"
+msgstr "Du kan tilføje henvisninger til vedhæftede filer vha. <a href=\"!explanation-url\">specielle mærker</a>"
+
+#: inline.module:44
+msgid ""
+"<p>You may link to files uploaded with the current node using special tags. The tags will be replaced by the corresponding files. Syntax: <code>[inline:file_id]</code>. Parameter: file_id represents the file uploaded with the node in which to link, assuming that the first uploaded file is labeled as 1 and so on.</p>\n"
+"    <p>If the file is an image, it will be displayed inline, otherwise a link to the file will be inserted.</p> "
+msgstr "<p>Du kan tilføje henvisninger til vedhæftede filer vha. specielle mærker. Mærkerne erstattes med de tilsvarende filer. Syntaks: <code>[inline:fil_id]</code>. Parameter: fil_id er filens nummer på listen af vedhæftede filer. Den første fil har nummer 1.</p><p>Hvis filen er et billede vil billedet blive integeret i teksten, ellers indsættes en henvisning til filen.</p>"
+
+#: inline.module:66
+msgid "Inline filter is not yet enabled for at least one <a href=\"!formats\">input format</a>."
+msgstr "Inline-filtret skal aktiveres for mindst ét <a href=\"!formats\">inddataformat</a>."
+
+#: inline.module:71
+msgid "Image output"
+msgstr "Billedvisning"
+
+#: inline.module:73
+msgid "<strong>Note:</strong> Images are only processed, if a tag is referencing them. However, there is a auto-inline feature to inline all uploaded images automatically. Auto-inline can be enabled for certain <a href=\"!content-types\">content types</a>."
+msgstr "<strong>Bemærk:</strong> Billeder behandles kun hvis et mærke henviser til dem. Der findes et funktion, der automatisk integrerer billeder. Automatisk integration kan slås til for de enkelte <a href=\"!content-types\">indholdstyper</a>."
+
+# d:\cantincorov2\modules\inline\inline.module:20
+#: inline.module:77
+msgid "Link to images"
+msgstr "Link til billeder"
+
+#: inline.module:80
+msgid "Display image only"
+msgstr "Vis kun billede"
+
+#: inline.module:81
+msgid "Display image with a link to the image file"
+msgstr "Vis billedet med et link til billedfilen"
+
+#: inline.module:87
+msgid "Image dimensions and scaling"
+msgstr "Billedstørrelser og skalering"
+
+#: inline.module:89
+msgid "Select the <a href=\"!presets\">Imagecache presets</a> to use for inlined images."
+msgstr "Vælg hvilke <a href=\"!presets\">Imagecache indstillinger</a> du ønsker at bruge til integrerede billeder."
+
+#: inline.module:89
+msgid "<strong>Note:</strong> If <a href=\"!imagecache\">Imagecache</a> module is installed, Inline provides support for image scaling."
+msgstr "<strong>Bemærk:</strong> Hvis <a href=\"!imagecache\">Imagecache</a>-modulet er aktiveret, understøtter Inline skalering af billeder."
+
+#: inline.module:102
+msgid "Teaser preset"
+msgstr "Standard for smagsprøve"
+
+#: inline.module:103
+msgid "Select the Imagecache preset to use for inlined images in teaser view."
+msgstr "Vælg Imagecache-indstillingen der skal bruges for billeder i smagsprøver."
+
+#: inline.module:109
+msgid "Full preset"
+msgstr "Standard for fuld visning"
+
+#: inline.module:110
+msgid "Select the Imagecache preset to use for inlined images in full view."
+msgstr "Vælg Imagecache-indstillingen der skal bruges for billeder i fuld visning."
+
+#: inline.module:119
+msgid "Maximum width and height for inline images (format: XXX,YYY)"
+msgstr "Maksimal bredde og højde af integrerede billeder (format: XXX,YYY)"
+
+#: inline.module:124
+msgid "This setting limits the dimensions of displayed images in pixels. They will not be resized. Images exceeding these dimensions are automatically not displayed."
+msgstr "Denne indstilling påvirker størrelsen af de viste billeder. Billederne bliver ikke ændret. Billeder, der overskrider dimensionerne, bliver ikke vist."
+
+#: inline.module:141
+msgid "Display attachments inline automatically"
+msgstr "Integrer vedhæftede filer automatisk"
+
+#: inline.module:144
+msgid "Disabled"
+msgstr "Deaktiveret"
+
+#: inline.module:145
+msgid "Only in teaser view"
+msgstr "Kun i smagsprøve"
+
+#: inline.module:146
+msgid "Only in body view"
+msgstr "Kun i fuld visning"
+
+#: inline.module:147
+msgid "In teaser and body view"
+msgstr "I smagsprøve og fuld visning"
+
+#: inline.module:148
+msgid "Choose whether uploaded images should be shown inline automatically. Make sure you set the dimensions at !settings_url"
+msgstr "Vælg om vedhæftede billeder automatisk skal integreres i indholdet. Husk at indstille dimensionerne på !settings_url"
+
+#: inline.module:148
+msgid "inline settings"
+msgstr "indstillinger"
+
+#: inline.module:163
+msgid "Inline file filter"
+msgstr "Inline filter"
+
+#: inline.module:168
+msgid "Substitutes [inline:xx] tags with the xxth file uploaded with the node."
+msgstr "Erstatter [inline:xx] mærker med den xx'te fil hæftet til indholdselementet."
+
+#: inline.module:183
+msgid ""
+"\n"
+"      <a id=\"filter-inline\" name=\"filter-inline\"></a>\n"
+"      <p>You may link to files uploaded with the current node using special tags. The tags will be replaced by the corresponding files. For example:\n"
+"\n"
+"      Suppose you uploaded three files (in this order):\n"
+"      <ul>\n"
+"      <li>imag1.png (referred as file #1)\n"
+"      <li>file1.pdf (referred as file #2)\n"
+"      <li>imag2.png (referred as file #3)\n"
+"      </ul>\n"
+"\n"
+"      <pre>[inline:1=test]  or  [inline:imag1.png=test]</pre>\n"
+"      will be replaced by <em><code>&lt;img src=imag1.png alt=test&gt;</code></em>\n"
+"\n"
+"      <pre>[file:1=test]  or  [file:imag1.png=test]</pre>\n"
+"      will be replaced by <em><code>&lt;a href=imag1.png&gt;test&lt;/a&gt;</code></em>\n"
+"\n"
+"      <pre>[attachment:2=test]  or  [attachment:file1.pdf=test]</pre>\n"
+"      will be replaced by <em><code>&lt;a href=file1.pdf.png&gt;test&lt;/a&gt;</code></em>"
+msgstr ""
+"\n"
+"<p>Du kan linke til vedhæftede filer vha. specielle mærker. Mærkerne erstattes med de relevante filer. For eksempel: Hvis du vedhæfter tre filer (i denne rækkefølge):</p><ul>\n"
+"<li>billede1.png (fil #1)\n"
+"<li>fil1.pdf (fil #2)\n"
+"<li>billede2.png (file #3)\n"
+"</ul>\n"
+"<p>vil</p><p><pre>[inline:1=test]  eller  [inline:billede1.png=test]</pre>\n"
+"</p><p>blive erstattet med</p><p><em><code>&lt;img src=imag1.png alt=test&gt;</code></em></p><p>og</p><p><pre>[file:1=test]  eller  [file:billede1.png=test]</pre>\n"
+"</p><p>vil blive erstattet med</p><p><em><code>&lt;a href=imag1.png&gt;test&lt;/a&gt;</code></em></p><p><pre>[attachment:2=test]  eller  [attachment:file1.pdf=test]</pre></p><p>vil blive erstattet med</p><p><em><code>&lt;a href=file1.pdf.png&gt;test&lt;/a&gt;</code></em></p>    "
+
+#: inline.module:204
+msgid "You may use <a href=\"!inline_help\">[inline:xx] tags</a> to display uploaded files or images inline."
+msgstr "Du kan bruge <a href=\"!inline_help\">[inline:xx] mærker</a> til at vise filer eller billeder integreret i indholdet."
+
+#: inline.module:300
+msgid "Download: @name (@size)"
+msgstr "Download: @name (@size)"
+
+# d:\cantincorov2\modules\inline\inline.module:130
+#: inline.module:332
+msgid "View"
+msgstr "Vis"
+
+#: inline.module:28
+msgid "administer inline settings"
+msgstr "administrer inline indstillinger"
+
+#: inline.module:0
+msgid "inline"
+msgstr "inline"
+
+#: inline.info:0
+msgid "Allows attached files to be placed into the body of a node either automatically or by using simple tags."
+msgstr "Vedhæftede filer kan indsættes i brødteksten; enten automatisk eller ved at bruge simple mærker."
+
+#: inline.info:0
+msgid "Input filters"
+msgstr "Input filtre"
+

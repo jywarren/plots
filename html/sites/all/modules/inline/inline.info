@@ -1,0 +1,13 @@
+; $Id: inline.info,v 1.4 2008/08/17 14:22:43 sun Exp $
+name = Inline
+description = Allows attached files to be placed into the body of a node either automatically or by using simple tags.
+package = Input filters
+dependencies[] = upload
+core = 6.x
+
+; Information added by drupal.org packaging script on 2009-01-13
+version = "6.x-1.0"
+core = "6.x"
+project = "inline"
+datestamp = "1231879528"
+

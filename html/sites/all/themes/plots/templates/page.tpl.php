@@ -207,6 +207,7 @@ The Public Laboratory website is designed for use in any browser except Internet
     <style> 
       #header { padding-bottom:0 !important;margin-bottom:0 !important; }
       #navigation .clearfix { margin:0 !important;background:none !important; }
+      #content { margin-top:0 !important; }
       #content-area ul.links { background:none !important;padding-bottom:0 !important; }
     </style>
     <?php } ?>
