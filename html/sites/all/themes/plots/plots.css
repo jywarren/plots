@@ -455,7 +455,7 @@ form .filefield-element input.form-submit {
 	font-size:11px;
 }
 textarea.markitupeditor {
-	width:470px;
+	/*width:470px;*/
 }
 
 /* Attempt to show all base layers at partial opacity, failure so far */
