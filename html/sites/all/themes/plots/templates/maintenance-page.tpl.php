@@ -33,11 +33,10 @@ html {
 }
 body { width: 600px; }
 </style>
-<h1>This is what the web could look like under the Stop Online Piracy Act</h1>
-<p>Keep the web open. <a href="http://wfc2.wiredforchange.org/o/9043/p/dia/action/public/action_KEY=8173">Contact your representatives</a> or <a href="http://sopablackout.org/learnmore">find out more</a></p> 
+<h1>The Public Laboratory website is temporarily unavailable</h1>
+<p>Please wait a moment and try again. If the issue persists, contact <a href="mailto:team@publiclaboratory.org">team@publiclaboratory.org</a>.</p>
 
 <br />
 
-<p>(The Public Laboratory website will be inaccessble until midnight Jan 18th.)</p>
 </body>
 </html>
