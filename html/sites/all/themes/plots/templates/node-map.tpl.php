@@ -257,7 +257,7 @@
 		$('#links').hide()
 		$('#header').hide()
 		$('#footer').hide()
-		$('#hide-on-fullscreen').hide()
+		$('#content').hide()
 		$('meta[name=viewport]').attr('content', 'width=320; initial-scale=1.0; maximum-scale=1.0; user-scalable=0;');
 	}
 	function minimize() {
@@ -271,7 +271,7 @@
 		$('#links').show()
 		$('#header').show()
 		$('body').removeClass('body-fullscreen')
-		$('#hide-on-fullscreen').show()
+		$('#content').show()
 		$('meta[name=viewport]').attr('content', '');
 	}
 </script>

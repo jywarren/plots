@@ -727,6 +727,12 @@ div.messages {
 	font-size:11px;
 }
 
+.node-type-map #content .section {
+	margin-top:30px;
+}
+.node-type-map .clearfix {
+	background:white;
+}
 .node-type-map #content .field div {
 	display:inline;
 	padding:6px 0;
