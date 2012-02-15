@@ -168,3 +168,12 @@ function formatbytes($megabytes)
 	return $megabytes.' mb';
     }  
 }
+
+function phptemplate_preprocess_node(&$vars) {
+  if (module_exists('path')) {
+    if ($_GET['fullscreen'] == "true") {
+       $vars['template_files'][] = 'node-map-fullscreen';
+    }
+  }
+}
+?>
