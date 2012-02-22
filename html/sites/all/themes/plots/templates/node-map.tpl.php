@@ -95,7 +95,7 @@
     </div>
   <?php endif; ?>
 
-<script type="text/javascript" src="http://openlayers.org/api/2.9/OpenLayers.js"></script>
+<script type="text/javascript" src="http://openlayers.org/api/2.11/OpenLayers.js"></script>
 <script src='http://maps.google.com/maps?file=api&amp;v=2&amp;key=ABQIAAAANO6Yx8ihhesSqnPHx9a3RxQCA0kQZc0rHxnaN3mazoBpOqX1oBQwLut2gk7rd_T9sYyxcGJrxQK3gg' type='text/javascript'></script> 
 <script src="http://api.maps.yahoo.com/ajaxymap?v=3.0&amp;appid=INSERT_YOUR_YAHOO_APP_ID_HERE"></script>
 
@@ -116,7 +116,9 @@
 	var map;
 	var mapBounds = new OpenLayers.Bounds(sw_lon,sw_lat,ne_lon,ne_lat)
 	var mapMinZoom = <?php print ($node->field_zoom_min[0]['value']) ?>;
-	var mapMaxZoom = 22;
+	<?php $zoom_max = $node->field_zoom_max[0]['value'];if (!$zoom_max) $zoom_max = 22; ?>
+
+	var mapMaxZoom = <?php print ($zoom_max); ?>;
 
 	var spher_merc = new OpenLayers.Projection("EPSG:4326")
 	var latlon = new OpenLayers.Projection("EPSG:900913")
@@ -137,6 +139,13 @@
 		displayProjection: latlon, 
 		maxExtent: new OpenLayers.Bounds(-20037508, -20037508, 20037508, 20037508.34),//mapBounds,
 		maxResolution: 156543.0339,
+		controls: [
+		  new OpenLayers.Control.TouchNavigation({
+                    dragPanOptions: {
+                      enableKinetic: true
+                    }
+           	  })
+		]
 	});
 
         var grm_tms = new OpenLayers.Layer.TMS( "<?php print $title; ?> (<?php echo date("F j, Y",strtotime($node->field_capture_date[0][value])); ?>)",
@@ -203,8 +212,25 @@
 
 	//if (OpenLayers.Util.alphaHack() == false) { tmsoverlay.setOpacity(0.7); }
 	if (OpenLayers.Util.alphaHack() == false) { gsat.setOpacity(0.7); }
+
+	plotsPanZoom = OpenLayers.Class(OpenLayers.Control.PanZoom, {
+        includeButtons: {
+            "zoomin": {
+                outImageSrc: "zoom-plus-mini.png",
+                overImageSrc: "zoom-plus-mini-over.png"
+            },
+            "zoomout": {
+                outImageSrc: "zoom-minus-mini.png",
+                overImageSrc: "zoom-minus-mini-over.png"
+            }
+        },
+	})
 	
 	map.addControl(new OpenLayers.Control.LayerSwitcher({'div':OpenLayers.Util.getElement('layerswitcher')}));
+	map.addControl(new plotsPanZoom());
+	//map.addControl(new OpenLayers.Control.PanZoom());
+	map.addControl(new OpenLayers.Control.MouseDefaults());
+	map.addControl(new OpenLayers.Control.KeyboardDefaults());
 
 	map.zoomToExtent( mapBounds.transform(spher_merc,latlon ) );
 
@@ -252,12 +278,10 @@
 		$('#map-fullscreen-btn').addClass('map-fullscreen-btn-full')
 		$('#map-minimize-btn').addClass('show')
 		map.updateSize()
-		$('.region-sidebar-first').hide()
-		$('.region-sidebar-second').hide()
 		$('#links').hide()
+		$('#main').hide()
 		$('#header').hide()
 		$('#footer').hide()
-		$('#content').hide()
 		$('meta[name=viewport]').attr('content', 'width=320; initial-scale=1.0; maximum-scale=1.0; user-scalable=0;');
 	}
 	function minimize() {
@@ -265,13 +289,11 @@
 		$('#map-fullscreen-btn').removeClass('map-fullscreen-btn-full')
 		$('#map-minimize-btn').removeClass('show')
 		map.updateSize()
-		$('.region-sidebar-first').show()
-		$('.region-sidebar-second').show()
 		$('#footer').show()
 		$('#links').show()
+		$('#main').show()
 		$('#header').show()
 		$('body').removeClass('body-fullscreen')
-		$('#content').show()
 		$('meta[name=viewport]').attr('content', '');
 	}
 </script>
