@@ -310,7 +310,27 @@
  	<?php if ($node->field_jpg_url[0]['value']) { ?><a class="jpg-field" href="<?php print $node->field_jpg_url[0]['value'] ?>">JPG<?php if ($node->field_jpg_filesize[0]['value']) { ?> (<?php print formatbytes($node->field_jpg_filesize[0]['value']) ?>)<?php } ?></a><?php } ?>
 	<?php if ($node->field_raw_images[0]['value']) { ?><a class="raw-field" href="<?php print $node->field_raw_images[0]['value'] ?>">Raw images<?php if ($node->field_raw_images_filesize[0]['value']) { ?> (<?php print formatbytes($node->field_raw_images_filesize[0]['value']) ?>)<?php } ?></a><?php } ?>
   </div>
+  <div id="embed">
+	<?php 
+		$cen_lon = ($sw[0]+$ne[0])/2;
+		$cen_lat = ($sw[1]+$ne[1])/2;
+	?>
+	<p><b>Embed code:</b> <input type="text" id="embedcode" value='<iframe style="border:none;" width="500" height="375" src="http://archive.publiclaboratory.org/leaflet/?tms=<?php if ($node->field_tms_url[0]['value']) { print $node->field_tms_url[0]['value']; } ?>&lon=<?php print $cen_lon; ?>&lat=<?php print $cen_lat; ?>&zoom=17"></iframe>' /></p>
+
+  </div>
   <div class="content nodebody">
+    <div class="field field-type-text field-field-license">
+      <div class="field-label">Tags:&nbsp;</div>
+        <div class="field-items">
+        <?php
+		foreach ($node->taxonomy as $term) {
+			if ($term->vid == 6) {
+				echo("<a href='/maps/".$term->name."'>".$term->name."</a>"); 
+			}
+		}
+	 ?>
+        </div>
+    </div>
     <?php print $content; ?>
   </div>
 

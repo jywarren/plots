@@ -552,6 +552,13 @@ textarea.markitupeditor {
 	padding:4px 0;
 	font-size:10px;	
 }
+#content-area .comment ul.links {
+	padding:15px 0;
+}
+#content-area .comment ul.links li {
+	display:inline;
+	margin-right:8px;
+}
 #content-area .views-quick-links ul.links li {
 	display:inline;
 }
