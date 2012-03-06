@@ -1,0 +1,12 @@
+name = Community Tags
+description = "Allows users to 'tag' other users' content. Weighted tag lists or 'tag clouds' are generated for each piece of content to show the popularity of tags."
+dependencies[] = taxonomy
+package = "Taxonomy"
+core=6.x
+
+; Information added by drupal.org packaging script on 2011-05-25
+version = "6.x-1.0"
+core = "6.x"
+project = "community_tags"
+datestamp = "1306324940"
+

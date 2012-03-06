@@ -1,0 +1,12 @@
+name = "Openid Provider"
+description = "OpenID Provider (or server) support allows you to login to other OpenID enabled sites using your local account."
+core = 6.x
+php = 5.2
+dependencies[] = xrds_simple
+package = OpenID
+; Information added by drupal.org packaging script on 2012-01-31
+version = "6.x-1.0-rc2"
+core = "6.x"
+project = "openid_provider"
+datestamp = "1328028052"
+

@@ -1,0 +1,97 @@
+<?php
+// $Id$
+/**
+ * @file Functional tests for openid_provider
+ */
+
+class OpenIDProviderTestCase extends DrupalWebTestCase {
+
+  function setUp() {
+    parent::setUp('openid_provider', 'openid');
+    module_load_include('inc', 'openid_provider');
+    module_load_include('inc', 'openid');
+  }
+
+  /**
+   * Implementation of getInfo().
+   */
+  function getInfo() {
+    return array(
+      'name' => t('Functional tests'),
+      'description' => t('Test critical functions of OpenID Provider.'),
+      'group' => t('OpenID Provider'),
+    );
+  }
+
+  function testOpenIDProviderAdd() {
+    $result = _openid_provider_add('314159265', '271828183');
+    if (function_exists('gmp_strval')) {
+      $result = gmp_strval($result);
+    }
+    $this->assertEqual((string) $result, '585987448', t('Two number can be added.'));
+  }
+
+  function testOpenIDProviderPower() {
+    $result = _openid_provider_powmod('10', '2', '1000');
+    if (function_exists('gmp_strval')) {
+      $result = gmp_strval($result);
+    }
+    $this->assertEqual((string) $result, '100', t('Power with modulo I.'));
+    $result = _openid_provider_powmod('2', '10', '100');
+    if (function_exists('gmp_strval')) {
+      $result = gmp_strval($result);
+    }
+    $this->assertEqual((string) $result, '24', t('Power with modulo II.'));
+  }
+
+  function testOpenIDProviderRPSaveandLoad() {
+    $start = time();
+    $realm = '123456789012345678901234567890123456789012345678901234567890';
+    _openid_provider_rp_save(1, $realm, FALSE);
+    $end = time();
+    $rps = _openid_provider_rp_load(1);
+    $this->assertEqual(count($rps), 1, t('The saved RP is loaded back'));
+    $rp = array_pop($rps);
+    $this->assertEqual($rp->realm, $realm, t('The realm is the same what was saved'));
+    $between = ($start <= $rp->first_time) && ($end >= $rp->first_time);
+    $this->assertTrue($between, t('The time of RP is sane.'));
+  }
+
+  function testOpenIDProviderDHAssoc() {
+    $request = array(
+      'openid.dh_consumer_public' => base64_encode(314159265),
+    );
+    $result = openid_provider_dh_assoc($request, '987654321', 'sha1');
+    $this->assertEqual(strlen($result['dh_server_public']), 4, t('DH public has correct length.'));
+    $this->assertEqual(strlen($result['enc_mac_key']), 12, t('The key has correct length.'));
+  }
+
+  function testOpenIDProviderDHXorSecret() {
+    $shareds = array(
+      271828183271828183271828183271828183,
+      314159265314159265314159265314159265,
+    );
+    $secrets = array(
+      'Alice and Bob',
+      'Trudy is an intruder.',
+    );
+    $results = array(
+      'GsVV/tXvmFE2lWO4IA==',
+      'D9tJ+cnvkExy1E/3K2A3hJjGHT0u',
+    );
+    foreach ($shareds as $k => $shared) {
+      $secret = $secrets[$k];
+      // Base64 is needed because the output is not displayable
+      $result = base64_encode(_openid_provider_dh_xorsecret($shared, $secret, 'sha1'));
+      file_put_contents('/tmp/foo'. $k, $result);
+      $this->assertEqual($result, $results[$k], t('DH XorSecret works correctly.'));
+    }
+  }
+
+  function testOpenIDProviderNonce() {
+    $nonce = _openid_provider_nonce();
+    // Loose check by regexp
+    $result = preg_grep('/[0-9]+-[0-9]+-[0-9]+[A-Z]+[0-9]+:[0-9]+:[0-9]+..../', array($nonce));
+    $this->assertEqual(array_pop($result), $nonce, t('The nonce has proper format.'));
+  }
+}
