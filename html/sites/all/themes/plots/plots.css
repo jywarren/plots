@@ -437,6 +437,10 @@ form .filefield-element input.form-submit {
 	margin-right:6px;
 }
 
+#edit-tags-wrapper {
+	clear:left;
+}
+
 .comment_reply, .node-type-map .comment_add { 
 	margin:12px 0;
 	margin-bottom:6px;
@@ -551,6 +555,11 @@ textarea.markitupeditor {
 	display:block;
 	padding:4px 0;
 	font-size:10px;	
+}
+#content-area .comment .picture {
+	margin-left:10px;
+	margin-bottom:10px;
+	float:right;
 }
 #content-area .comment ul.links {
 	padding:15px 0;
@@ -1041,5 +1050,25 @@ ul#toc li {
 	display:none;
 }
 .page-dashboard div {
+}
+
+.button {
+        font-size:14px;
+        text-decoration:none;
+        color:white;
+        padding:6px;
+        background:#4C6ACB;
+        -moz-border-radius-topleft:3px;
+        -webkit-border-top-left-radius:3px;
+        -moz-border-radius-bottomleft:3px;
+        -webkit-border-bottom-left-radius:3px;
+        -moz-border-radius-topright:3px;
+        -webkit-border-top-right-radius:3px;
+        -moz-border-radius-bottomright:3px;
+        -webkit-border-bottom-right-radius:3px;
+}
+a:hover.button {
+        background:#35b;
+        color:#ccc;
 }
 

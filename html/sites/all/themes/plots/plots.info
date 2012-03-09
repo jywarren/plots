@@ -55,6 +55,8 @@ conditional-stylesheets[if lte IE 6][all][] = css/ie6.css
 scripts[] = js/jquery-1.7.1.min.js
 scripts[] = js/jquery.tableofcontents.min.js
 scripts[] = js/jquery.sparkline.min.js
+scripts[] = js/jquery.flot.js
+scripts[] = js/jquery.flot.pie.js
 scripts[] = js/absolutize.js
 scripts[] = js/jcarousellite_1.0.1.min.js
 

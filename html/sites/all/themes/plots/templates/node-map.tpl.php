@@ -315,6 +315,7 @@
 		$cen_lon = ($sw[0]+$ne[0])/2;
 		$cen_lat = ($sw[1]+$ne[1])/2;
 	?>
+	<p><a class="button" href="http://www.zazzle.com/api/create/at-238652512768069879?rf=238652512768069879&ax=Linkover&pd=228632289886847720&fwd=ProductPage&ed=true&tc=&ic=&title=<?php print $title; ?>&map=<?php print $node->field_jpg_url[0]['value'] ?>">Order a print</a> of this map.</p>
 	<p><b>Embed code:</b> <input type="text" id="embedcode" value='<iframe style="border:none;" width="500" height="375" src="http://archive.publiclaboratory.org/leaflet/?tms=<?php if ($node->field_tms_url[0]['value']) { print $node->field_tms_url[0]['value']; } ?>&lon=<?php print $cen_lon; ?>&lat=<?php print $cen_lat; ?>&zoom=17"></iframe>' /></p>
 
   </div>
