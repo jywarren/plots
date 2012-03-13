@@ -46,6 +46,15 @@ fieldset table, fieldset{
 .floatright { float:right; }
 .box { padding:6px 14px; border:1px solid #bbb; margin:10px; }
 
+.notification {
+	font-size:0.8em;
+	padding:0 10px 10px;
+	margin-top:16px;
+	border:none;
+	border-top:8px solid #fd6;
+	background:#ffa;
+}
+
 #content iframe {
 	border:0;
 }
