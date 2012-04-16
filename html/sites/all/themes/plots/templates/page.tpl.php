@@ -147,6 +147,7 @@ The Public Laboratory website is designed for use in any browser except Internet
 		</ul>
 		<a href="/about">About</a>
 	</li>
+	<li style="margin-right:0;"><a href="/places">Places</a></li>
 	<li onMouseOver="$('#placeHeader').show()" onMouseOut="$('#placeHeader').hide()">
 		<ul class="sublinks" style="display:none;" id="placeHeader">
 			<li><a href="/place/new-york-city">New York</a></li>
@@ -155,12 +156,13 @@ The Public Laboratory website is designed for use in any browser except Internet
 			<li><a href="/place/providence">Providence</a></li>
 			<li><a href="/place/butte">Butte</a></li>
 			<li><a href="/place/western-north-carolina">Western North Carolina</a></li>
+			<li><a href="/place/davis">Davis</a></li>
 			<li><a href="/place/texas">Texas</a></li>
 			<li><a href="/place/sumava-czech-republic">Sumava, Czech Republic</a></li>
 			<li><a href="/place/portland-oregon">Portland, OR</a></li>
 			<li><a href="/place/santiago-chile">Santiago Chile</a></li>
 		</ul>
-		<a href="/places">Places</a> 
+		<a style="padding-right:8px;" href="javascript:void();">&or;</a>
 	</li>
 	<li><a href="/notes">Research notes</a></li>
 	<li onMouseOver="$('#archiveHeader').show()" onMouseOut="$('#archiveHeader').hide()">
@@ -170,6 +172,7 @@ The Public Laboratory website is designed for use in any browser except Internet
 		</ul>
 		<a href="/archive">Archive</a>
 	</li>
+	<li style="margin-right:0;"><a href="/tools">Tools</a></li>
 	<li onMouseOver="$('#toolHeader').show()" onMouseOut="$('#toolHeader').hide()">
 		<ul class="sublinks" style="display:none;" id="toolHeader">
 			<li><a href="/tool/balloon-mapping">Balloon mapping</a></li>
@@ -180,7 +183,7 @@ The Public Laboratory website is designed for use in any browser except Internet
 			<li><a href="/tool/hydrogen-sulfide-sensing">Hydrogen sulfide sensing</a></li>
 			<li><a href="/tool/environmental-estrogen-testing">Environmental estrogen testing</a></li>
 		</ul>
-		<a href="/tools">Tools</a>
+		<a style="padding-right:8px;" href="javascript:void();">&or;</a>
 	</li>
 	<li><a href="/events">Events</a></li> 
 	<li class="right"> 

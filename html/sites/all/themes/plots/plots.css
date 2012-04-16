@@ -471,6 +471,10 @@ textarea.markitupeditor {
 	/*width:470px;*/
 }
 
+.comment .picture img {
+	padding-bottom:4px;
+}
+
 /* Attempt to show all base layers at partial opacity, failure so far */
 #OpenLayers.Map_2_GMap2Container div {
   filter:alpha(opacity=70);   /* Internet Explorer       */
