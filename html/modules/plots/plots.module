@@ -16,3 +16,17 @@ function plots_form_alter(&$form, $form_state, $form_id) {
   }
 }
 
+/**
+ * Mollom permission bypass
+ */
+
+function plots_mollom_form_info_alter(&$form_info, $form_id) {
+  if ($form_info['module'] == 'node') {
+    foreach ($form_info['bypass access'] as $key => $perm) {
+      if (strpos($perm, 'edit any ') === 0 || strpos($perm, 'delete any ') === 0) {
+        unset($form_info['bypass access'][$key]);
+      }
+    }
+  }
+}
+
