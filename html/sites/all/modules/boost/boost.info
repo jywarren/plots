@@ -1,0 +1,13 @@
+; $Id: boost.info,v 1.1.2.1.2.3.2.2 2009/10/04 07:24:50 mikeytown2 Exp $
+name = Boost
+description = Caches text (html, ajax, xml) outputted by Drupal as static files for performance and scalability purposes.
+recommends[] = nodereferrer
+package = Caching
+core = 6.x
+
+; Information added by drupal.org packaging script on 2010-01-25
+version = "6.x-1.18"
+core = "6.x"
+project = "boost"
+datestamp = "1264382702"
+

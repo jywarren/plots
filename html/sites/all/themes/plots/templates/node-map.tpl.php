@@ -205,7 +205,7 @@
           isBaseLayer: true,
 	  transitionEffect: "resize",
 	});
-        map.addLayer(tms);
+        //map.addLayer(tms);
 
 	gsat.setVisibility(true);
 	tms.setVisibility(false);

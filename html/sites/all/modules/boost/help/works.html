@@ -1,0 +1,19 @@
+<a name="top"></a><img src="&path&rocket.png" align="right">
+<a href="#works">How Boost Works</a> | <a href="#disp">Dispatch Mechanism</a> | <a href="#limit">Limitations</a>
+<h4>HOW BOOST WORKS</h4>
+<p>Once Boost has been installed and enabled, page requests by anonymous visitors will be cached as static HTML pages in the server's file system. Periodically (when the Drupal cron runs) stale or expired pages (i.e. files or pages exceeding the maximum cache lifetime setting) will be purged, allowing them to be recreated the first time that the next anonymous visitor requests that page again. If the Cron Crawler is enabled, the files and pages will be regenerated automatically.</p>
+<p>New rewrite rules are added to the .htaccess file supplied with Drupal, directing the web server to try and fulfill page requests by anonymous visitors first and foremost from the static page cache, and to only pass the request through to Drupal if the requested page is not cacheable or hasn't yet been cached.</p>
+<p><a href name="disp"></a></p>
+<h4>DISPATCH MECHANISM</h4>
+<p> For each incoming page request, the new Apache mod_rewrite directives in .htaccess will check if a cached version of the requested page should be served as per the following simple rules:</p>
+<p><b>1.</b> First, we check that the HTTP request method being used is GET. POST requests are not cacheable, and are passed through to Drupal.</p>
+<p><b>2.</b> Since only anonymous visitors can benefit from the static page cache at present, we check that the page request doesn't include a cookie that is set when a user logs in to the Drupal site. If the cookie is present, we simply let Drupal handle the page request dynamically.</p>
+<p><b>3.</b> Now, for the important bit: we check whether we actually have a cached HTML file for the request URL path available in the file system cache. If we do, we direct the web server to serve that file directly and to<br>
+terminate the request immediately after; in this case, Drupal (and indeed PHP) is never invoked, meaning the page request will be served by the web server itself at full speed.</p>
+<p><b>4.</b> If, however, we couldn't locate a cached version of the page, we just pass the request on to Drupal, which will serve it dynamically in the normal manner.</p>
+<p><a href name="limit"></a><a href="#top">Back to top</a></p>
+<h4>LIMITATIONS</h4>
+<p>Only anonymous visitors will be served cached versions of pages; authenticated users will get dynamic content. This will limit the usefulness of this module for those community sites that require user registration and login for active participation.</p>
+<p>In contrast to Drupal's built-in caching, static caching will lose any additional HTTP headers set for an HTML page by a module. This is unlikely to be problem except for some very specific modules and rare use cases.</p>
+<p>Web server software other than Apache is not supported at the moment. Adding Lighttpd support would be desirable but is not a high priority for the developer at present (see TODO.txt). (Note that while the LiteSpeed web server has not been specifically tested by the developer, it may, in fact, work, since they claim to support .htaccess files and to have mod_rewrite compatibility. Feedback on this would be appreciated.)</p>
+<p><a href="#top">Back to top</a><br /></p>

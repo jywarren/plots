@@ -1,0 +1,1466 @@
+<?php
+// $Id: boost.install,v 1.2.2.1.2.3.2.88 2010/01/24 18:25:46 mikeytown2 Exp $
+
+/**
+ * @file
+ * Handles Boost module installation and upgrade tasks.
+ */
+
+//////////////////////////////////////////////////////////////////////////////
+// Core API hooks
+
+/**
+ * Implementation of hook_enable().
+ */
+function boost_enable() {
+  drupal_set_message(t('Boost successfully installed. Fix all errors and warnings on the <a href="@report">status report page</a> under Boost for a quick installation.', array('@report' => url('admin/reports/status'))));
+  drupal_set_message(t('For a more in depth install, please review the available <a href="@settings">configuration settings</a>. There are 2 new <a href="@blocks">blocks</a> that you can add to help with the administrative side (<a href="@status">status</a>, <a href="@config">page configuration</a>), and 1 to support core <a href="@stats">stats</a>.', array(
+    '@settings' => url('admin/settings/performance/boost'),
+    '@blocks' => url('admin/build/block'),
+    '@status' => url('admin/build/block/configure/boost/status'),
+    '@config' => url('admin/build/block/configure/boost/config'),
+    '@stats' => url('admin/build/block/configure/boost/stats'),
+  )));
+
+  // Forcibly disable Drupal's built-in SQL caching to prevent any conflicts of interest:
+  if (variable_get('cache', CACHE_DISABLED) != CACHE_DISABLED) {
+    variable_set('cache', CACHE_DISABLED);
+    drupal_set_message(t('Drupal\'s <a href="@config">standard page caching</a> disabled by Boost.', array('@config' => url('admin/settings/performance'))), 'warning');
+  }
+}
+
+/**
+ * Implementation of hook_disable().
+ */
+function boost_disable() {
+  // Make sure that the static page cache is wiped when the module is disabled:
+  boost_cache_clear_all();
+  drupal_set_message(t('Static page cache cleared.'));
+}
+
+/**
+ * Implementation of hook_install().
+ */
+function boost_install() {
+  // Ensure that the module is loaded early in the bootstrap:
+  db_query("UPDATE {system} SET weight = -90 WHERE name = '%s'", 'boost');
+  variable_set('boost_crawler_key', md5(mt_rand()));
+  // Create tables.
+  drupal_install_schema('boost');
+}
+
+/**
+ * Implementation of hook_uninstall().
+ */
+function boost_uninstall() {
+  db_query("DELETE FROM {variable} WHERE name LIKE '%s_%%'", 'boost');
+  cache_clear_all('variables', 'cache');
+  // Delete tables.
+  drupal_uninstall_schema('boost');
+}
+
+/**
+ * Implementation of hook_requirements().
+ */
+function boost_requirements($phase) {
+  global $base_root;
+  $requirements = array();
+  $t = get_t();
+  switch ($phase) {
+    case 'runtime':
+      if (!BOOST_IGNORE_SUBDIR_LIMIT) {
+        boost_tree_directory(BOOST_ROOT_CACHE_DIR);
+      }
+      $cache_directories = array();
+      $cache_directories[] = BOOST_ROOT_CACHE_DIR;
+      $cache_directories[] = BOOST_FILE_PATH;
+      $cache_directories[] = BOOST_PERM_FILE_PATH;
+      foreach (_boost_copy_file_get_domains(BOOST_PERM_FILE_PATH) as $dir) {
+        _boost_mkdir_p($dir);
+        file_put_contents($dir . '/' . variable_get('boost_root_file', '.boost'), $dir);
+      }
+      if (BOOST_GZIP) {
+        $cache_directories[] = BOOST_GZIP_FILE_PATH;
+        $cache_directories[] = BOOST_PERM_GZIP_FILE_PATH;
+        foreach (_boost_copy_file_get_domains(BOOST_PERM_GZIP_FILE_PATH) as $dir) {
+          _boost_mkdir_p($dir);
+          file_put_contents($dir . '/' . variable_get('boost_root_file', '.boost'), $dir);
+        }
+      }
+
+      $cache_directories = array_unique($cache_directories);
+      $htaccess = stristr($_SERVER["SERVER_SOFTWARE"], 'apache') ? file_get_contents(dirname($_SERVER["SCRIPT_FILENAME"]) . '/.htaccess') : FALSE;
+      if (BOOST_CRAWL_ON_CRON) {
+        $crawler_response = drupal_http_request(BOOST_CRAWLER_SELF . '&test=1');
+        $crawler_response = $crawler_response->code;
+      }
+      $robots = drupal_http_request('http://' . check_plain($_SERVER['HTTP_HOST']) . '/robots.txt');
+      if ($robots->code == 200) {
+        $robots = $robots->data;
+      }
+      else {
+        $robots = FALSE;
+      }
+
+      foreach ($cache_directories as $cache_directory) {
+        if (_boost_mkdir_p($cache_directory)) {
+          $root_file = file_put_contents($cache_directory . '/' . variable_get('boost_root_file', '.boost'), $cache_directory);
+        }
+        if (!is_dir($cache_directory)) {
+          $requirements['boost_default'] = array(
+            'title'       => $t('Boost'),
+            'description' => $t('!cache_dir: does not exist.', array('!cache_dir' => $cache_directory)),
+            'severity'    => REQUIREMENT_ERROR,
+            'value'       => $t('Cache path'),
+          );
+        }
+        if (is_dir($cache_directory) && (!$root_file || !is_writable($cache_directory))) {
+          $requirements['boost_permissions'] = array(
+            'title'       => $t('Boost'),
+            'description' => $t('Directory %dir credentials - Permissions: %fp. Owner %fo. Group %fg.<br /> Your credentials - Group ID: %gid. User ID: %uid. Current script owner: %user.', array('%dir' => getcwd() . '/' . $cache_directory, '%gid' => getmygid(), '%uid' => getmyuid(), '%user' => get_current_user(), '%fp' => substr(sprintf('%o', fileperms($cache_directory)), -4), '%fo' => fileowner($cache_directory), '%fg' => filegroup($cache_directory) )),
+            'severity'    => REQUIREMENT_ERROR,
+            'value'       => $t('Can not write to file-system'),
+          );
+        }
+      }
+      if (BOOST_FILE_PATH != boost_cache_directory(NULL, FALSE)) {
+        $requirements['boost_dir_exists'] = array(
+          'title'       => $t('Boost'),
+          'description' => $t('<a href="@url">Cache file path</a>: is not set to the default(!default). ', array('@url' => url('admin/settings/performance/boost#edit-boost-file-path'), '!default'    => boost_cache_directory(NULL, FALSE))),
+          'severity'    => REQUIREMENT_WARNING,
+          'value'       => $t('Cache path'),
+        );
+      }
+      if ($htaccess && !BOOST_IGNORE_HTACCESS_WARNING && !boost_chk_htaccess_doc($htaccess)) {
+        $requirements['boost_htaccess'] = array(
+          'title'       => $t('Boost'),
+          'description' => $t('.htaccess file does not contain or match the boost specific rewrite rules, or the rewrite rules have changed, due to new settings, and they need to be updated. Get the rules: <a href="@url">Boost Apache .htaccess settings generation</a>.', array('@url' => url('admin/settings/performance/boost-rules'))),
+          'severity'    => REQUIREMENT_ERROR,
+          'value'       => $t('.htaccess file'),
+        );
+      }
+      if ($htaccess && !boost_chk_htaccess_doc_subdir($htaccess)) {
+        $requirements['boost_htaccess_subdir'] = array(
+          'title'       => $t('Boost'),
+          'description' => $t('Drupal is installed in a subdirectory but the htaccess rules are not set for a subdirectory install. Get rules specific to your setup here: <a href="@url">Boost Apache .htaccess settings generation</a>.', array('@url' => url('admin/settings/performance/boost-rules'))),
+          'severity'    => REQUIREMENT_ERROR,
+          'value'       => $t('.htaccess file'),
+        );
+      }
+      if (!boost_chk_module_versions()) {
+        $requirements['boost_other_modules'] = array(
+          'title'       => $t('Boost'),
+          'description' => $t('You need to get a newer version of <a href="@url">poormanscron</a>, 1.1 and above, or the 2.0 branch.', array('@url' => "http://drupal.org/project/poormanscron")),
+          'severity'    => REQUIREMENT_ERROR,
+          'value'       => $t('poormanscron is the wrong version'),
+        );
+      }
+      if (variable_get('language_negotiation', LANGUAGE_NEGOTIATION_NONE) == LANGUAGE_NEGOTIATION_PATH) {
+        $requirements['boost_language'] = array(
+          'title'       => $t('Boost'),
+          'description' => $t('Boost is not compatible with <a href="!url">language negotiation</a> set to "language fallback".  An anonymous user with their browser set to a language other than the site\'s default language will navigate to a non-cached page.  The page will be displayed in the user\'s browser language.  Boost will cache the non-default-language page. ', array('!url' => url('admin/settings/language/configure'))),
+          'severity'    => REQUIREMENT_ERROR,
+          'value'       => $t('Cannot use "language fallback" language negotiation'),
+        );
+      }
+      if (!variable_get('boost_crawler_key', FALSE)) {
+        $requirements['boost_crawler'] = array(
+          'title'       => $t('Boost'),
+          'description' => $t('Please Run the database update, as the crawler key is not generated yet.'),
+          'severity'    => REQUIREMENT_ERROR,
+          'value'       => $t('Boost Crawler Key Not Found.'),
+        );
+      }
+      elseif (isset($crawler_response) && $crawler_response != 200) {
+        switch ($crawler_response) {
+          case 503:
+            $description = t('Your site is in maintenance mode, crawler will not work with your site in this state. Take site out of maintenance mode if you wish to use the crawler. Running cron if your site is not in maintenance mode might make this error eventually clear.');
+            $severity = REQUIREMENT_WARNING;
+            break;
+          case 403:
+            $description = t('Menu item for crawler is not there. You need to "Clear cached data" at the bottom of the <a href="!url">performance page</a>', array('!url' => url('admin/settings/performance')));
+            $severity = REQUIREMENT_ERROR;
+            break;
+          default:
+            $description = t('<a href="!url">Clear cached data</a> & run cron; if error priests <a href="@link">open an issue</a> on the Boost issue queue.', array('!url' => url('admin/settings/performance'), '@link' => 'http://drupal.org/node/add/project-issue/boost'));
+            $severity = REQUIREMENT_ERROR;
+            break;
+        }
+        $requirements['boost_crawler'] = array(
+          'title'       => $t('Boost'),
+          'description' => $description,
+          'severity'    => $severity,
+          'value'       => $t('Boost crawler did not get a 200 response; @number returned instead.', array('@number' => $crawler_response)),
+        );
+      }
+      if (!BOOST_ENABLED) {
+        $requirements['boost_is_enabled'] = array(
+          'title'       => $t('Boost'),
+          'description' => $t('Boost is disabled. <a href="@performance">Enable</a> it.', array('@performance' => url('admin/settings/performance/boost'))),
+          'severity'    => REQUIREMENT_WARNING,
+          'value'       => $t('Boost Disabled'),
+        );
+      }
+      if (ini_get('safe_mode') && !BOOST_IGNORE_SAFE_WARNING) {
+        $requirements['boost_safemode'] = array(
+          'title'       => $t('Boost'),
+          'description' => $t('Boost does not work very well if PHP is in safe mode. Some functionality may not work correctly.'),
+          'severity'    => REQUIREMENT_WARNING,
+          'value'       => $t('Boost & PHP running in Safe Mode is not a good idea.'),
+        );
+      }
+//       if (BOOST_CRAWL_URL_ALIAS && BOOST_LOOPBACK_BYPASS) {
+//         $requirements['boost_crawler'] = array(
+//           'title'       => $t('Boost'),
+//           'description' => $t('Crawler settings are inefficient. You probably want to disable the "Crawl All URL\'s in the url_alias table" <a href="@performance">setting</a>.', array('@performance' => url('admin/settings/performance/boost#edit-boost-crawl-on-cron-wrapper'))),
+//           'severity'    => REQUIREMENT_WARNING,
+//           'value'       => $t('Boost crawler does not have efficient settings.'),
+//         );
+//       }
+      if (!BOOST_IGNORE_SUBDIR_LIMIT && isset($GLOBALS['_boost_dir_limit_warning'])) {
+        $requirements['boost_dir_limit'] = array(
+          'title'       => $t('Boost'),
+          'description' => $t('Sub directory limit about to be hit in these directories: <br /> !list <br /><br /> Change your url structure or open a new thread on the Boost issue tracker; there is a solution but it will cost you $100, since it can not be generalized & must be customized for your configuration', array('!list' => implode(" <br />\n ", $GLOBALS['_boost_dir_limit_warning']))),
+          'severity'    => REQUIREMENT_WARNING,
+          'value'       => $t('File system sub directory limit.'),
+        );
+      }
+      if (!BOOST_IGNORE_SUBDIR_LIMIT && isset($GLOBALS['_boost_dir_limit_hit'])) {
+        $requirements['boost_dir_limit'] = array(
+          'title'       => $t('Boost'),
+          'description' => $t('Sub directory has been hit in these directories: <br /> !list <br /><br /> Change your url structure or open a new thread on the Boost issue tracker; there is a solution but it will cost you $100, since it can not be generalized & must be customized for your configuration.', array('!list' => implode(" <br />\n ", $GLOBALS['_boost_dir_limit_hit']))),
+          'severity'    => REQUIREMENT_WARNING,
+          'value'       => $t('File system sub directory limit.'),
+        );
+      }
+      if ($robots && !stristr($robots, 'Disallow: /boost_stats.php')) {
+        $requirements['boost_robots'] = array(
+          'title'       => $t('Boost'),
+          'description' => $t('Your robots.txt file does not contain "Disallow: /boost_stats.php". This is needed in order to prevent the output of this from accidentally getting indexed by search engines.'),
+          'severity'    => REQUIREMENT_WARNING,
+          'value'       => $t('"Disallow: /boost_stats.php" entry missing in robots.txt'),
+        );
+      }
+      // if the apache_get_modules function doesn't exist, skip this entirely
+      if (function_exists('apache_get_modules')) {
+        // Get all available Apache modules.
+        $modules = apache_get_modules();
+        if (!in_array('mod_headers', $modules)) {
+          $requirements['boost_apache_headers'] = array(
+            'title'       => $t('Boost'),
+            'description' => $t('The Apache module "mod_headers" is not available.  You must enable <a href="!link">mod_headers</a> for Apache.', array('!link' => 'http://httpd.apache.org/docs/trunk/mod/mod_headers.html')),
+            'severity'    => REQUIREMENT_WARNING,
+            'value'       => $t('Apache module "mod_headers" is not installed.'),
+          );
+        }
+        if (!in_array('mod_rewrite', $modules)) {
+          $requirements['boost_apache_rewrite'] = array(
+            'title'       => $t('Boost'),
+            'description' => $t('The Apache module "mod_rewrite" is not available.  You must enable <a href="!link">mod_rewrite</a> for Apache.', array('!link' => 'http://httpd.apache.org/docs/trunk/mod/mod_rewrite.html')),
+            'severity'    => REQUIREMENT_ERROR,
+            'value'       => $t('Apache module "mod_rewrite" is not installed.'),
+          );
+        }
+        if (!in_array('mod_mime', $modules)) {
+          $requirements['boost_apache_mime'] = array(
+            'title'       => $t('Boost'),
+            'description' => $t('The Apache module "mod_mime" is not available.  You must enable <a href="!link">mod_mime</a> for Apache.', array('!link' => 'http://httpd.apache.org/docs/trunk/mod/mod_mime.html')),
+            'severity'    => REQUIREMENT_WARNING,
+            'value'       => $t('Apache module "mod_mime" is not installed.'),
+          );
+        }
+      }
+      if (empty($requirements)) {
+        $requirements['boost'] = array(
+          'title'       => $t('Boost'),
+          'severity'    => REQUIREMENT_OK,
+          'value'       => t('Boost installed correctly, should be working if properly <a href="@settings">configured</a>.', array('@settings' => url('admin/settings/performance/boost'))),
+        );
+      }
+      break;
+  }
+  return $requirements;
+}
+
+/**
+ * Check for bad versions of modules.
+ */
+function boost_chk_module_versions() {
+  // chk poormanscron
+  if (module_exists('poormanscron')) {
+    $info = unserialize(db_result(db_query("SELECT info FROM {system} WHERE name LIKE 'poormanscron'")));
+    if ($info['version'] == '6.x-1.0') {
+      return FALSE;
+    }
+    else {
+      return TRUE;
+    }
+  }
+  else {
+    return TRUE;
+  }
+}
+
+/**
+ * Check htaccess file if needed subdir references are in it.
+ */
+function boost_chk_htaccess_doc_subdir($htaccess) {
+  Global $base_path;
+  $drupal_subdir = rtrim($base_path, '/');
+  if (strlen($drupal_subdir) > 0) {
+    $rules = (int)BOOST_CACHE_HTML + (int)BOOST_CACHE_XML + (int)BOOST_CACHE_JSON + (int)BOOST_CACHE_CSS + (int)BOOST_CACHE_JS;
+    $rules = BOOST_GZIP ? $rules*2+1 : $rules+1;
+    if (BOOST_CACHE_HTML || BOOST_CACHE_XML || BOOST_CACHE_JSON) {
+      $rules++;
+    }
+    if (count(explode($drupal_subdir, $htaccess)) < $rules) {
+      return FALSE;
+    }
+  }
+  return TRUE;
+}
+
+/**
+ * Check htaccess file for given rules.
+ */
+function boost_chk_htaccess_doc($htaccess) {
+  $char = BOOST_CHAR;
+  if (BOOST_CACHE_HTML || BOOST_CACHE_XML || BOOST_CACHE_JSON) {
+    $rules = (int)BOOST_CACHE_HTML + (int)BOOST_CACHE_XML + (int)BOOST_CACHE_JSON;
+    $rules = BOOST_GZIP ? $rules*4+1 : $rules*2+1;
+    if (count(explode("%{REQUEST_URI}$char%{QUERY_STRING}\.", $htaccess)) < $rules) {
+      return FALSE;
+    }
+  }
+  if (BOOST_CACHE_CSS || BOOST_CACHE_JS) {
+    $rules = BOOST_CACHE_CSS && BOOST_CACHE_JS ? 2 : 1;
+    $rules = BOOST_GZIP ? $rules*4+1 : $rules*2+1;
+    if (count(explode("%{REQUEST_URI}$char\.", $htaccess)) < $rules) {
+      return FALSE;
+    }
+  }
+  if (BOOST_GZIP && BOOST_AGGRESSIVE_GZIP) {
+    if (!strstr($htaccess, "RewriteRule boost-gzip-cookie-test\.")) {
+      return FALSE;
+    }
+    $rules = 1;
+    $rules = (BOOST_CACHE_CSS || BOOST_CACHE_JS) ? $rules+1 : $rules;
+    $rules = (BOOST_CACHE_HTML || BOOST_CACHE_XML || BOOST_CACHE_JSON) ? $rules+1 : $rules;
+    if (count(explode("RewriteCond %{HTTP_COOKIE} !(boost-gzip)", $htaccess)) < $rules) {
+      return FALSE;
+    }
+  }
+  if (!(BOOST_CACHE_HTML || BOOST_CACHE_XML || BOOST_CACHE_CSS || BOOST_CACHE_JS || BOOST_CACHE_JSON)) {
+      return FALSE;
+  }
+  return TRUE;
+}
+
+
+/**
+ * Return a tree directory structure array
+ *
+ * @param $dir
+ *  Directory name
+ * @param $limit
+ *  If there are more then this many sub directories in this directory then set
+ *  the $GLOBALS['_boost_dir_limit_hit'] variable. Default is 31,000; set to
+ *  zero to disable this functionality.
+ */
+function boost_tree_directory($dir, $limit = 31000) {
+  if (!is_dir($dir)) {
+    return FALSE;
+  }
+  // Get directories/files
+  $files = scandir($dir);
+
+  // Only keep directories
+  foreach ($files as $file) {
+    if (is_dir($dir . '/' . $file) && $file != '.' && $file != '..') {
+      $dirs[] = $file;
+    }
+  }
+
+  // Recursive operation to get subdirectories
+  if (count($dirs)) {
+    if (count($dirs) >= 31990) {
+      $GLOBALS['_boost_dir_limit_hit'][] = $dir;
+    }
+    elseif ($limit && count($dirs) > $limit) {
+      $GLOBALS['_boost_dir_limit_warning'][] = $dir;
+    }
+    foreach ($dirs as $key => $subdir) {
+      unset($dirs[$key]);
+      $dirs[$subdir] = boost_tree_directory($dir . '/' . $subdir, $limit);
+    }
+  }
+  else {
+    return NULL;
+  }
+
+  // Return Array
+  return $dirs;
+}
+
+
+/**
+ * PHP4 compatible scandir function
+ *
+ * @see http://php.net/scandir
+ */
+if (!function_exists("scandir")) {
+  function scandir($dir) {
+    $dh = opendir($dir);
+    while (FALSE !== ($filename = readdir($dh))) {
+      $files[] = $filename;
+    }
+    return $files;
+  }
+}
+
+/**
+ * Attempts to set the PHP maximum execution time.
+ * See http://api.drupal.org/api/function/drupal_set_time_limit/7
+ */
+function _boost_install_set_time_limit($time_limit) {
+  if (function_exists('set_time_limit')) {
+    @set_time_limit($time_limit);
+  }
+}
+
+/**
+ * Implementation of hook_schema().
+ */
+function boost_schema() {
+  $schema['boost_cache'] = array(
+    'description' => t('List of the cached page'),
+    'fields' => array(
+      'hash' => array(
+        'description' => 'MD5 hash of filename',
+        'type' => 'varchar',
+        'length' => 32,
+        'not null' => TRUE,
+        'default' => '',
+      ),
+      'filename' => array(
+        'description' => 'Path of the cached file relative to Drupal webroot.',
+        'type' => 'text',
+        'size' => 'normal',
+        'not null' => TRUE,
+      ),
+      'base_dir' => array(
+        'description' => 'Path of the cache root dir relative to Drupal webroot.',
+        'type' => 'varchar',
+        'length' => 128,
+        'not null' => TRUE,
+        'default' => '',
+      ),
+      'expire' => array(
+        'description' => t('UNIX timestamp for the expiration date of cached page.'),
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'default' => 0,
+      ),
+      'lifetime' => array(
+        'description' => t('Number of seconds this page should be considered fresh. Used to set the expiration column.'),
+        'type' => 'int',
+        'not null' => TRUE,
+        'default' => -1,
+      ),
+      'push' => array(
+        'description' => 'A flag to indicate whether page should be crawled so it is fresh in the cache.',
+        'type' => 'int',
+        'size' => 'small',
+        'not null' => TRUE,
+        'default' => -1,
+      ),
+      'page_callback' => array(
+        'description' => 'The name of the function that renders the page.',
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+        'default' => ''
+      ),
+      'page_type' => array(
+        'description' => 'The name of the content type.',
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+        'default' => ''
+      ),
+      'page_id' => array(
+        'description' => 'The ID of the page.',
+        'type' => 'varchar',
+        'length' => 64,
+        'not null' => TRUE,
+        'default' => ''
+      ),
+      'extension' => array(
+        'description' => 'File Extension/Mime content type of this page.',
+        'type' => 'varchar',
+        'length' => 8,
+        'not null' => TRUE,
+        'default' => '',
+      ),
+      'timer' => array(
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'default' => 0,
+        'description' => 'Time in milliseconds that the page took to be generated.',
+      ),
+      'timer_average' => array(
+        'type' => 'float',
+        'not null' => TRUE,
+        'default' => 0,
+        'description' => 'Average time in milliseconds that the page took to be generated.',
+      ),
+      'hash_url' => array(
+        'description' => 'MD5 hash of url',
+        'type' => 'varchar',
+        'length' => 32,
+        'not null' => TRUE,
+        'default' => '',
+      ),
+      'url' => array(
+        'description' => 'URL of cached page',
+        'type' => 'text',
+        'size' => 'normal',
+        'not null' => TRUE,
+      ),
+    ),
+    'indexes' => array(
+      'expire' => array('expire'),
+      'push' => array('push'),
+      'base_dir' => array('base_dir'),
+      'page_id' => array('page_id'),
+      'timer' => array('timer'),
+      'timer_average' => array('timer_average'),
+      'page_callback' => array('page_callback'),
+      'page_type' => array('page_type'),
+      'extension' => array('extension'),
+    ),
+    'primary key' => array('hash'),
+  );
+  $schema['boost_cache_settings'] = array(
+    'description' => t('Boost cache settings'),
+    'fields' => array(
+      'csid' => array(
+        'description' => 'Primary Key: Unique cache settings ID.',
+        'type' => 'serial',
+        'unsigned' => TRUE,
+        'not null' => TRUE
+      ),
+      'base_dir' => array(
+        'description' => 'Path of the cache root dir relative to Drupal webroot.',
+        'type' => 'varchar',
+        'length' => 128,
+        'not null' => TRUE,
+        'default' => '',
+      ),
+      'page_callback' => array(
+        'description' => 'The name of the function that renders the page.',
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+        'default' => ''
+      ),
+      'page_type' => array(
+        'description' => 'The name of the content type.',
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+        'default' => '0'
+      ),
+      'page_id' => array(
+        'description' => 'The ID of the page.',
+        'type' => 'varchar',
+        'length' => 64,
+        'not null' => TRUE,
+        'default' => ''
+      ),
+      'extension' => array(
+        'description' => 'File Extension/Mime content type of this page.',
+        'type' => 'varchar',
+        'length' => 8,
+        'not null' => TRUE,
+        'default' => '',
+      ),
+      'lifetime' => array(
+        'description' => t('Number of seconds this page should be considered fresh. Used to set the expiration column.'),
+        'type' => 'int',
+        'not null' => TRUE,
+        'default' => -1,
+      ),
+      'push' => array(
+        'description' => 'A flag to indicate whether page should be crawled so it is fresh in the cache.',
+        'type' => 'int',
+        'size' => 'small',
+        'not null' => TRUE,
+        'default' => -1,
+      ),
+    ),
+    'indexes' => array(
+      'page_callback' => array('page_callback'),
+      'page_type' => array('page_type'),
+      'base_dir' => array('base_dir'),
+      'page_id' => array('page_id'),
+      'extension' => array('extension'),
+    ),
+    'primary key' => array('csid'),
+  );
+  $schema['boost_crawler'] = array(
+    'description' => t('Boost crawler - temp table'),
+    'fields' => array(
+      'id' => array(
+        'description' => 'Primary Key: Unique ID.',
+        'type' => 'serial',
+        'unsigned' => TRUE,
+        'not null' => TRUE
+      ),
+      'hash' => array(
+        'description' => 'MD5 hash of url',
+        'type' => 'varchar',
+        'length' => 32,
+        'not null' => TRUE,
+        'default' => '',
+      ),
+      'url' => array(
+        'description' => 'URL of page',
+        'type' => 'text',
+        'size' => 'normal',
+        'not null' => TRUE,
+      ),
+    ),
+    'primary key' => array('id'),
+    'unique keys' => array(
+      'hash' => array('hash'),
+    ),
+  );
+  $schema['boost_cache_relationships'] = array(
+    'description' => t('Boost parent child relationships'),
+    'fields' => array(
+      'hash' => array(
+        'description' => 'MD5 hash of below items in the database',
+        'type' => 'varchar',
+        'length' => 32,
+        'not null' => TRUE,
+        'default' => '',
+      ),
+      'base_dir' => array(
+        'description' => 'Path of the cache root dir relative to Drupal webroot.',
+        'type' => 'varchar',
+        'length' => 128,
+        'not null' => TRUE,
+        'default' => '',
+      ),
+      'page_callback' => array(
+        'description' => 'The name of the parent function that renders the page.',
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+        'default' => ''
+      ),
+      'page_type' => array(
+        'description' => 'The name of the parent content type.',
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+        'default' => '0'
+      ),
+      'page_id' => array(
+        'description' => 'The ID of the parent page.',
+        'type' => 'varchar',
+        'length' => 64,
+        'not null' => TRUE,
+        'default' => ''
+      ),
+      'child_page_callback' => array(
+        'description' => 'The name of the child function that renders the page.',
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+        'default' => ''
+      ),
+      'child_page_type' => array(
+        'description' => 'The name of the child content type.',
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+        'default' => '0'
+      ),
+      'child_page_id' => array(
+        'description' => 'The ID of the child page.',
+        'type' => 'varchar',
+        'length' => 64,
+        'not null' => TRUE,
+        'default' => ''
+      ),
+      'hash_url' => array(
+        'description' => 'MD5 hash of url',
+        'type' => 'varchar',
+        'length' => 32,
+        'not null' => TRUE,
+        'default' => ''
+      ),
+      'timestamp' => array(
+        'description' => 'The Unix timestamp of late update to this field.',
+        'type' => 'int',
+        'not null' => TRUE,
+        'default' => 0
+      ),
+    ),
+    'indexes' => array(
+      'base_dir' => array('base_dir'),
+      'page_callback' => array('page_callback'),
+      'page_type' => array('page_type'),
+      'page_id' => array('page_id'),
+      'child_page_callback' => array('child_page_callback'),
+      'child_page_type' => array('child_page_type'),
+      'child_page_id' => array('child_page_id'),
+      'hash_url' => array('hash_url'),
+      'timestamp' => array('timestamp'),
+    ),
+    'primary key' => array('hash'),
+  );
+  return $schema;
+}
+
+/**
+ * Update 6100 - Install Boost Database.
+ */
+function boost_update_6100() {
+  // Create tables.
+  $schema['boost_cache'] = array(
+    'description' => t('List of the cached page'),
+    'fields' => array(
+      'filename' => array(
+        'description' => 'Path of the cached file relative to Drupal webroot.',
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+        'default' => '',
+      ),
+      'url' => array(
+        'description' => 'URL of cached page',
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+        'default' => '',
+      ),
+      'expire' => array(
+        'description' => t('UNIX timestamp for the expiration date of cached page.'),
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'default' => 0,
+      ),
+      'lifetime' => array(
+        'description' => t('Number of seconds this page should be considered fresh. Used to set the expiration column.'),
+        'type' => 'int',
+        'not null' => TRUE,
+        'default' => -1,
+      ),
+      'push' => array(
+        'description' => 'A flag to indicate whether page should be crawled so it is fresh in the cache.',
+        'type' => 'int',
+        'size' => 'small',
+        'not null' => TRUE,
+        'default' => -1,
+      ),
+      'page_callback' => array(
+        'description' => 'The name of the function that renders the page.',
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+        'default' => ''
+      ),
+      'page_arguments' => array(
+        'description' => 'The name of the content type.',
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+        'default' => ''
+      ),
+    ),
+    'indexes' => array(
+      'expire' => array('expire'),
+      'push' => array('push'),
+    ),
+    'primary key' => array('filename'),
+  );
+  $schema['boost_cache_settings'] = array(
+    'description' => t('Boost cache settings'),
+    'fields' => array(
+      'csid' => array(
+        'description' => 'Primary Key: Unique cache settings ID.',
+        'type' => 'serial',
+        'unsigned' => TRUE,
+        'not null' => TRUE
+      ),
+      'page_callback' => array(
+        'description' => 'The name of the function that renders the page.',
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+        'default' => ''
+      ),
+      'page_arguments' => array(
+        'description' => 'The name of the content type.',
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+        'default' => ''
+      ),
+      'lifetime' => array(
+        'description' => t('Number of seconds this page should be considered fresh. Used to set the expiration column.'),
+        'type' => 'int',
+        'not null' => TRUE,
+        'default' => -1,
+      ),
+      'push' => array(
+        'description' => 'A flag to indicate whether page should be crawled so it is fresh in the cache.',
+        'type' => 'int',
+        'size' => 'small',
+        'not null' => TRUE,
+        'default' => -1,
+      ),
+    ),
+    'indexes' => array(
+      'page_callback' => array('page_callback'),
+      'page_arguments' => array('page_arguments'),
+    ),
+    'primary key' => array('csid'),
+  );
+
+  $ret = array();
+  db_create_table($ret, 'boost_cache', $schema['boost_cache']);
+  db_create_table($ret, 'boost_cache_settings', $schema['boost_cache_settings']);
+  return $ret;
+}
+
+/**
+ * Update 6101 - Copy old variable to new one.
+ */
+function boost_update_6101() {
+  // copy variable
+  return array(update_sql("UPDATE {variable} SET name = 'boost_enabled' WHERE name = 'boost'"));
+}
+
+/**
+ * Update 6102 - Delete old boost permissions variable.
+ */
+function boost_update_6102() {
+  // del variable
+  variable_del('boost_permissions');
+  return array(array('success' => TRUE, 'query' => 'Old permissions variable deleted.'));
+}
+
+/**
+ * Update 6103 - Add new columns to tables
+ */
+function boost_update_6103() {
+  $GLOBALS['_boost_max_execution_time'] =  ini_get('max_execution_time');
+  ini_set('max_execution_time', 10800); //3 Hours
+  _boost_install_set_time_limit(0);
+  $ret = array();
+  // Add in base_dir column
+  db_add_field($ret, 'boost_cache', 'base_dir', array(
+        'description' => 'Path of the cache root dir relative to Drupal webroot.',
+        'type' => 'varchar',
+        'length' => 128,
+        'not null' => TRUE,
+        'default' => '',
+      ));
+  db_add_field($ret, 'boost_cache_settings', 'base_dir', array(
+        'description' => 'Path of the cache root dir relative to Drupal webroot.',
+        'type' => 'varchar',
+        'length' => 128,
+        'not null' => TRUE,
+        'default' => '',
+      ));
+  db_add_index($ret, 'boost_cache', 'base_dir', array('base_dir'));
+  db_add_index($ret, 'boost_cache_settings', 'base_dir', array('base_dir'));
+
+  // Add in page_id column
+  db_add_field($ret, 'boost_cache', 'page_id', array(
+        'description' => 'The ID of the page.',
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'default' => 0,
+      ));
+  db_add_field($ret, 'boost_cache_settings', 'page_id', array(
+        'description' => 'The ID of the page.',
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'default' => 0,
+      ));
+  db_add_index($ret, 'boost_cache', 'page_id', array('page_id'));
+  db_add_index($ret, 'boost_cache_settings', 'page_id', array('page_id'));
+
+  // Add in timer column
+  db_add_field($ret, 'boost_cache', 'timer', array(
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'default' => 0,
+        'description' => 'Time in milliseconds that the page took to be generated.',
+      ));
+  db_add_index($ret, 'boost_cache', 'timer', array('timer'));
+
+  // Add in timer_average column
+  db_add_field($ret, 'boost_cache', 'timer_average', array(
+        'type' => 'float',
+        'not null' => TRUE,
+        'default' => 0,
+        'description' => 'Average time in milliseconds that the page took to be generated.',
+      ));
+  db_add_index($ret, 'boost_cache', 'timer_average', array('timer_average'));
+
+  // Add indexes
+  db_add_index($ret, 'boost_cache', 'page_callback', array('page_callback'));
+  db_add_index($ret, 'boost_cache', 'page_arguments', array('page_arguments'));
+
+  // Set Defaults
+  db_field_set_default($ret, 'boost_cache_settings', 'page_arguments', '0');
+  ini_set('max_execution_time', $GLOBALS['_boost_max_execution_time']);
+
+  return $ret;
+}
+
+/**
+ * Update 6104 - Add new column to tables
+ *  Add in mime_type column
+ */
+function boost_update_6104() {
+  $GLOBALS['_boost_max_execution_time'] =  ini_get('max_execution_time');
+  ini_set('max_execution_time', 10800); //3 Hours
+  _boost_install_set_time_limit(0);
+  $ret = array();
+  // Add in extension column
+  db_add_field($ret, 'boost_cache', 'extension', array(
+        'description' => 'File Extension/Mime content type of this page.',
+        'type' => 'varchar',
+        'length' => 8,
+        'not null' => TRUE,
+        'default' => '',
+      ));
+  db_add_field($ret, 'boost_cache_settings', 'extension', array(
+        'description' => 'File Extension/Mime content type of this page.',
+        'type' => 'varchar',
+        'length' => 8,
+        'not null' => TRUE,
+        'default' => '',
+      ));
+  db_add_index($ret, 'boost_cache', 'extension', array('extension'));
+  db_add_index($ret, 'boost_cache_settings', 'extension', array('extension'));
+  _boost_install_set_time_limit(0);
+  ini_set('max_execution_time', $GLOBALS['_boost_max_execution_time']);
+
+  return $ret;
+}
+
+/**
+ * Update 6105 - Add new column to boost_cache table
+ *  Add in url column
+ */
+function boost_update_6105() {
+  $GLOBALS['_boost_max_execution_time'] =  ini_get('max_execution_time');
+  ini_set('max_execution_time', 10800); //3 Hours
+  _boost_install_set_time_limit(0);
+  $ret = array();
+  db_add_field($ret, 'boost_cache', 'url', array(
+        'description' => 'URL of cached page',
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+        'default' => '',
+      ));
+  _boost_install_set_time_limit(0);
+  ini_set('max_execution_time', $GLOBALS['_boost_max_execution_time']);
+  return $ret;
+}
+
+/**
+ * Update 6106 - Add boost_crawler table to DB
+ */
+function boost_update_6106() {
+  $schema['boost_crawler'] = array(
+    'description' => t('Boost crawler - temp table'),
+    'fields' => array(
+      'id' => array(
+        'description' => 'Primary Key: Unique ID.',
+        'type' => 'serial',
+        'unsigned' => TRUE,
+        'not null' => TRUE
+      ),
+      'url' => array(
+        'description' => 'URL of page',
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+        'default' => '',
+      ),
+    ),
+    'primary key' => array('id'),
+    'unique keys' => array(
+      'url' => array('url'),
+    ),
+  );
+
+  $ret = array();
+  db_create_table($ret, 'boost_crawler', $schema['boost_crawler']);
+  return $ret;
+}
+
+/**
+ * Update 6107 - Flush core caches
+ */
+function boost_update_6107() {
+  // Flush caches, needed since some functions got renamed.
+  drupal_flush_all_caches();
+  return array(array('success' => TRUE, 'query' => 'Core Caches Flushed.'));
+}
+
+/**
+ * Update 6108 - Create crawler key
+ */
+function boost_update_6108() {
+  variable_set('boost_crawler_key', md5(mt_rand()));
+  return array(array('success' => TRUE, 'query' => 'Crawler key generated.'));
+}
+
+/**
+ * Update 6109 - Change .js to .json
+ */
+function boost_update_6109() {
+  $GLOBALS['_boost_max_execution_time'] =  ini_get('max_execution_time');
+  ini_set('max_execution_time', 10800); //3 Hours
+  _boost_install_set_time_limit(0);
+  // _boost_change_extension() is located in the module file, make sure thats loaded.
+  drupal_load('module', 'boost');
+  variable_set('boost_json_extension', '.json');
+  _boost_change_extension('.js', '.json');
+  drupal_set_message(t('Be sure to update your htaccess rules.'), BOOST_CACHE_JSON ? 'warning' : 'status');
+  _boost_install_set_time_limit(0);
+  ini_set('max_execution_time', $GLOBALS['_boost_max_execution_time']);
+  return array(array('success' => TRUE, 'query' => '.js extension changed to .json.'));
+}
+
+/**
+ * Update 6110 - Flush core caches
+ */
+function boost_update_6110() {
+  // Flush caches, needed since the menus where changed around.
+  drupal_flush_all_caches();
+  return array(array('success' => TRUE, 'query' => 'Core Caches Flushed.'));
+}
+
+/**
+ * Update 6111 - Use MD5 hash for DB Keys, allowing for long URL's to be cached
+ */
+function boost_update_6111() {
+  $GLOBALS['_boost_max_execution_time'] =  ini_get('max_execution_time');
+  ini_set('max_execution_time', 10800); //3 Hours
+  _boost_install_set_time_limit(0);
+  $ret = array();
+  // Add in hash & hash_url columns to boost_cache
+  db_add_field($ret, 'boost_cache', 'hash', array(
+        'description' => 'MD5 hash of filename',
+        'type' => 'varchar',
+        'length' => 32,
+        'not null' => TRUE,
+        'default' => '',
+      ));
+  db_add_field($ret, 'boost_cache', 'hash_url', array(
+        'description' => 'MD5 hash of url',
+        'type' => 'varchar',
+        'length' => 32,
+        'not null' => TRUE,
+        'default' => '',
+      ));
+  db_add_index($ret, 'boost_cache', 'hash_url', array('hash_url'));
+
+  // Add in hash columns to boost_crawler
+  db_add_field($ret, 'boost_crawler', 'hash', array(
+        'description' => 'MD5 hash of url',
+        'type' => 'varchar',
+        'length' => 32,
+        'not null' => TRUE,
+        'default' => '',
+      ));
+  _boost_install_set_time_limit(0);
+  ini_set('max_execution_time', $GLOBALS['_boost_max_execution_time']);
+  return $ret;
+}
+
+/**
+ * Update 6112 - Calculate filename MD5 for boost_cache table
+ */
+function boost_update_6112() {
+  $GLOBALS['_boost_max_execution_time'] =  ini_get('max_execution_time');
+  ini_set('max_execution_time', 10800); //3 Hours
+  _boost_install_set_time_limit(0);
+  $result = db_query("SELECT filename FROM {boost_cache} WHERE hash = ''");
+  while ($filename = db_result($result)) {
+    $hash = md5($filename);
+    db_query("UPDATE {boost_cache} SET hash = '%s' WHERE filename = '%s'", $hash, $filename);
+  }
+  _boost_install_set_time_limit(0);
+  ini_set('max_execution_time', $GLOBALS['_boost_max_execution_time']);
+  return array(array('success' => TRUE, 'query' => 'Filenames hashed'));
+}
+
+/**
+ * Update 6113 - Calculate url MD5 for boost_cache table
+ */
+function boost_update_6113() {
+  $GLOBALS['_boost_max_execution_time'] =  ini_get('max_execution_time');
+  ini_set('max_execution_time', 10800); //3 Hours
+  _boost_install_set_time_limit(0);
+  $result = db_query("SELECT url FROM {boost_cache} WHERE hash_url = ''");
+  while ($url = db_result($result)) {
+    $hash = md5($url);
+    db_query("UPDATE {boost_cache} SET hash_url = '%s' WHERE url = '%s'", $hash, $url);
+  }
+  _boost_install_set_time_limit(0);
+  ini_set('max_execution_time', $GLOBALS['_boost_max_execution_time']);
+  return array(array('success' => TRUE, 'query' => 'URLs hashed'));
+}
+
+/**
+ * Update 6114 - Calculate url MD5 for boost_crawler table
+ */
+function boost_update_6114() {
+  $GLOBALS['_boost_max_execution_time'] =  ini_get('max_execution_time');
+  ini_set('max_execution_time', 10800); //3 Hours
+  _boost_install_set_time_limit(0);
+  $result = db_query("SELECT url FROM {boost_crawler} WHERE hash = ''");
+  while ($url = db_result($result)) {
+    $hash = md5($url);
+    db_query("UPDATE {boost_crawler} SET hash = '%s' WHERE url = '%s'", $hash, $url);
+  }
+  _boost_install_set_time_limit(0);
+  ini_set('max_execution_time', $GLOBALS['_boost_max_execution_time']);
+  return array(array('success' => TRUE, 'query' => 'URLs hashed'));
+}
+
+/**
+ * Update 6115 - Change PK
+ */
+function boost_update_6115() {
+  $GLOBALS['_boost_max_execution_time'] =  ini_get('max_execution_time');
+  ini_set('max_execution_time', 10800); //3 Hours
+  _boost_install_set_time_limit(0);
+  $ret = array();
+  // Edit filename column & set PK
+  db_drop_primary_key($ret, 'boost_cache');
+  db_change_field($ret, 'boost_cache', 'filename', 'filename', array(
+        'description' => 'URL of cached page',
+        'type' => 'text',
+        'size' => 'normal',
+        'not null' => TRUE,
+        'default' => ''
+      ));
+  db_add_primary_key($ret, 'boost_cache', array('hash'));
+  // Edit URL column & set unique key
+  db_drop_unique_key($ret, 'boost_crawler', 'url');
+  db_change_field($ret, 'boost_crawler', 'url', 'url', array(
+        'description' => 'URL of cached page',
+        'type' => 'text',
+        'size' => 'normal',
+        'not null' => TRUE,
+        'default' => ''
+      ));
+  db_add_unique_key($ret, 'boost_crawler', 'hash', array('hash'));
+  _boost_install_set_time_limit(0);
+  ini_set('max_execution_time', $GLOBALS['_boost_max_execution_time']);
+  return $ret;
+}
+
+/**
+ * Update 6116 - Update page_callback column so views_page is now view
+ */
+function boost_update_6116() {
+  $ret = array();
+  $ret[] = update_sql("UPDATE {boost_cache} SET page_callback = 'view' WHERE page_callback = 'views_page'");
+  $ret[] = update_sql("UPDATE {boost_cache_settings} SET page_callback = 'view' WHERE page_callback = 'views_page'");
+  return $ret;
+}
+
+/**
+ * Update 6117 - Update page_id column so it uses varchar - Fix for views
+ */
+function boost_update_6117() {
+  $GLOBALS['_boost_max_execution_time'] =  ini_get('max_execution_time');
+  ini_set('max_execution_time', 10800); //3 Hours
+  _boost_install_set_time_limit(0);
+  $ret = array();
+  // Edit filename column & set PK
+  $result = db_query("SELECT * FROM {boost_cache_settings} WHERE page_callback = 'view' AND page_id <> 0");
+  while ($old = db_fetch_array($result)) {
+    drupal_set_message(t('Due to a bug in Boost, this view\'s scope was not set correctly. It has been deleted, and needs to be re-set.<br /><br /> Base Dir: %dir<br /> View Name: %args<br /> Cache Lifetime: %time', array('%dir' => $old['base_dir'], '%args' => $old['page_arguments'], '%time' => format_interval($old['lifetime'], 1))), 'warning');
+    $ret[] = update_sql('DELETE FROM {boost_cache_settings} WHERE csid = %d', $old['csid']);
+    $ret[] = array('success' => TRUE, 'query' => t('This setting needs to be re-set.<br /><br /> Base Dir: %dir<br /> View Name: %args<br /> Cache Lifetime: %time', array('%dir' => $old['base_dir'], '%args' => $old['page_arguments'], '%time' => format_interval($old['lifetime'], 1))));
+  }
+
+  db_drop_index($ret, 'boost_cache', 'page_id');
+  db_change_field($ret, 'boost_cache', 'page_id', 'page_id', array(
+        'description' => 'The ID of the page.',
+        'type' => 'varchar',
+        'length' => 64,
+        'not null' => TRUE,
+        'default' => ''
+      ));
+  db_add_index($ret, 'boost_cache', 'page_id', array('page_id'));
+
+  db_drop_index($ret, 'boost_cache_settings', 'page_id');
+  db_change_field($ret, 'boost_cache_settings', 'page_id', 'page_id', array(
+        'description' => 'The ID of the page.',
+        'type' => 'varchar',
+        'length' => 64,
+        'not null' => TRUE,
+        'default' => ''
+      ));
+  db_add_index($ret, 'boost_cache_settings', 'page_id', array('page_id'));
+  _boost_install_set_time_limit(0);
+  ini_set('max_execution_time', $GLOBALS['_boost_max_execution_time']);
+  return $ret;
+}
+
+/**
+ * Update 6118 - Change page_arguments column to page_type
+ */
+function boost_update_6118() {
+  $GLOBALS['_boost_max_execution_time'] =  ini_get('max_execution_time');
+  ini_set('max_execution_time', 10800); //3 Hours
+  _boost_install_set_time_limit(0);
+  $ret = array();
+  db_drop_index($ret, 'boost_cache', 'page_arguments');
+  db_change_field($ret, 'boost_cache', 'page_arguments', 'page_type', array(
+        'description' => 'The name of the content type.',
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+        'default' => ''
+      ));
+  db_add_index($ret, 'boost_cache', 'page_type', array('page_type'));
+
+  db_drop_index($ret, 'boost_cache_settings', 'page_arguments');
+  db_change_field($ret, 'boost_cache_settings', 'page_arguments', 'page_type', array(
+        'description' => 'The name of the content type.',
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+        'default' => ''
+      ));
+  db_add_index($ret, 'boost_cache_settings', 'page_type', array('page_type'));
+  _boost_install_set_time_limit(0);
+  ini_set('max_execution_time', $GLOBALS['_boost_max_execution_time']);
+  return $ret;
+}
+
+/**
+ * Update 6119 - Create boost_cache_relationships table
+ */
+function boost_update_6119() {
+  $schema['boost_cache_relationships'] = array(
+    'description' => t('Boost parent child relationships'),
+    'fields' => array(
+      'hash' => array(
+        'description' => 'MD5 hash of the 7 these 7 items in the database',
+        'type' => 'varchar',
+        'length' => 32,
+        'not null' => TRUE,
+        'default' => '',
+      ),
+      'base_dir' => array(
+        'description' => 'Path of the cache root dir relative to Drupal webroot.',
+        'type' => 'varchar',
+        'length' => 128,
+        'not null' => TRUE,
+        'default' => '',
+      ),
+      'page_callback' => array(
+        'description' => 'The name of the parent function that renders the page.',
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+        'default' => ''
+      ),
+      'page_type' => array(
+        'description' => 'The name of the parent content type.',
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+        'default' => '0'
+      ),
+      'page_id' => array(
+        'description' => 'The ID of the parent page.',
+        'type' => 'varchar',
+        'length' => 64,
+        'not null' => TRUE,
+        'default' => ''
+      ),
+      'child_page_callback' => array(
+        'description' => 'The name of the child function that renders the page.',
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+        'default' => ''
+      ),
+      'child_page_type' => array(
+        'description' => 'The name of the child content type.',
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+        'default' => '0'
+      ),
+      'child_page_id' => array(
+        'description' => 'The ID of the child page.',
+        'type' => 'varchar',
+        'length' => 64,
+        'not null' => TRUE,
+        'default' => ''
+      ),
+    ),
+    'primary key' => array('hash'),
+  );
+
+  $ret = array();
+  db_create_table($ret, 'boost_cache_relationships', $schema['boost_cache_relationships']);
+  return $ret;
+}
+
+
+/**
+ * Update 6120 - Add URL hash & timestamp to boost_cache_relationships
+ */
+function boost_update_6120() {
+  $GLOBALS['_boost_max_execution_time'] =  ini_get('max_execution_time');
+  ini_set('max_execution_time', 10800); //3 Hours
+  _boost_install_set_time_limit(0);
+  $ret = array();
+  // Add in hash_url & timestamp columns to boost_cache
+  db_add_field($ret, 'boost_cache_relationships', 'hash_url', array(
+        'description' => 'MD5 hash of url',
+        'type' => 'varchar',
+        'length' => 32,
+        'not null' => TRUE,
+        'default' => '',
+      ));
+  db_add_field($ret, 'boost_cache_relationships', 'timestamp', array(
+        'description' => 'The Unix timestamp of late update to this field.',
+        'type' => 'int',
+        'not null' => TRUE,
+        'default' => 0,
+      ));
+  _boost_install_set_time_limit(0);
+  ini_set('max_execution_time', $GLOBALS['_boost_max_execution_time']);
+  return $ret;
+}
+
+/**
+ * Update 6121 - Add indexes to database for boost_has_site_changed() function.
+ */
+function boost_update_6121() {
+  $GLOBALS['_boost_max_execution_time'] =  ini_get('max_execution_time');
+  ini_set('max_execution_time', 10800); //3 Hours
+  _boost_install_set_time_limit(0);
+
+  // Make sure we have boost.module file loaded
+  drupal_load('module', 'boost');
+
+  $ret = array();
+  _boost_index_exists($ret, 'node_revisions', 'timestamp');
+  _boost_index_exists($ret, 'files', 'timestamp');
+  _boost_index_exists($ret, 'comments', 'timestamp');
+  _boost_index_exists($ret, 'node', 'changed');
+  _boost_index_exists($ret, 'node_comment_statistics', 'last_comment_timestamp');
+  _boost_index_exists($ret, 'votingapi_vote', 'timestamp');
+
+  _boost_install_set_time_limit(0);
+  ini_set('max_execution_time', $GLOBALS['_boost_max_execution_time']);
+  return $ret;
+}
+
+/**
+ * Update 6122 - Remove default value for all text columns.
+ */
+function boost_update_6122() {
+  $ret = array();
+  db_change_field($ret, 'boost_cache', 'filename', 'filename', array(
+        'description' => 'URL of cached page',
+        'type' => 'text',
+        'size' => 'normal',
+        'not null' => TRUE,
+      ));
+  db_change_field($ret, 'boost_cache', 'url', 'url', array(
+        'description' => 'URL of cached page',
+        'type' => 'text',
+        'size' => 'normal',
+        'not null' => TRUE,
+      ));
+  db_change_field($ret, 'boost_crawler', 'url', 'url', array(
+        'description' => 'URL of page',
+        'type' => 'text',
+        'size' => 'normal',
+        'not null' => TRUE,
+      ));
+  return $ret;
+}
+
+/**
+ * Update 6123 - Add indexes to boost_cache_relationships table
+ */
+function boost_update_6123() {
+  $ret = array();
+
+  // Add indexes
+  db_add_index($ret, 'boost_cache_relationships', 'base_dir', array('base_dir'));
+  db_add_index($ret, 'boost_cache_relationships', 'page_callback', array('page_callback'));
+  db_add_index($ret, 'boost_cache_relationships', 'page_id', array('page_id'));
+  db_add_index($ret, 'boost_cache_relationships', 'child_page_callback', array('child_page_callback'));
+  db_add_index($ret, 'boost_cache_relationships', 'child_page_type', array('child_page_type'));
+  db_add_index($ret, 'boost_cache_relationships', 'child_page_id', array('child_page_id'));
+  db_add_index($ret, 'boost_cache_relationships', 'hash_url', array('hash_url'));
+  db_add_index($ret, 'boost_cache_relationships', 'timestamp', array('timestamp'));
+
+  return $ret;
+}
+
+/**
+ * Update 6124 - Add missing page_type index to boost_cache_relationships table
+ */
+function boost_update_6124() {
+  $ret = array();
+  // Make sure we have boost.module file loaded
+  drupal_load('module', 'boost');
+  _boost_index_exists($ret, 'boost_cache_relationships', 'page_type');
+  return $ret;
+}
+
+/**
+ * Update 6125 - Reset boost-gzip-cookie-test.html.gz file
+ */
+function boost_update_6125() {
+  $ret = array();
+  // Make sure we have boost.module file loaded
+  drupal_load('module', 'boost');
+  $filename = BOOST_ROOT_CACHE_DIR . '/' . BOOST_PERM_GZ_DIR . '/boost-gzip-cookie-test.html.gz';
+  if (is_file($filename) || is_link($filename)) {
+    if (unlink($filename)) {
+      _boost_generate_gzip_test_file();
+      return array(array('success' => TRUE, 'query' => t('boost-gzip-cookie-test.html.gz file was reset')));
+    }
+    else {
+      return array(array('success' => FALSE, 'query' => t('boost-gzip-cookie-test.html.gz file was not deleted; please manually delete this file')));
+    }
+  }
+  else {
+    return array(array('success' => TRUE, 'query' => t('boost-gzip-cookie-test.html.gz did not need to be reset')));
+  }
+}

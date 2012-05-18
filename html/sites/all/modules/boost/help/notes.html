@@ -1,0 +1,26 @@
+<a name="top"></a><img src="&path&rocket.png" align="right">
+<h3>If cron is not clearing the cache as expected.</h3>
+<p>Set $base_url variable in /sites/default/settings.php (line 125 or so) so cron runs error free and clears the cache properly when invoked like 'php /path/to/cron.php' or 'drush cron'. This should be something like http://www.example.com</p>
+<dt>Prepare Settings.php File for Cron</dt>
+<dd>Set $base_url variable in /sites/default/settings.php so cron will run error free and clear the cache properly.<br />
+-------------------<br />
+<em>This is a cut away of the settings.php file</em>(about half way down)<br />
+-------------------<br />
+* Examples:<br />
+ *   $base_url = 'http://www.example.com';<br />
+ *   $base_url = 'http://www.example.com:8888';<br />
+ *   $base_url = 'http://www.example.com/drupal';<br />
+ *   $base_url = 'https://www.example.com:8888/drupal';<br />
+ *<br />
+ * It is not allowed to have a trailing slash; Drupal will add it<br />
+ * for you.<br />
+ */<br />
+ # $base_url = 'http://www.example.com' ;  // NO trailing slash!<br />
+-------------------<br />
+Add the website URL between the ( &#039; &#039; ) as in the example above.<br />
+Remove or delete the # so it will work.<br />
+-------------------</dd>
+</p>
+<h3>URL paths that contain non-ASCII characters</h3>
+<p>If your Drupal URL paths contain non-ASCII characters, you may have to tweak your locate settings on the server in order to ensure the URL paths get correctly translated into directory paths in the file system. You can also turn off the ASCII filter in the Boost Advanced Settings. OR install the <a href="http://drupal.org/project/transliteration">Transliteration</a> module to help fix the characters.</p>
+<p><a href="#top">Back to top</a><br /></p>

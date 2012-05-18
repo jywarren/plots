@@ -1,0 +1,11 @@
+<a name="top"></a><img src="&path&rocket.png" align="right">
+<p>There are 2 blocks that you can add to help with the administrative side (status, page configuration), and 1 block to support core stats.</p>
+<p>Goto: ( Administer > Site building > Blocks > List ) to place them.</p>
+<p>The visibility of blocks can also be configured by role and page. On the Blocks list page, to the right of each block click 'configure'.</p>  
+ <p><b>Status Block:</b><br />
+This block shows the current status of the page as far as Boost is concerned. It will state if the page is served 'live' or by 'Boost', the expiration of the page and has a Flush Page button to clear the page from the cache manually. The block only appears if your not user 0 and provides useful information about PHP errors on the page.</p>
+<p><b>Page configuration Block:</b><br />
+This block allows the administrator to set pages individually. Including setting for minimum cache lifetime(select box), preemptive cache(on or off), scope(page ID, content type or content container).</p> 
+<p><b>Stats Block:</b><br />
+Drupal's core stats is supported. Configure the "Popular content" block, but then disable it. Place the "Boost: AJAX core statistics" in its place. If ajax stats are loading too slowly, copy stats/boost_stats.php to your webroot and enable "Cache Statistics Block". The cache gets updated on cron runs.</p>
+<p><a href="#top">Back to top</a><br /></p>
