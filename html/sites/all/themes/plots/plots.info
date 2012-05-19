@@ -59,6 +59,7 @@ scripts[] = js/jquery.flot.js
 scripts[] = js/jquery.flot.pie.js
 scripts[] = js/absolutize.js
 scripts[] = js/jcarousellite_1.0.1.min.js
+scripts[] = js/jquery.autocomplete.js
 
   ; The regions defined in Zen's default page.tpl.php file.  The name in
   ; brackets is the name of the variable in the page.tpl.php file, (e.g.
