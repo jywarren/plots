@@ -20,7 +20,7 @@ Drupal.behaviors.search_autocomplete = function(context) {
 			   //useCache: true,
 			   	filterResults: false,
 			   	sortResults: false,
-				onFinish: function() { $('#search-block').submit() },
+				onFinish: function() { $('#search-form').submit() },
 				//processData: function(data) {
 				//	return data.replace('\"',"").replace("\'","")
 				//},
