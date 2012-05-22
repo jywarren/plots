@@ -201,7 +201,8 @@ function openid_provider_authentication_response($request) {
     'openid.response_nonce' => _openid_provider_nonce(),
     'openid.assoc_handle' => $assoc_handle,
     'openid.sreg.nickname' => $user->name,
-    'openid.sreg.email' => $user->mail
+    'openid.sreg.email' => $user->mail,
+    'openid.ns.sreg' => 'http://openid.net/extensions/sreg/1.1'
   );
 
   // calling hook_openid so we can do response parsing and send any pertinent data back to the user
@@ -475,7 +476,7 @@ function _openid_provider_nonce() {
 function _openid_provider_sign($response) {
   module_load_include('inc', 'openid');
 
-  $signed_keys = array('op_endpoint', 'return_to', 'response_nonce', 'assoc_handle', 'identity', 'claimed_id');
+  $signed_keys = array('op_endpoint', 'return_to', 'response_nonce', 'assoc_handle', 'identity', 'claimed_id', 'sreg.nickname', 'sreg.email');
   $signed_keys = array_merge($signed_keys, module_invoke_all('openid_provider', 'signed', $response));
   $response['openid.signed'] = implode(',', $signed_keys);
 
