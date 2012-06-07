@@ -186,9 +186,12 @@ The Public Laboratory website is designed for use in any browser except Internet
 		<a style="padding-right:8px;" href="javascript:void();">&or;</a>
 	</li>
 	<li><a href="/events">Events</a></li> 
+
+	<?php if ( $user->uid ) { ?>
 	<li class="right"> 
 		<a href="/note/add">Post a note [+]</a> 
-	</li> 
+	</li>
+	<?php } ?> 
       </ul>
     </div> 
 
@@ -222,8 +225,9 @@ The Public Laboratory website is designed for use in any browser except Internet
         <?php print $highlight; ?>
 
 	<?php 
-	$path = explode('/', request_uri() );
 	global $user;
+	$path = explode('/', request_uri() );
+
 	$uid = $user->uid;
 	$profilePage = false;
 	if ($path[1] && $path[1] == "people" && $path[2]) {
@@ -231,6 +235,10 @@ The Public Laboratory website is designed for use in any browser except Internet
 		$uid = $uid->uid;
 		$profilePage = true;
 	}
+
+	if ($path[1] == "people") { ?>
+	<a class="subscribeBtn" href="http://publiclaboratory.org/notifications/subscribe/<?php echo $user->uid; ?>/author/author/<?php echo $uid; ?>?destination=user%2F<?php echo $uid; ?>&confirm=0">Subscribe +</a>
+	<?php } 
 
 	if ( request_uri() == "/dashboard" || $profilePage) {
 	
@@ -253,7 +261,7 @@ The Public Laboratory website is designed for use in any browser except Internet
 	$weeks = array_reverse(array_slice($weeks,0,52));
 	
 	?>
-	<div id="dashboardGraph">
+	<div id="dashboardGraph" <?php if (!$profilePage) { ?>style="margin-top:44px;"<?php } ?>>
 	<span class="barSparkline"><?php echo implode(",",$weeks); ?></span>
 	<a href="/wiki/github-graphs"><img class="githubGraph" src="/<?php echo path_to_theme(); ?>/images/52-week-graph.png" /></a>
 	</div>
