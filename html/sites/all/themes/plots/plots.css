@@ -27,7 +27,6 @@ a {
 /*
  * Suggested formats for editors
  */
-.floatright { float:right;margin:10px; }
 .frame { 
 border: 5px solid #EEE;
 margin: 5px;
@@ -62,8 +61,8 @@ fieldset table, fieldset{
 	font-size:10px;
 }
 
-.floatright { float:right; }
 .box { padding:6px 14px; border:1px solid #bbb; margin:10px; }
+.floatright { float:right;padding: 10px; }
 
 .notification {
 	font-size:0.8em;
@@ -492,6 +491,10 @@ form .filefield-element input.form-submit {
 #share a {
 	float:left;
 	margin-right:6px;
+}
+.fb-like {
+	display:inline;
+	padding-top:2px;
 }
 
 #edit-tags-wrapper {
@@ -1132,4 +1135,3 @@ a:hover.button {
         background:#35b;
         color:#ccc;
 }
-

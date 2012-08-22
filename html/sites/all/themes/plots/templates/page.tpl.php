@@ -131,6 +131,14 @@
 
 </head>
 <body class="<?php print $classes; ?>">
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) return;
+  js = d.createElement(s); js.id = id;
+  js.src = "//connect.facebook.net/en_US/all.js#xfbml=1";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
 
   <div style="border:2px solid red;background:#fcc;padding:10px;" id="iewarning"><p><h2>Incompatible browser</h2>
 The Public Laboratory website is designed for use in any browser except Internet Explorer. To view it properly, please use <a href="http://firefox.com">Firefox</a>, <a href="http://google.com/chrome">Chrome</a>, or another standards-compliant browser. Support for Internet Explorer is planned, but it's a good idea for you to get another browser anyways -- IE poses a security risk for your computer.</p></div>

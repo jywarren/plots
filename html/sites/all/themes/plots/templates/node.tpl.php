@@ -129,10 +129,11 @@
 
 <?php if (($node->type == "tool" || $node->type == "place" || $node->type == "note" || $node->type == "page") && $node->nid != "356") { ?>
   <div id="share">
-	<a name="fb_share" type="button_count" href="http://www.facebook.com/sharer.php">Share</a><script src="http://static.ak.fbcdn.net/connect.php/js/FB.Share" type="text/javascript"></script>  
-	<a href="http://twitter.com/share?text=Public Laboratory: <?php print $title; ?>"><img src="/img/twitter.png" /></a>
 	<g:plusone></g:plusone>
 	<script src="https://apis.google.com/js/plusone.js"></script>
+	<a href="https://twitter.com/share" class="twitter-share-button">Tweet</a>
+	<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+	<div class="fb-like" data-send="false" data-layout="button_count" data-width="50" data-show-faces="false" style="vertical-align:top;zoom:1;*display:inline"></div>
   </div>
 <?php } ?>
 
