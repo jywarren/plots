@@ -1135,3 +1135,9 @@ a:hover.button {
         background:#35b;
         color:#ccc;
 }
+
+.nicetable td {
+	border:2px solid #ccc;
+	background-color:#fdffe7;
+	padding:8px;
+}
