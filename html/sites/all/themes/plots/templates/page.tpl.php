@@ -197,8 +197,7 @@ The Public Laboratory website is designed for use in any browser except Internet
 
         <?php if (in_array('alpha',$user->roles)) { ?>
 	<li class="right"> 
-		   <a style="border-left:8px solid white;background:#35d" href="#" onClick="alpha()">&alpha;</a> 
-                <script>function alpha() { window.location = 'http://alpha.'+(window.location+'').split('://')[1] } </script>
+		   <a style="border-left:8px solid white;background:#35d" href="#" onClick="javascript:(function alpha() { if ((window.location+'').split('publiclaboratory')[0] == 'http://' || (window.location+'').split('publiclaboratory')[0] == 'http://www.') { window.location = 'http://alpha.'+(window.location+'').split('://')[1] } else { window.location = 'http://'+(window.location+'').split('://alpha.')[1] }})()">&alpha;</a> 
 	</li>
         <?php } ?>
 	<?php if ( $user->uid ) { ?>
