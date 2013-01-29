@@ -109,7 +109,7 @@
  * @see zen_process()
  */
 ?>
-
+<!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="<?php print $language->language; ?>" lang="<?php print $language->language; ?>" dir="<?php print $language->dir; ?>">
 
 <head>
@@ -169,6 +169,7 @@ The Public Laboratory website is designed for use in any browser except Internet
 			<li><a href="/place/sumava-czech-republic">Sumava, Czech Republic</a></li>
 			<li><a href="/place/portland-oregon">Portland, OR</a></li>
 			<li><a href="/place/santiago-chile">Santiago Chile</a></li>
+			<li><a href="/place/vermont">Vermont</a></li>
 		</ul>
 		<a style="padding-right:8px;" href="javascript:void();">&or;</a>
 	</li>
@@ -372,6 +373,19 @@ The Public Laboratory website is designed for use in any browser except Internet
   <?php print $closure; ?>
 
 <script type="text/javascript">
+
+  function urlParam(name) {
+    return decodeURI(
+        (RegExp(name + '=' + '(.+?)(&|$)').exec(location.search)||[,null])[1]
+    );
+  }
+  (function(){
+  if (location.toString().split('/')[location.toString().split('/').length-1]) {
+    if (urlParam('title')!='null') $('input#edit-title').val(urlParam('title'))
+    if (urlParam('body')!='null') $('textarea#edit-body').val(urlParam('body'))
+    if (urlParam('tags')!='null') $('input#edit-taxonomy-tags-3').val(urlParam('tags').replace('%2C',','))
+  } 
+  })()
 
   var _gaq = _gaq || [];
   _gaq.push(['_setAccount', 'UA-180781-33']);
