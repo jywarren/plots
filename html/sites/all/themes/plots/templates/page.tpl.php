@@ -375,15 +375,20 @@ The Public Laboratory website is designed for use in any browser except Internet
 <script type="text/javascript">
 
   function urlParam(name) {
-    return decodeURI(
-        (RegExp(name + '=' + '(.+?)(&|$)').exec(location.search)||[,null])[1]
-    );
+    return decodeURIComponent(urlParams()[name].replace(/\+/g,' ')) 
+  }
+  function urlParams() {
+    params = {}
+    $.each(location.toString().split('?')[1].split('&'),function(i,p) {
+      params[p.split('=')[0]] = p.split('=')[1]
+    })
+    return params
   }
   (function(){
   if (location.toString().split('/')[location.toString().split('/').length-1]) {
     if (urlParam('title')!='null') $('input#edit-title').val(urlParam('title'))
     if (urlParam('body')!='null') $('textarea#edit-body').val(urlParam('body'))
-    if (urlParam('tags')!='null') $('input#edit-taxonomy-tags-3').val(urlParam('tags').replace('%2C',','))
+    if (urlParam('tags')!='null') $('input#edit-taxonomy-tags-3').val(urlParam('tags')+"".replace('%2C',','))
   } 
   })()
 
