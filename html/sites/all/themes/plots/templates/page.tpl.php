@@ -391,9 +391,13 @@ The Public Laboratory website is designed for use in any browser except Internet
     if (urlParam('tags')!='null') $('input#edit-taxonomy-tags-3').val(urlParam('tags')+"".replace('%2C',','))
   } 
   })()
+</script>
+
+<script type="text/javascript">
 
   var _gaq = _gaq || [];
   _gaq.push(['_setAccount', 'UA-180781-33']);
+  _gaq.push(['_setDomainName', 'publiclaboratory.org']);
   _gaq.push(['_trackPageview']);
 
   (function() {
