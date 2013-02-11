@@ -385,13 +385,32 @@ The Public Laboratory website is designed for use in any browser except Internet
     return params
   }
   (function(){
+  
+  if (location.toString().split('.org/')[1] == "note/add") {
+    
+  }
+
   if (location.toString().split('/')[location.toString().split('/').length-1]) {
     if (urlParam('title')!='null') $('input#edit-title').val(urlParam('title'))
     if (urlParam('body')!='null') $('textarea#edit-body').val(urlParam('body'))
     if (urlParam('tags')!='null') $('input#edit-taxonomy-tags-3').val(urlParam('tags')+"".replace('%2C',','))
   } 
+
   })()
 </script>
+<style>
+  .page-note-add .taxonomy-super-select-checkboxes,
+  .page-note-add #edit-taxonomy-tags-1-wrapper,
+  .page-note-add legend.collapse-processed {
+    display:none;
+  }
+  .page-note-add fieldset {
+    border:0;
+  }
+  .page-note-add #edit-body {
+    height:300px;
+  }
+</style>
 
 <script type="text/javascript">
 
