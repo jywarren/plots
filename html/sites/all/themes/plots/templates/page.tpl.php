@@ -120,10 +120,9 @@
   <link rel="stylesheet" href="/sites/all/themes/plots/plots.css" type="text/css" media="screen" />
   <?php print $styles; ?>
   <!--[if !IE]><!--><link rel="stylesheet" href="/sites/all/themes/plots/not-ie.css" type="text/css" media="screen" /><!--<![endif]-->
-  <!--[if IE]>
+  <!--[if lt IE 7]>
   <link rel="stylesheet" href="/sites/all/themes/plots/ie.css" type="text/css" media="screen" />
   <![endif]-->
-  <!--[if IE 6]><link rel="stylesheet" href="/sites/all/themes/plots/ie.css" type="text/css" media="screen" /><![endif]-->
   <?php print $scripts; ?>
   <script src="/scripts/jquery-nivo-slider-pack.js" type="text/javascript"></script>
   <link rel="stylesheet" href="/scripts/nivo-slider.css" type="text/css" media="screen" />
@@ -141,7 +140,7 @@
 }(document, 'script', 'facebook-jssdk'));</script>
 
   <div style="border:2px solid red;background:#fcc;padding:10px;" id="iewarning"><p><h2>Incompatible browser</h2>
-The Public Laboratory website is designed for use in any browser except Internet Explorer. To view it properly, please use <a href="http://firefox.com">Firefox</a>, <a href="http://google.com/chrome">Chrome</a>, or another standards-compliant browser. Support for Internet Explorer is planned, but it's a good idea for you to get another browser anyways -- IE <a href-"http://en.wikipedia.org/wiki/Comparison_of_web_browsers#Security_and_vulnerabilities">poses a security risk</a> for your computer.</p></div>
+The Public Laboratory website will not render correctly in Internet Explorer 6 or earlier. To view it properly, please use an up-to-date browser, such as <a href="http://firefox.com">Firefox</a>, <a href="http://google.com/chrome">Chrome</a>, or another standards-compliant browser. It's a good idea to upgrade anyways -- olderversions of IE <a href-"http://en.wikipedia.org/wiki/Comparison_of_web_browsers#Security_and_vulnerabilities">pose a security risk</a> for your computer.</p></div>
 
   <div id="page-wrapper"><div id="page">
 
